@@ -1,0 +1,38 @@
+{
+  "name": "huskycat",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Universal Code Validation Platform",
+  "scripts": {
+    "dev": "python3 -m src.huskycat",
+    "validate": "python3 -m src.huskycat validate",
+    "validate:ci": "python3 -m src.huskycat ci-validate .gitlab-ci.yml",
+    "hooks:install": "python3 -m src.huskycat setup-hooks",
+    "mcp:server": "python3 -m src.huskycat mcp-server",
+    "mcp:test": "echo '{\"jsonrpc\": \"2.0\", \"method\": \"tools/list\", \"id\": 1}' | npm run mcp:server",
+    "clean": "python3 -m src.huskycat clean",
+    "status": "python3 -m src.huskycat status",
+    "container:build": "podman build -f ContainerFile -t huskycat:local .",
+    "container:test": "podman run --rm huskycat:local --version",
+    "container:test:validate": "podman run --rm -v \"$(pwd)\":/workspace huskycat:local validate --all",
+    "container:shell": "podman run --rm -it huskycat:local /bin/bash",
+    "build:binary": "uv run python build_binary.py",
+    "build:upx": "npm run build:binary && upx --best --lzma dist/huskycat",
+    "build:all": "npm run container:build && npm run build:upx",
+    "test:unit": "uv run pytest tests/ -v -m unit",
+    "test:integration": "uv run pytest tests/ -v -m integration",
+    "test:e2e": "uv run pytest tests/ -v -m e2e",
+    "test:all": "uv run pytest tests/ -v",
+    "docs:build": "mkdocs build",
+    "docs:serve": "mkdocs serve",
+    "install:local": "uv pip install -e .",
+    "install:deps": "uv sync --dev",
+    "ci:validate": "npm run validate:ci && npm run test:all",
+    "release:prepare": "npm run build:all && npm run test:all",
+    "pages:deploy": "mkdocs gh-deploy"
+  },
+  "devDependencies": {
+    "husky": "9.0.11",
+    "lint-staged": "15.2.0"
+  }
+}

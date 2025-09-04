@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "validation": {
+    "enabled": true,
+    "staged_only": true,
+    "auto_fix": false,
+    "strict": false,
+    "max_errors": 50
+  },
+  "tools": {
+    "python": {
+      "enabled": true,
+      "tools": [
+        "black",
+        "flake8",
+        "mypy"
+      ],
+      "file_patterns": [
+        "*.py",
+        "*.pyi"
+      ],
+      "exclude": [
+        "__pycache__",
+        ".venv",
+        "venv"
+      ]
+    },
+    "javascript": {
+      "enabled": true,
+      "tools": [
+        "eslint",
+        "prettier"
+      ],
+      "file_patterns": [
+        "*.js",
+        "*.jsx",
+        "*.ts",
+        "*.tsx"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build"
+      ]
+    },
+    "shell": {
+      "enabled": true,
+      "tools": [
+        "shellcheck"
+      ],
+      "file_patterns": [
+        "*.sh",
+        "*.bash"
+      ]
+    },
+    "yaml": {
+      "enabled": true,
+      "tools": [
+        "yamllint"
+      ],
+      "file_patterns": [
+        "*.yml",
+        "*.yaml"
+      ]
+    }
+  },
+  "hooks": {
+    "pre_commit": {
+      "enabled": true,
+      "commands": [
+        "huskycat validate --staged"
+      ]
+    },
+    "commit_msg": {
+      "enabled": true,
+      "conventional_commits": true,
+      "allowed_types": [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "build",
+        "ci",
+        "chore",
+        "revert"
+      ]
+    }
+  }
+}

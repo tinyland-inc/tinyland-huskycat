@@ -1,0 +1,48 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+docs/
+*.md
+
+# CI/CD
+.gitlab-ci*
+.github/
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test results
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Node modules (if any)
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv
+env/
+venv/

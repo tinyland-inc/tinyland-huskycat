@@ -1,0 +1,240 @@
+[project]
+name = "huskycat"
+version = "2.0.0"
+description = "Universal Code Validation Platform with MCP Server Integration"
+authors = [{name = "Jess Sullivan", email = "jess@tinyland.ai"}]
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+keywords = ["linting", "validation", "git-hooks", "mcp", "claude", "ci-cd"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "pydantic>=2.0.0",
+    "black>=24.0.0",
+    "flake8>=7.0.0",
+    "mypy>=1.0.0",
+    "PyYAML>=6.0.0",
+    "jsonschema>=4.23.0",
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-timeout>=2.2.0",
+    "pytest-xdist>=3.0.0",
+    "hypothesis>=6.0.0",
+    "playwright>=1.40.0",
+    "pytest-playwright>=0.4.0",
+    "requests>=2.31.0",
+    "docker>=6.0.0",
+    "black>=24.0.0",
+    "flake8>=7.0.0",
+    "mypy>=1.0.0",
+    "ruff>=0.8.0",
+    "yamllint>=1.35.0",
+    "PyYAML>=6.0.0",
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocs-mermaid2-plugin>=1.0.0",
+]
+build = [
+    "pyinstaller>=6.0.0",
+    "staticx>=0.14.0",
+]
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0", 
+    "mkdocs-mermaid2-plugin>=1.0.0",
+]
+
+[project.scripts]
+huskycat = "huskycat:main"
+
+[project.urls]
+Homepage = "https://huskycat.pages.io"
+Repository = "https://gitlab.com/tinyland/ai/huskycat"
+Documentation = "https://huskycat.pages.io"
+"Bug Tracker" = "https://gitlab.com/tinyland/ai/huskycat/-/issues"
+Downloads = "https://huskycat.pages.io/downloads"
+
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/huskycat"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "docs/",
+    "README.md",
+    "LICENSE",
+    "pyproject.toml",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | node_modules
+    | vendor
+    | packages/coreboot
+    | packages/qemu
+    | \.nx
+  )/
+)
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503", "E501"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".eggs",
+    "*.egg-info",
+    ".tox",
+    ".venv",
+    "venv",
+    "node_modules",
+    "vendor",
+    "packages/coreboot",
+    "packages/qemu",
+    ".nx"
+]
+per-file-ignores = [
+    "__init__.py:F401",
+    "test_*.py:F401,F811"
+]
+
+[tool.pylint]
+max-line-length = 88
+ignore = ["CVS", ".git", "__pycache__", "build", "dist", "node_modules", "vendor"]
+disable = [
+    "C0111",  # missing-docstring
+    "C0103",  # invalid-name
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "W0212",  # protected-access
+    "W0621",  # redefined-outer-name
+]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+exclude = [
+    "node_modules",
+    "vendor",
+    "packages/coreboot",
+    "packages/qemu",
+    ".nx",
+    "build",
+    "dist"
+]
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F", "I", "N", "W", "UP", "YTT", "ANN", "S", "BLE", "FBT", "B", "A", "COM", "C4", "DTZ", "T10", "DJ", "EM", "EXE", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q", "RSE", "RET", "SLF", "SIM", "TID", "TCH", "ARG", "PTH", "ERA", "PD", "PGH", "PL", "TRY", "RUF"]
+ignore = ["ANN101", "ANN102", "S101"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "vendor",
+    "packages/coreboot",
+    "packages/qemu",
+    ".nx"
+]
+
+# Same as Black.
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.8
+target-version = "py38"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"test_*.py" = ["S101"]
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.15.0",
+]

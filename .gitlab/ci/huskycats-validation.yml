@@ -1,0 +1,159 @@
+# HuskyCats GitLab CI Validation Template
+# This template provides comprehensive validation for GitLab CI/CD pipelines
+
+.huskycats_base:
+  image: ${CI_REGISTRY}/huskycats/validator:latest
+  before_script:
+    # Initialize MCP server connection if available
+    - |
+      if [ -n "$MCP_SERVER_URL" ]; then
+        export MCP_SESSION_ID="gitlab-ci-${CI_PIPELINE_ID}-${CI_JOB_ID}"
+        curl -X POST ${MCP_SERVER_URL}/rpc \
+          -H "Content-Type: application/json" \
+          -H "X-Session-ID: ${MCP_SESSION_ID}" \
+          -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05"},"id":1}'
+      fi
+
+# Validation job for merge requests
+validate:merge_request:
+  extends: .huskycats_base
+  stage: .pre
+  script:
+    # Validate GitLab CI configuration
+    - |
+      for file in $(git diff --name-only origin/${CI_DEFAULT_BRANCH}...HEAD | grep -E "\.gitlab-ci\.yml|\.gitlab/.*\.yml"); do
+        echo "Validating $file..."
+        if [ -n "$MCP_SERVER_URL" ]; then
+          curl -X POST ${MCP_SERVER_URL}/rpc \
+            -H "Content-Type: application/json" \
+            -H "X-Session-ID: ${MCP_SESSION_ID}" \
+            -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"gitlab-ci-validate\",\"arguments\":{\"files\":[\"$file\"]}},\"id\":2}"
+        else
+          python3 /opt/scripts/validate-gitlab-ci-schema.py "$file"
+        fi
+      done
+
+    # Validate Auto DevOps values files
+    - |
+      for file in $(git diff --name-only origin/${CI_DEFAULT_BRANCH}...HEAD | grep -E "values.*\.ya?ml|chart/.*\.ya?ml"); do
+        echo "Validating Helm values: $file..."
+        yamllint "$file"
+        if command -v helm >/dev/null 2>&1; then
+          helm lint . --values "$file" || true
+        fi
+      done
+
+    # Run comprehensive linting
+    - |
+      if [ -n "$MCP_SERVER_URL" ]; then
+        # Use MCP server for validation
+        for file in $(git diff --name-only origin/${CI_DEFAULT_BRANCH}...HEAD); do
+          case "$file" in
+            *.py)
+              curl -X POST ${MCP_SERVER_URL}/rpc \
+                -H "Content-Type: application/json" \
+                -H "X-Session-ID: ${MCP_SESSION_ID}" \
+                -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"python-flake8\",\"arguments\":{\"files\":[\"$file\"]}},\"id\":3}"
+              ;;
+            *.js|*.jsx|*.ts|*.tsx)
+              curl -X POST ${MCP_SERVER_URL}/rpc \
+                -H "Content-Type: application/json" \
+                -H "X-Session-ID: ${MCP_SESSION_ID}" \
+                -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"js-eslint\",\"arguments\":{\"files\":[\"$file\"]}},\"id\":4}"
+              ;;
+            Dockerfile|ContainerFile)
+              curl -X POST ${MCP_SERVER_URL}/rpc \
+                -H "Content-Type: application/json" \
+                -H "X-Session-ID: ${MCP_SESSION_ID}" \
+                -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"docker-hadolint\",\"arguments\":{\"files\":[\"$file\"]}},\"id\":5}"
+              ;;
+          esac
+        done
+      else
+        # Fallback to local validation
+        huskycat lint --staged || true
+      fi
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+
+# Auto DevOps validation
+validate:auto_devops:
+  extends: .huskycats_base
+  stage: .pre
+  script:
+    # Check if Auto DevOps is enabled
+    - |
+      if [ "$AUTO_DEVOPS_EXPLICITLY_ENABLED" = "1" ] || [ -z "$CI_PROJECT_AUTO_DEVOPS_ENABLED" ]; then
+        echo "Auto DevOps validation..."
+        
+        # Validate Dockerfile if exists
+        if [ -f Dockerfile ]; then
+          hadolint Dockerfile
+        fi
+        
+        # Validate Helm chart if exists
+        if [ -d chart ]; then
+          helm lint chart/
+        fi
+        
+        # Check for required Auto DevOps files
+        for required in .gitlab-ci.yml; do
+          if [ ! -f "$required" ]; then
+            echo "Warning: $required not found, Auto DevOps will use defaults"
+          fi
+        done
+      fi
+  rules:
+    - if: $AUTO_DEVOPS_EXPLICITLY_ENABLED == "1"
+    - if: $CI_PROJECT_AUTO_DEVOPS_ENABLED == "true"
+
+# Security validation
+validate:security:
+  extends: .huskycats_base
+  stage: test
+  script:
+    # Scan for secrets
+    - |
+      echo "Scanning for secrets..."
+      git diff --name-only origin/${CI_DEFAULT_BRANCH}...HEAD | \
+        xargs -r grep -E -i '(password|secret|api[_-]?key|token|credential|private[_-]?key)\s*[:=]\s*["\'][^"\']+["\']' | \
+        grep -v -E '(example|sample|test|dummy|placeholder|\.env\.example)' || true
+
+    # Python security scan
+    - |
+      for file in $(git diff --name-only origin/${CI_DEFAULT_BRANCH}...HEAD | grep "\.py$"); do
+        if [ -n "$MCP_SERVER_URL" ]; then
+          curl -X POST ${MCP_SERVER_URL}/rpc \
+            -H "Content-Type: application/json" \
+            -H "X-Session-ID: ${MCP_SESSION_ID}" \
+            -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"python-bandit\",\"arguments\":{\"files\":[\"$file\"]}},\"id\":6}"
+        else
+          bandit "$file" || true
+        fi
+      done
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Kubernetes manifest validation
+validate:k8s:
+  extends: .huskycats_base
+  stage: .pre
+  script:
+    - |
+      for file in $(find . -name "*.yaml" -o -name "*.yml" | grep -E "(k8s|kubernetes|manifests|deploy)/"); do
+        echo "Validating K8s manifest: $file"
+        kubectl --dry-run=client apply -f "$file" || true
+        
+        # Check for security issues
+        if command -v kubesec >/dev/null 2>&1; then
+          kubesec scan "$file" || true
+        fi
+      done
+  rules:
+    - if: $CI_KUBERNETES_ACTIVE
+    - exists:
+        - k8s/**/*.yaml
+        - kubernetes/**/*.yaml
+        - manifests/**/*.yaml

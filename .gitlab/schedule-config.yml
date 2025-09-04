@@ -1,0 +1,54 @@
+# GitLab CI Schedule Configuration
+# Configure these schedules in GitLab UI: Settings -> CI/CD -> Schedules
+
+schedules:
+  weekly_schema_update:
+    description: 'Weekly GitLab CI Schema Update'
+    cron: '0 2 * * 1' # Every Monday at 2 AM UTC
+    timezone: 'UTC'
+    branch: 'main'
+    variables:
+      SCHEDULE_TYPE: 'weekly_updates'
+      UPDATE_SCHEMAS: 'true'
+      UPDATE_DEPENDENCIES: 'true'
+      VALIDATE_FEATURES: 'true'
+    active: true
+
+  daily_artifact_check:
+    description: 'Daily Artifact Availability Check'
+    cron: '0 6 * * *' # Every day at 6 AM UTC
+    timezone: 'UTC'
+    branch: 'main'
+    variables:
+      SCHEDULE_TYPE: 'artifact_check'
+      CHECK_PAGES: 'true'
+      CHECK_REGISTRY: 'true'
+      CHECK_DOWNLOADS: 'true'
+    active: true
+
+  weekly_full_lifecycle:
+    description: 'Weekly Full Lifecycle Validation'
+    cron: '0 3 * * 0' # Every Sunday at 3 AM UTC
+    timezone: 'UTC'
+    branch: 'main'
+    variables:
+      SCHEDULE_TYPE: 'weekly_updates'
+      RUN_FULL_LIFECYCLE: 'true'
+      GENERATE_REPORT: 'true'
+    active: true
+# To create these schedules via API:
+# curl --request POST \
+#   --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+#   --header "Content-Type: application/json" \
+#   --data '{
+#     "description": "Weekly GitLab CI Schema Update",
+#     "ref": "main",
+#     "cron": "0 2 * * 1",
+#     "cron_timezone": "UTC",
+#     "active": true,
+#     "variables": [
+#       {"key": "SCHEDULE_TYPE", "value": "weekly_updates"},
+#       {"key": "UPDATE_SCHEMAS", "value": "true"}
+#     ]
+#   }' \
+#   "https://gitlab.com/api/v4/projects/$PROJECT_ID/pipeline_schedules"

@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Build outputs
+build/
+dist/
+.nx/
+.cache/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Package files
+*.tgz
+*.tar.gz
+
+# Temporary files
+tmp/
+temp/
+
+# Vendor
+vendor/
+packages/coreboot/
+packages/qemu/
+
+# Generated files
+*.min.js
+*.min.css
+
+# Config files that shouldn't be formatted
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# GitLab CI artifacts
+*.gitlab-ci.yml.bak
+quality-report.md

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "schedule:weekly",
+    ":dependencyDashboard",
+    ":semanticCommitTypeAll(chore)",
+    ":automergePatch"
+  ],
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["@jesssullivan"],
+  "timezone": "UTC",
+  "schedule": ["every weekend"],
+  "python": {
+    "enabled": true
+  },
+  "pip_setup": {
+    "enabled": true
+  },
+  "pip_requirements": {
+    "enabled": true,
+    "fileMatch": ["(^|/)requirements.*\\.txt$", "(^|/)requirements.*\\.in$"]
+  },
+  "pep621": {
+    "enabled": true,
+    "fileMatch": ["(^|/)pyproject\\.toml$"]
+  },
+  "dockerfile": {
+    "enabled": true,
+    "fileMatch": ["(^|/|\\.)ContainerFile$", "(^|/)ContainerFile\\.[^/]*$", "(^|/)Dockerfile$"]
+  },
+  "gitlabci": {
+    "enabled": true,
+    "fileMatch": ["\\.gitlab-ci\\.yml$", "\\.gitlab/ci/.*\\.yml$"]
+  },
+  "npm": {
+    "enabled": true,
+    "rangeStrategy": "bump"
+  },
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["jsonschema", "pyyaml", "requests"],
+      "groupName": "validation dependencies",
+      "groupSlug": "validation-deps",
+      "schedule": ["every weekend"],
+      "prPriority": 10
+    },
+    {
+      "matchPackagePatterns": ["pytest", "hypothesis", "playwright"],
+      "groupName": "testing dependencies",
+      "groupSlug": "testing-deps",
+      "automerge": false
+    },
+    {
+      "matchPackagePatterns": ["black", "flake8", "mypy", "ruff"],
+      "groupName": "linting dependencies",
+      "groupSlug": "linting-deps",
+      "automerge": true
+    }
+  ],
+  "prConcurrentLimit": 3,
+  "prCreation": "immediate",
+  "automergeType": "branch",
+  "postUpdateOptions": ["gomodTidy", "npmDedupe", "yarnDedupeHighest"],
+  "commitMessagePrefix": "chore(deps):",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "assignees": ["@jesssullivan"],
+    "prPriority": 10
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^src/gitlab_ci_validator\\.py$"],
+      "matchStrings": [
+        "SCHEMA_URL = \"https://gitlab\\.com/gitlab-org/gitlab/-/raw/(?<currentValue>\\S+)/app/assets/javascripts/editor/schema/ci\\.json\""
+      ],
+      "depNameTemplate": "gitlab-ci-schema",
+      "datasourceTemplate": "gitlab-tags",
+      "lookupNameTemplate": "gitlab-org/gitlab",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    }
+  ]
+}

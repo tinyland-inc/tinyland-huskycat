@@ -1,0 +1,118 @@
+# Unified HuskyCat Container - Production
+# Optimized Alpine-based container with all validation tools
+
+FROM alpine:3.19 AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    nodejs \
+    npm \
+    go \
+    rust \
+    cargo \
+    gcc \
+    musl-dev \
+    python3-dev \
+    linux-headers \
+    git \
+    curl \
+    bash
+
+# Install Python tools
+RUN pip3 install --no-cache-dir --break-system-packages \
+    black \
+    flake8 \
+    mypy \
+    pylint \
+    bandit \
+    ruff \
+    yamllint \
+    hypothesis \
+    pytest \
+    jsonschema \
+    pyyaml \
+    requests \
+    pydantic
+
+# Install Node.js tools
+RUN npm install -g \
+    eslint \
+    prettier \
+    typescript \
+    @typescript-eslint/parser \
+    @typescript-eslint/eslint-plugin
+
+# Install Go tools (commented out for now)
+# RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+# RUN go install github.com/securecodewarrior/sast-scan@latest
+
+# Create empty go bin directory for multi-stage copy
+RUN mkdir -p /go/bin
+
+# Install security tools
+RUN pip3 install --no-cache-dir --break-system-packages \
+    safety \
+    gitpython
+
+# Install Shell tools
+RUN apk add --no-cache shellcheck
+
+# Install Docker tools
+WORKDIR /tmp
+RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
+    chmod +x /usr/local/bin/hadolint
+
+# Production stage
+FROM alpine:3.19
+
+# Install runtime dependencies only
+RUN apk add --no-cache \
+    python3 \
+    nodejs \
+    git \
+    bash \
+    libstdc++ \
+    libgcc
+
+# Create non-root user
+RUN addgroup -g 1001 huskycat && \
+    adduser -D -u 1001 -G huskycat huskycat
+
+# Copy tools from builder
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /usr/lib/python3.* /usr/lib/python3.11/
+COPY --from=builder /usr/lib/node_modules /usr/lib/node_modules
+# Copy Go tools (currently empty directory)
+COPY --from=builder /go/bin /usr/local/bin
+
+# Copy application files
+WORKDIR /app
+COPY src/ /app/src/
+COPY pyproject.toml /app/
+COPY uv.lock /app/
+
+# Set up workspace directory
+RUN mkdir -p /workspace && \
+    chown -R huskycat:huskycat /workspace /app
+
+# Security hardening
+RUN chmod -R 755 /app && \
+    chmod -R 777 /tmp /workspace
+
+# Switch to non-root user
+USER huskycat
+WORKDIR /workspace
+
+# Environment variables
+ENV PATH="/app:${PATH}"
+ENV PYTHONPATH="/app:${PYTHONPATH}"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD python3 -c "import sys; sys.exit(0)"
+
+# Entry point
+ENTRYPOINT ["python3", "-m", "src.huskycat"]
+CMD ["--help"]

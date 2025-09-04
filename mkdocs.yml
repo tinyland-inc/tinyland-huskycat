@@ -1,0 +1,80 @@
+site_name: HuskyCat Documentation
+site_description: Universal Code Validation Platform
+site_url: https://tinyland.gitlab.io/ai/huskycat
+repo_url: https://gitlab.com/tinyland/ai/huskycat
+repo_name: tinyland/ai/huskycat
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - toc.follow
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - mermaid2
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: installation.md
+    - Quick Start: quickstart.md
+    - Configuration: configuration.md
+  - Features:
+    - Validation Engine: features/validation.md
+    - MCP Server: features/mcp-server.md
+    - Git Hooks: features/git-hooks.md
+    - Container Integration: features/containers.md
+  - API Reference:
+    - CLI Commands: api/cli.md
+    - MCP Tools: api/mcp-tools.md
+    - Python API: api/python.md
+  - Development:
+    - Architecture: development/architecture.md
+    - Contributing: development/contributing.md
+    - Testing: development/testing.md
+    - Building: development/building.md
+  - Changelog: changelog.md
