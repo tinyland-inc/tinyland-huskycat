@@ -26,7 +26,7 @@ update:helm-chart-schemas:
           'https://gitlab.com/gitlab-org/cluster-integration/auto-devops-deploy/-/raw/master/values.yaml',
           'https://gitlab.com/gitlab-org/cluster-integration/auto-devops-deploy/-/raw/master/values-production.yaml'
       ]
-      
+
       COMMON_CHART_URLS = [
           'https://raw.githubusercontent.com/helm/helm/main/pkg/chart/schema.json',
           'https://raw.githubusercontent.com/helm/charts/master/stable/nginx-ingress/values.yaml'
@@ -42,10 +42,10 @@ update:helm-chart-schemas:
           try:
               response = requests.get(url, timeout=30)
               response.raise_for_status()
-              
+
               filename = url.split('/')[-1]
               target_file = helm_dir / f'autodevops-{filename}'
-              
+
               # Parse and validate YAML
               if filename.endswith(('.yaml', '.yml')):
                   data = yaml.safe_load(response.text)
@@ -54,7 +54,7 @@ update:helm-chart-schemas:
               else:
                   with open(target_file, 'w') as f:
                       f.write(response.text)
-                      
+
               print(f'Updated: {target_file}')
           except Exception as e:
               print(f'Failed to fetch {url}: {e}')
@@ -64,10 +64,10 @@ update:helm-chart-schemas:
           try:
               response = requests.get(url, timeout=30)
               response.raise_for_status()
-              
+
               filename = url.split('/')[-1]
               target_file = helm_dir / f'common-{filename}'
-              
+
               if filename.endswith('.json'):
                   data = response.json()
                   with open(target_file, 'w') as f:
@@ -79,11 +79,11 @@ update:helm-chart-schemas:
               else:
                   with open(target_file, 'w') as f:
                       f.write(response.text)
-                      
+
               print(f'Updated: {target_file}')
           except Exception as e:
               print(f'Failed to fetch {url}: {e}')
-              
+
       print(f'Helm schemas updated in {helm_dir}')
       "
 
@@ -108,7 +108,7 @@ update:helm-chart-schemas:
           try:
               with open(chart_file) as f:
                   data = yaml.safe_load(f)
-                  
+
               if chart_file.name == 'autodevops-Chart.yaml':
                   validation_rules['autodevops_validation']['chart_metadata'] = {
                       'name': data.get('name'),
@@ -118,7 +118,7 @@ update:helm-chart-schemas:
               elif 'values' in chart_file.name:
                   # Extract common value patterns
                   validation_rules['autodevops_validation']['values_schema'].update(data or {})
-                  
+
           except Exception as e:
               print(f'Error processing {chart_file}: {e}')
 
@@ -126,7 +126,7 @@ update:helm-chart-schemas:
       rules_file = schema_dir / 'validation-rules.json'
       with open(rules_file, 'w') as f:
           json.dump(validation_rules, f, indent=2)
-          
+
       print(f'Generated validation rules: {rules_file}')
       "
 
