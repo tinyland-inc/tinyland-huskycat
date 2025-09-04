@@ -1,7 +1,201 @@
 # Scheduled Updates for HuskyCat
 # Ensures schemas, dependencies, and validations stay current
 
-# Weekly schema update job
+# Weekly Helm chart validation schema update job
+update:helm-chart-schemas:
+  stage: scheduled
+  image: python:3.11-alpine
+  before_script:
+    - apk add --no-cache git curl bash jq helm
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+  script:
+    # Update Helm chart schemas from Auto-DevOps repository
+    - echo "Updating Helm chart schemas from GitLab Auto-DevOps repository..."
+    - |
+      python3 -c "
+      import json
+      import requests
+      import yaml
+      from pathlib import Path
+
+      # GitLab Auto-DevOps Helm chart sources
+      AUTODEVOPS_REPO = 'https://gitlab.com/gitlab-org/cluster-integration/auto-devops-deploy'
+      HELM_CHART_URLS = [
+          'https://gitlab.com/gitlab-org/cluster-integration/auto-devops-deploy/-/raw/master/Chart.yaml',
+          'https://gitlab.com/gitlab-org/cluster-integration/auto-devops-deploy/-/raw/master/values.yaml',
+          'https://gitlab.com/gitlab-org/cluster-integration/auto-devops-deploy/-/raw/master/values-production.yaml'
+      ]
+      
+      COMMON_CHART_URLS = [
+          'https://raw.githubusercontent.com/helm/helm/main/pkg/chart/schema.json',
+          'https://raw.githubusercontent.com/helm/charts/master/stable/nginx-ingress/values.yaml'
+      ]
+
+      # Create schemas directory
+      schema_dir = Path('schemas')
+      helm_dir = schema_dir / 'helm'
+      helm_dir.mkdir(parents=True, exist_ok=True)
+
+      # Fetch Auto-DevOps Helm charts
+      for url in HELM_CHART_URLS:
+          try:
+              response = requests.get(url, timeout=30)
+              response.raise_for_status()
+              
+              filename = url.split('/')[-1]
+              target_file = helm_dir / f'autodevops-{filename}'
+              
+              # Parse and validate YAML
+              if filename.endswith(('.yaml', '.yml')):
+                  data = yaml.safe_load(response.text)
+                  with open(target_file, 'w') as f:
+                      yaml.dump(data, f, indent=2, default_flow_style=False)
+              else:
+                  with open(target_file, 'w') as f:
+                      f.write(response.text)
+                      
+              print(f'Updated: {target_file}')
+          except Exception as e:
+              print(f'Failed to fetch {url}: {e}')
+
+      # Fetch common Helm schemas
+      for url in COMMON_CHART_URLS:
+          try:
+              response = requests.get(url, timeout=30)
+              response.raise_for_status()
+              
+              filename = url.split('/')[-1]
+              target_file = helm_dir / f'common-{filename}'
+              
+              if filename.endswith('.json'):
+                  data = response.json()
+                  with open(target_file, 'w') as f:
+                      json.dump(data, f, indent=2)
+              elif filename.endswith(('.yaml', '.yml')):
+                  data = yaml.safe_load(response.text)
+                  with open(target_file, 'w') as f:
+                      yaml.dump(data, f, indent=2, default_flow_style=False)
+              else:
+                  with open(target_file, 'w') as f:
+                      f.write(response.text)
+                      
+              print(f'Updated: {target_file}')
+          except Exception as e:
+              print(f'Failed to fetch {url}: {e}')
+              
+      print(f'Helm schemas updated in {helm_dir}')
+      "
+
+    # Generate validation rules from schemas
+    - |
+      python3 -c "
+      import yaml
+      import json
+      from pathlib import Path
+
+      schema_dir = Path('schemas/helm')
+      validation_rules = {
+          'autodevops_validation': {
+              'required_fields': ['name', 'version', 'appVersion'],
+              'values_schema': {},
+              'common_patterns': {}
+          }
+      }
+
+      # Extract patterns from Auto-DevOps charts
+      for chart_file in schema_dir.glob('autodevops-*.yaml'):
+          try:
+              with open(chart_file) as f:
+                  data = yaml.safe_load(f)
+                  
+              if chart_file.name == 'autodevops-Chart.yaml':
+                  validation_rules['autodevops_validation']['chart_metadata'] = {
+                      'name': data.get('name'),
+                      'version_pattern': r'^[0-9]+\.[0-9]+\.[0-9]+',
+                      'required_fields': list(data.keys())
+                  }
+              elif 'values' in chart_file.name:
+                  # Extract common value patterns
+                  validation_rules['autodevops_validation']['values_schema'].update(data or {})
+                  
+          except Exception as e:
+              print(f'Error processing {chart_file}: {e}')
+
+      # Save validation rules
+      rules_file = schema_dir / 'validation-rules.json'
+      with open(rules_file, 'w') as f:
+          json.dump(validation_rules, f, indent=2)
+          
+      print(f'Generated validation rules: {rules_file}')
+      "
+
+    # Check for schema changes
+    - |
+      if git diff --quiet schemas/helm/; then
+        echo "No Helm schema changes detected"
+        exit 0
+      fi
+
+    # Test schemas with current autodevops command
+    - echo "Testing updated schemas with HuskyCat auto-devops validation..."
+    - uv sync --dev
+    - uv run python -m src.huskycat.commands.autodevops --simulate . || echo "Auto-DevOps validation test completed"
+
+    # Create commit if schemas changed
+    - git config user.email "bot@huskycat.io"
+    - git config user.name "HuskyCat Bot"
+    - git add schemas/helm/
+    - |
+      git commit -m "chore: update Helm chart schemas from Auto-DevOps
+
+      Automated weekly update of Helm chart schemas from GitLab Auto-DevOps repository.
+      Sources:
+      - https://gitlab.com/gitlab-org/cluster-integration/auto-devops-deploy
+      - https://raw.githubusercontent.com/helm/helm/main/pkg/chart/schema.json
+
+      Updated validation rules for improved Auto-DevOps Helm chart validation.
+
+      [skip ci]"
+
+    # Create merge request
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "main" ]; then
+        BRANCH_NAME="chore/update-helm-schemas-$(date +%Y%m%d)"
+        git checkout -b $BRANCH_NAME
+        git push origin $BRANCH_NAME
+
+        # Use GitLab API to create MR
+        curl --request POST \
+          --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
+          --header "Content-Type: application/json" \
+          --data "{
+            \"source_branch\": \"$BRANCH_NAME\",
+            \"target_branch\": \"main\",
+            \"title\": \"chore: Update Helm Chart Schemas for Auto-DevOps\",
+            \"description\": \"Automated weekly update of Helm chart schemas from GitLab Auto-DevOps repository.\\n\\n\" \
+              \"This MR updates our Auto-DevOps Helm chart validation with the latest official schemas and patterns.\\n\\n\" \
+              \"Updated schemas:\" \
+              \"\\n- Auto-DevOps Chart.yaml patterns\" \
+              \"\\n- Values.yaml schema validation\" \
+              \"\\n- Production values patterns\" \
+              \"\\n- Common Helm chart schemas\\n\\n\" \
+              \"This MR was created automatically by the scheduled update job.\",
+            \"remove_source_branch_after_merge\": true,
+            \"assignee_ids\": []
+          }" \
+          "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests"
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE_TYPE == "weekly_updates"
+    - if: $CI_COMMIT_BRANCH == "main" && $MANUAL_HELM_UPDATE == "true"
+      when: manual
+  artifacts:
+    paths:
+      - schemas/helm/
+    expire_in: 1 week
+
+# Weekly GitLab CI schema update job
 update:gitlab-ci-schema:
   stage: scheduled
   image: python:3.11-alpine

@@ -17,6 +17,9 @@ class AutoDevOpsCommand(BaseCommand):
     """Command to validate Auto-DevOps Helm charts and Kubernetes manifests."""
 
     REQUIRED_STAGES = ["build", "test", "security", "deploy"]
+    
+    # Schema cache directory for Auto-DevOps validation
+    SCHEMAS_DIR = Path.home() / ".cache" / "huskycats" / "schemas" / "helm"
     SECURITY_TEMPLATES = [
         "Security/SAST.gitlab-ci.yml",
         "Security/Secret-Detection.gitlab-ci.yml",
@@ -194,6 +197,115 @@ class AutoDevOpsCommand(BaseCommand):
 
         return analysis
 
+    def _load_helm_validation_rules(self) -> Dict[str, Any]:
+        """Load cached Helm validation rules from scheduled updates."""
+        rules_file = self.SCHEMAS_DIR / "validation-rules.json"
+        
+        if not rules_file.exists():
+            self.log(f"Helm validation rules not found at {rules_file}")
+            self.log("Consider running: huskycat update-schemas --helm")
+            return {}
+            
+        try:
+            with open(rules_file) as f:
+                rules = json.load(f)
+            self.log(f"Loaded Helm validation rules from {rules_file}")
+            return rules
+        except Exception as e:
+            self.log(f"Failed to load Helm validation rules: {e}")
+            return {}
+
+    def _validate_with_cached_helm_schemas(
+        self, chart_path: Path, chart_name: str
+    ) -> Dict[str, Any]:
+        """Validate Helm chart using cached Auto-DevOps schemas."""
+        result = {"valid": True, "errors": [], "warnings": []}
+        
+        # Load validation rules
+        rules = self._load_helm_validation_rules()
+        if not rules:
+            result["warnings"].append(
+                "No cached Helm schemas available - using basic validation"
+            )
+            return result
+            
+        autodevops_rules = rules.get("autodevops_validation", {})
+        
+        try:
+            # Validate Chart.yaml
+            chart_yaml = chart_path / "Chart.yaml"
+            if chart_yaml.exists():
+                with open(chart_yaml) as f:
+                    chart_data = yaml.safe_load(f)
+                    
+                # Check required fields
+                required_fields = autodevops_rules.get("required_fields", [])
+                for field in required_fields:
+                    if field not in chart_data:
+                        result["errors"].append(
+                            f"Missing required field '{field}' in Chart.yaml"
+                        )
+                        result["valid"] = False
+                        
+                # Validate version pattern
+                chart_metadata = autodevops_rules.get("chart_metadata", {})
+                version_pattern = chart_metadata.get("version_pattern")
+                if version_pattern and "version" in chart_data:
+                    import re
+                    if not re.match(version_pattern, str(chart_data["version"])):
+                        result["warnings"].append(
+                            f"Chart version '{chart_data['version']}' "
+                            f"doesn't match recommended pattern {version_pattern}"
+                        )
+                        
+            # Validate values.yaml against cached schema
+            values_yaml = chart_path / "values.yaml"
+            if values_yaml.exists():
+                with open(values_yaml) as f:
+                    values_data = yaml.safe_load(f)
+                    
+                values_schema = autodevops_rules.get("values_schema", {})
+                if values_schema:
+                    # Simple schema validation - check for common Auto-DevOps patterns
+                    self._validate_values_against_schema(
+                        values_data, values_schema, result
+                    )
+                    
+        except Exception as e:
+            result["errors"].append(f"Schema validation failed: {e}")
+            result["valid"] = False
+            
+        return result
+
+    def _validate_values_against_schema(
+        self, values_data: Dict[str, Any], schema: Dict[str, Any], result: Dict[str, Any]
+    ) -> None:
+        """Validate values.yaml against Auto-DevOps schema patterns."""
+        # Check for Auto-DevOps specific configurations
+        autodevops_keys = [
+            "replicaCount", "image", "service", "ingress", "resources",
+            "nodeSelector", "tolerations", "affinity"
+        ]
+        
+        for key in autodevops_keys:
+            if key in schema and key not in values_data:
+                result["warnings"].append(
+                    f"Consider adding '{key}' configuration for Auto-DevOps compatibility"
+                )
+                
+        # Validate image configuration
+        if "image" in values_data and "image" in schema:
+            image_config = values_data["image"]
+            schema_image = schema["image"]
+            
+            if isinstance(image_config, dict) and isinstance(schema_image, dict):
+                for required_key in ["repository", "tag"]:
+                    if required_key not in image_config:
+                        result["errors"].append(
+                            f"Missing required image.{required_key} in values.yaml"
+                        )
+                        result["valid"] = False
+
     def _validate_gitlab_ci_autodevops(
         self, gitlab_ci_path: Path, strict_mode: bool
     ) -> Dict:
@@ -285,6 +397,21 @@ class AutoDevOpsCommand(BaseCommand):
         for pattern in values_patterns:
             for values_file in project_path_obj.glob(pattern):
                 result["values_files"].append(str(values_file))
+
+        # Validate each chart using cached schemas
+        for chart_dir in result["charts_found"]:
+            chart_path = Path(chart_dir)
+            chart_name = chart_path.name
+            
+            # Use cached Auto-DevOps schemas for enhanced validation
+            schema_result = self._validate_with_cached_helm_schemas(
+                chart_path, chart_name
+            )
+            
+            if not schema_result["valid"]:
+                result["valid"] = False
+                result["errors"].extend(schema_result["errors"])
+            result["warnings"].extend(schema_result["warnings"])
 
         # Validate each values file
         for values_file in result["values_files"]:

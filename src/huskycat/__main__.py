@@ -70,6 +70,9 @@ def create_parser() -> argparse.ArgumentParser:
     schemas_parser.add_argument(
         "--force", action="store_true", help="Force update even if cache is fresh"
     )
+    schemas_parser.add_argument(
+        "--helm", action="store_true", help="Also update Helm chart schemas from Auto-DevOps"
+    )
 
     # CI validate command
     ci_parser = subparsers.add_parser(
