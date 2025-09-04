@@ -3,7 +3,7 @@ Command factory pattern for HuskyCat validation platform.
 """
 
 from pathlib import Path
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type, Any
 from importlib import import_module
 
 from .base import BaseCommand, CommandResult, CommandStatus
@@ -25,7 +25,7 @@ class HuskyCatFactory:
         self._commands: Dict[str, Type[BaseCommand]] = {}
         self._register_commands()
 
-    def _register_commands(self):
+    def _register_commands(self) -> None:
         """Register all available commands."""
         # Get the base package name (handle both src.huskycat and huskycat)
         base_package = __package__.replace(".core", "")
@@ -68,13 +68,12 @@ class HuskyCatFactory:
 
         return command_class(config_dir=self.config_dir, verbose=self.verbose)
 
-    def execute_command(self, command_name: str, *args, **kwargs) -> CommandResult:
+    def execute_command(self, command_name: str, *args: Any, **kwargs: Any) -> CommandResult:
         """
         Execute a command by name.
 
         Args:
             command_name: Name of the command to execute
-            *args: Positional arguments for the command
             **kwargs: Keyword arguments for the command
 
         Returns:

@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 import yaml
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any, Union
 
 from ..core.base import BaseCommand, CommandResult, CommandStatus
 
@@ -53,17 +53,17 @@ class AutoDevOpsCommand(BaseCommand):
         Returns:
             CommandResult with validation status
         """
-        project_path = Path(project_path).resolve()
+        project_path_obj = Path(project_path).resolve()
 
-        if not project_path.exists():
+        if not project_path_obj.exists():
             return CommandResult(
                 status=CommandStatus.FAILED,
-                message=f"Project path does not exist: {project_path}",
-                errors=[f"Invalid project path: {project_path}"],
+                message=f"Project path does not exist: {project_path_obj}",
+                errors=[f"Invalid project path: {project_path_obj}"],
             )
 
         results = {
-            "project_analysis": self._analyze_project_structure(project_path),
+            "project_analysis": self._analyze_project_structure(project_path_obj),
             "gitlab_ci_validation": None,
             "helm_validation": None,
             "k8s_validation": None,
@@ -74,7 +74,7 @@ class AutoDevOpsCommand(BaseCommand):
         all_warnings = []
 
         # Validate GitLab CI configuration
-        gitlab_ci_path = project_path / ".gitlab-ci.yml"
+        gitlab_ci_path = project_path_obj / ".gitlab-ci.yml"
         if gitlab_ci_path.exists():
             ci_result = self._validate_gitlab_ci_autodevops(gitlab_ci_path, strict_mode)
             results["gitlab_ci_validation"] = ci_result
@@ -84,7 +84,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         # Validate Helm charts
         if validate_helm:
-            helm_result = self._validate_helm_charts(project_path)
+            helm_result = self._validate_helm_charts(project_path_obj)
             results["helm_validation"] = helm_result
             if not helm_result["valid"]:
                 all_errors.extend(helm_result["errors"])
@@ -92,7 +92,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         # Validate Kubernetes manifests
         if validate_k8s:
-            k8s_result = self._validate_k8s_manifests(project_path)
+            k8s_result = self._validate_k8s_manifests(project_path_obj)
             results["k8s_validation"] = k8s_result
             if not k8s_result["valid"]:
                 all_errors.extend(k8s_result["errors"])
@@ -100,7 +100,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         # Simulate Auto-DevOps deployment
         if simulate_deployment:
-            deployment_result = self._simulate_auto_devops_deployment(project_path)
+            deployment_result = self._simulate_auto_devops_deployment(project_path_obj)
             results["deployment_simulation"] = deployment_result
             if not deployment_result["valid"]:
                 all_errors.extend(deployment_result["errors"])
@@ -127,7 +127,7 @@ class AutoDevOpsCommand(BaseCommand):
             data=results,
         )
 
-    def _analyze_project_structure(self, project_path: Path) -> Dict:
+    def _analyze_project_structure(self, project_path_obj: Path) -> Dict:
         """Analyze project structure for Auto-DevOps compatibility."""
         analysis = {
             "project_type": "unknown",
@@ -139,35 +139,35 @@ class AutoDevOpsCommand(BaseCommand):
         }
 
         # Detect project type
-        if (project_path / "package.json").exists():
+        if (project_path_obj / "package.json").exists():
             analysis["project_type"] = "node"
-        elif (project_path / "pyproject.toml").exists() or (
-            project_path / "requirements.txt"
+        elif (project_path_obj / "pyproject.toml").exists() or (
+            project_path_obj / "requirements.txt"
         ).exists():
             analysis["project_type"] = "python"
-        elif (project_path / "go.mod").exists():
+        elif (project_path_obj / "go.mod").exists():
             analysis["project_type"] = "go"
-        elif (project_path / "pom.xml").exists():
+        elif (project_path_obj / "pom.xml").exists():
             analysis["project_type"] = "java"
 
         # Check for Docker
-        analysis["has_dockerfile"] = (project_path / "Dockerfile").exists() or (
-            project_path / "ContainerFile"
+        analysis["has_dockerfile"] = (project_path_obj / "Dockerfile").exists() or (
+            project_path_obj / "ContainerFile"
         ).exists()
 
         # Check for GitLab CI
-        analysis["has_gitlab_ci"] = (project_path / ".gitlab-ci.yml").exists()
+        analysis["has_gitlab_ci"] = (project_path_obj / ".gitlab-ci.yml").exists()
 
         # Check for Helm charts
         helm_dirs = ["chart", "charts", ".helm", "helm"]
         analysis["has_helm_charts"] = any(
-            (project_path / d).exists() for d in helm_dirs
+            (project_path_obj / d).exists() for d in helm_dirs
         )
 
         # Check for Kubernetes manifests
         k8s_dirs = ["k8s", "kubernetes", "manifests", "deploy"]
         analysis["has_k8s_manifests"] = any(
-            (project_path / d).exists() for d in k8s_dirs
+            (project_path_obj / d).exists() for d in k8s_dirs
         )
 
         # Check for Helm values files
@@ -178,7 +178,7 @@ class AutoDevOpsCommand(BaseCommand):
             "values-staging.yaml",
         ]
         analysis["has_helm_values"] = any(
-            (project_path / f).exists() for f in values_files
+            (project_path_obj / f).exists() for f in values_files
         )
 
         # Determine Auto-DevOps readiness
@@ -208,7 +208,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         try:
             with open(gitlab_ci_path, "r") as f:
-                ci_config = yaml.safe_load(f)
+                ci_config: Optional[Dict[str, Any]] = yaml.safe_load(f)
 
             if not ci_config:
                 result["valid"] = False
@@ -263,7 +263,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         return result
 
-    def _validate_helm_charts(self, project_path: Path) -> Dict:
+    def _validate_helm_charts(self, project_path_obj: Path) -> Dict:
         """Validate Helm charts and values files."""
         result = {
             "valid": True,
@@ -276,14 +276,14 @@ class AutoDevOpsCommand(BaseCommand):
         # Find Helm charts
         chart_dirs = ["chart", "charts", ".helm"]
         for chart_dir in chart_dirs:
-            chart_path = project_path / chart_dir
+            chart_path = project_path_obj / chart_dir
             if chart_path.exists():
                 result["charts_found"].append(str(chart_path))
 
         # Find values files
         values_patterns = ["values*.yaml", "values*.yml"]
         for pattern in values_patterns:
-            for values_file in project_path.glob(pattern):
+            for values_file in project_path_obj.glob(pattern):
                 result["values_files"].append(str(values_file))
 
         # Validate each values file
@@ -299,7 +299,7 @@ class AutoDevOpsCommand(BaseCommand):
         # Try helm template if helm is available and charts found
         if result["charts_found"] and self._is_helm_available():
             template_result = self._validate_with_helm_template(
-                project_path, result["charts_found"][0]
+                project_path_obj, result["charts_found"][0]
             )
             if not template_result["valid"]:
                 result["valid"] = False
@@ -308,7 +308,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         return result
 
-    def _validate_k8s_manifests(self, project_path: Path) -> Dict:
+    def _validate_k8s_manifests(self, project_path_obj: Path) -> Dict:
         """Validate Kubernetes manifests."""
         result = {"valid": True, "errors": [], "warnings": [], "manifests": []}
 
@@ -317,7 +317,7 @@ class AutoDevOpsCommand(BaseCommand):
         manifest_files = []
 
         for k8s_dir in k8s_dirs:
-            k8s_path = project_path / k8s_dir
+            k8s_path = project_path_obj / k8s_dir
             if k8s_path.exists():
                 for manifest in k8s_path.rglob("*.yaml"):
                     manifest_files.append(manifest)
@@ -325,7 +325,7 @@ class AutoDevOpsCommand(BaseCommand):
                     manifest_files.append(manifest)
 
         # Also check root level manifests
-        for manifest in project_path.glob("*.k8s.yaml"):
+        for manifest in project_path_obj.glob("*.k8s.yaml"):
             manifest_files.append(manifest)
 
         result["manifests"] = [str(m) for m in manifest_files]
@@ -356,7 +356,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         return result
 
-    def _simulate_auto_devops_deployment(self, project_path: Path) -> Dict:
+    def _simulate_auto_devops_deployment(self, project_path_obj: Path) -> Dict:
         """Simulate Auto-DevOps deployment with Helm."""
         result = {"valid": True, "errors": [], "warnings": [], "simulation_output": ""}
 
@@ -375,7 +375,7 @@ class AutoDevOpsCommand(BaseCommand):
 
         # Prepare values
         values_args = []
-        for values_file in project_path.glob("values*.yaml"):
+        for values_file in project_path_obj.glob("values*.yaml"):
             values_args.extend(["-f", str(values_file)])
 
         # Add default Auto-DevOps values
@@ -405,7 +405,7 @@ class AutoDevOpsCommand(BaseCommand):
             ] + values_args
 
             process = subprocess.run(
-                cmd, capture_output=True, text=True, cwd=project_path
+                cmd, capture_output=True, text=True, cwd=project_path_obj
             )
 
             if process.returncode != 0:
@@ -445,14 +445,14 @@ class AutoDevOpsCommand(BaseCommand):
         except (subprocess.CalledProcessError, FileNotFoundError):
             return False
 
-    def _validate_with_helm_template(self, project_path: Path, chart_path: str) -> Dict:
+    def _validate_with_helm_template(self, project_path_obj: Path, chart_path: str) -> Dict:
         """Validate using helm template."""
         result = {"valid": True, "errors": [], "warnings": []}
 
         try:
             cmd = ["helm", "template", chart_path, "--dry-run"]
             process = subprocess.run(
-                cmd, capture_output=True, text=True, cwd=project_path
+                cmd, capture_output=True, text=True, cwd=project_path_obj
             )
 
             if process.returncode != 0:

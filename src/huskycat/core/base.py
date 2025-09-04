@@ -25,10 +25,10 @@ class CommandResult:
     status: CommandStatus
     message: str
     data: Optional[Dict[str, Any]] = None
-    errors: List[str] = None
-    warnings: List[str] = None
+    errors: Optional[List[str]] = None
+    warnings: Optional[List[str]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.errors is None:
             self.errors = []
         if self.warnings is None:
@@ -51,7 +51,7 @@ class BaseCommand(ABC):
         self.config_dir.mkdir(parents=True, exist_ok=True)
 
     @abstractmethod
-    def execute(self, *args, **kwargs) -> CommandResult:
+    def execute(self, *args: Any, **kwargs: Any) -> CommandResult:
         """
         Execute the command.
 
@@ -83,7 +83,7 @@ class BaseCommand(ABC):
             status=CommandStatus.SUCCESS, message="Prerequisites satisfied"
         )
 
-    def log(self, message: str, level: str = "INFO"):
+    def log(self, message: str, level: str = "INFO") -> None:
         """Log a message if verbose mode is enabled."""
         if self.verbose:
             print(f"[{level}] {message}")

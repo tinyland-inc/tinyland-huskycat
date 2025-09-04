@@ -237,4 +237,7 @@ target-version = "py38"
 [dependency-groups]
 dev = [
     "pyinstaller>=6.15.0",
+    "types-jsonschema>=4.25.1.20250822",
+    "types-pyyaml>=6.0.12.20250822",
+    "types-requests>=2.32.4.20250809",
 ]

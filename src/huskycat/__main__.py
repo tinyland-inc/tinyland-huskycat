@@ -10,7 +10,7 @@ from .core.factory import HuskyCatFactory
 from .core.base import CommandStatus
 
 
-def create_parser():
+def create_parser() -> argparse.ArgumentParser:
     """Create the argument parser for HuskyCat CLI."""
     parser = argparse.ArgumentParser(
         prog="huskycat",
@@ -133,7 +133,7 @@ def create_parser():
     return parser
 
 
-def main():
+def main() -> int:
     """Main entry point for HuskyCat CLI."""
     parser = create_parser()
     args = parser.parse_args()
