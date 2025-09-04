@@ -5,7 +5,7 @@ Status command to show HuskyCat configuration and state.
 import subprocess
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, Union, List
+from typing import Dict, Union, List
 
 from ..core.base import BaseCommand, CommandResult, CommandStatus
 

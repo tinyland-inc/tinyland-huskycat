@@ -2,9 +2,6 @@
 MCP Server command for AI integration.
 """
 
-import sys
-import json
-from pathlib import Path
 
 from ..core.base import BaseCommand, CommandResult, CommandStatus
 

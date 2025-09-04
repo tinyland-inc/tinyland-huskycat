@@ -131,7 +131,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
 
     # Status command
-    status_parser = subparsers.add_parser(
+    subparsers.add_parser(
         "status", help="Show HuskyCat status and configuration"
     )
 

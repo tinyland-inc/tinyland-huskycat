@@ -2,9 +2,7 @@
 Installation command for setting up HuskyCat.
 """
 
-import os
 import subprocess
-from pathlib import Path
 
 from ..core.base import BaseCommand, CommandResult, CommandStatus
 

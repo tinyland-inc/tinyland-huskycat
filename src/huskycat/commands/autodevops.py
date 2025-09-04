@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 import yaml
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any, Union
+from typing import Dict, List, Optional, Any
 
 from ..core.base import BaseCommand, CommandResult, CommandStatus
 
@@ -559,7 +559,7 @@ class AutoDevOpsCommand(BaseCommand):
             # Cleanup temp file
             try:
                 os.unlink(f.name)
-            except:
+            except Exception:
                 pass
 
         return result

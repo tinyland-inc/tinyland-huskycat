@@ -60,21 +60,13 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started:
-    - Installation: installation.md
-    - Quick Start: quickstart.md
-    - Configuration: configuration.md
+      - Installation: installation.md
+      - Configuration: configuration.md
   - Features:
-    - Validation Engine: features/validation.md
-    - MCP Server: features/mcp-server.md
-    - Git Hooks: features/git-hooks.md
-    - Container Integration: features/containers.md
+      - MCP Server: features/mcp-server.md
   - API Reference:
-    - CLI Commands: api/cli.md
-    - MCP Tools: api/mcp-tools.md
-    - Python API: api/python.md
-  - Development:
-    - Architecture: development/architecture.md
-    - Contributing: development/contributing.md
-    - Testing: development/testing.md
-    - Building: development/building.md
-  - Changelog: changelog.md
+      - MCP Tools: api/mcp-tools.md
+  - GitLab Integration:
+      - CI/CD: gitlab-ci-cd.md
+      - Auto-DevOps: gitlab-auto-devops-complete.md
+  - MCP Architecture: mcp-architecture.md

@@ -2,7 +2,6 @@
 Git hooks setup command.
 """
 
-import os
 import subprocess
 from pathlib import Path
 

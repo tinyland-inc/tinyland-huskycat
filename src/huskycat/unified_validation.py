@@ -14,7 +14,7 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Set
 
 # Configure logging
 logging.basicConfig(
@@ -69,13 +69,11 @@ class Validator(ABC):
     @abstractmethod
     def name(self) -> str:
         """Unique name for this validator"""
-        pass
 
     @property
     @abstractmethod
     def extensions(self) -> Set[str]:
         """File extensions this validator handles"""
-        pass
 
     @property
     def command(self) -> str:
@@ -95,7 +93,6 @@ class Validator(ABC):
     @abstractmethod
     def validate(self, filepath: Path) -> ValidationResult:
         """Validate a single file"""
-        pass
 
     def can_handle(self, filepath: Path) -> bool:
         """Check if this validator can handle the given file"""
@@ -548,7 +545,7 @@ class GitLabCIValidator(Validator):
     def is_available(self) -> bool:
         """Check if GitLab CI validator is available"""
         try:
-            from gitlab_ci_validator import GitLabCISchemaValidator
+            pass
 
             return True
         except ImportError:

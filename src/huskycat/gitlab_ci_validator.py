@@ -12,7 +12,6 @@ import hashlib
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Tuple, Optional, Any
-import jsonschema
 from jsonschema import Draft7Validator, FormatChecker
 
 logger = logging.getLogger(__name__)
