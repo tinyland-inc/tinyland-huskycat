@@ -60,7 +60,7 @@ update:gitlab-ci-schema:
         BRANCH_NAME="chore/update-gitlab-ci-schema-$(date +%Y%m%d)"
         git checkout -b $BRANCH_NAME
         git push origin $BRANCH_NAME
-        
+
         # Use GitLab API to create MR
         curl --request POST \
           --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
@@ -69,7 +69,8 @@ update:gitlab-ci-schema:
             \"source_branch\": \"$BRANCH_NAME\",
             \"target_branch\": \"main\",
             \"title\": \"chore: Update GitLab CI Schema\",
-            \"description\": \"Automated weekly update of GitLab CI schema.\\n\\nThis MR was created automatically by the scheduled update job.\",
+            \"description\": \"Automated weekly update of GitLab CI schema.\\n\\n\" \
+              \"This MR was created automatically by the scheduled update job.\",
             \"remove_source_branch_after_merge\": true,
             \"assignee_ids\": []
           }" \
@@ -242,40 +243,24 @@ test:lifecycle:
     - export PATH="$HOME/.local/bin:$PATH"
   script:
     - echo "Testing full lifecycle..."
-
-    # 1. Validation
     - echo "Step 1: Code validation"
     - uv sync --dev
     - uv run black --check src/ tests/ || true
     - uv run flake8 src/ tests/ || true
     - uv run mypy src/ --ignore-missing-imports || true
-
-    # 2. GitLab CI validation
     - echo "Step 2: GitLab CI validation"
     - uv run python scripts/validate-gitlab-ci-schema.py .gitlab-ci.yml
-
-    # 3. Unit tests
     - echo "Step 3: Unit tests"
     - uv run pytest tests/test_*_pbt.py -v --tb=short || true
-
-    # 4. Build artifacts
     - echo "Step 4: Build artifacts"
     - uv build || true
-
-    # 5. Container build
     - echo "Step 5: Container build"
     - docker build -f ContainerFile -t huskycat:test . || true
-
-    # 6. MCP server test
     - echo "Step 6: MCP server test"
-    - |
-      uv run python -c "
-      from src.mcp_server import MCPServer
-      server = MCPServer()
-      print('MCP Server initialized successfully')
-      " || true
-
-    # Summary
+    - >
+      uv run python -c "from src.mcp_server import MCPServer;
+      server = MCPServer();
+      print('MCP Server initialized successfully')" || true
     - echo "Full lifecycle test completed"
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE_TYPE == "weekly_updates"
