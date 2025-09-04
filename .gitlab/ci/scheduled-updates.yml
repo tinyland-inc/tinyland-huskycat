@@ -243,24 +243,21 @@ test:lifecycle:
     - export PATH="$HOME/.local/bin:$PATH"
   script:
     - echo "Testing full lifecycle..."
-    - echo "Step 1: Code validation"
+    - 'echo "Step 1: Code validation"'
     - uv sync --dev
     - uv run black --check src/ tests/ || true
     - uv run flake8 src/ tests/ || true
     - uv run mypy src/ --ignore-missing-imports || true
-    - echo "Step 2: GitLab CI validation"
+    - 'echo "Step 2: GitLab CI validation"'
     - uv run python scripts/validate-gitlab-ci-schema.py .gitlab-ci.yml
-    - echo "Step 3: Unit tests"
+    - 'echo "Step 3: Unit tests"'
     - uv run pytest tests/test_*_pbt.py -v --tb=short || true
-    - echo "Step 4: Build artifacts"
+    - 'echo "Step 4: Build artifacts"'
     - uv build || true
-    - echo "Step 5: Container build"
+    - 'echo "Step 5: Container build"'
     - docker build -f ContainerFile -t huskycat:test . || true
-    - echo "Step 6: MCP server test"
-    - >
-      uv run python -c "from src.mcp_server import MCPServer;
-      server = MCPServer();
-      print('MCP Server initialized successfully')" || true
+    - 'echo "Step 6: MCP server test"'
+    - uv run python -c "from src.mcp_server import MCPServer; server = MCPServer(); print('MCP Server initialized successfully')" || true
     - echo "Full lifecycle test completed"
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE_TYPE == "weekly_updates"
