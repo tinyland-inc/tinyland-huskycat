@@ -11,7 +11,7 @@ rules:
   comments-indentation: disable
   document-start: disable
   document-end: disable
-  
+
 ignore: |
   .github/
   .nx/
@@ -27,3 +27,4 @@ ignore: |
   dist/
   *.min.yml
   *.min.yaml
+  .gitlab-ci-autodevops.yml

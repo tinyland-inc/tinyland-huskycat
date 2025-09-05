@@ -86,17 +86,17 @@ validate:auto_devops:
     - |
       if [ "$AUTO_DEVOPS_EXPLICITLY_ENABLED" = "1" ] || [ -z "$CI_PROJECT_AUTO_DEVOPS_ENABLED" ]; then
         echo "Auto DevOps validation..."
-        
+
         # Validate Dockerfile if exists
         if [ -f Dockerfile ]; then
           hadolint Dockerfile
         fi
-        
+
         # Validate Helm chart if exists
         if [ -d chart ]; then
           helm lint chart/
         fi
-        
+
         # Check for required Auto DevOps files
         for required in .gitlab-ci.yml; do
           if [ ! -f "$required" ]; then
@@ -145,7 +145,7 @@ validate:k8s:
       for file in $(find . -name "*.yaml" -o -name "*.yml" | grep -E "(k8s|kubernetes|manifests|deploy)/"); do
         echo "Validating K8s manifest: $file"
         kubectl --dry-run=client apply -f "$file" || true
-        
+
         # Check for security issues
         if command -v kubesec >/dev/null 2>&1; then
           kubesec scan "$file" || true

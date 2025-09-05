@@ -67,17 +67,21 @@ class ValidateCommand(BaseCommand):
 
         # Generate summary
         summary = engine.get_summary(results)
-        
+
         # Prepare detailed messages
         all_errors = []
         all_warnings = []
-        
+
         for filepath, file_results in results.items():
             for result in file_results:
                 if result.errors:
-                    all_errors.extend([f"{filepath} ({result.tool}): {e}" for e in result.errors])
+                    all_errors.extend(
+                        [f"{filepath} ({result.tool}): {e}" for e in result.errors]
+                    )
                 if result.warnings:
-                    all_warnings.extend([f"{filepath} ({result.tool}): {w}" for w in result.warnings])
+                    all_warnings.extend(
+                        [f"{filepath} ({result.tool}): {w}" for w in result.warnings]
+                    )
 
         # Determine overall status based on summary
         if summary["total_errors"] > 0:
@@ -89,7 +93,7 @@ class ValidateCommand(BaseCommand):
         else:
             status = CommandStatus.SUCCESS
             message = "All validations passed"
-        
+
         # Include auto-fix information in message
         if summary.get("fixed_files", 0) > 0:
             message += f" ({summary['fixed_files']} files auto-fixed)"

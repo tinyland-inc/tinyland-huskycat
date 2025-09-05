@@ -56,11 +56,14 @@ class AutoFixCommand(BaseCommand):
         elif all_files:
             # Get all tracked files from git
             import subprocess
+
             try:
                 result = subprocess.run(
                     ["git", "ls-files"], capture_output=True, text=True, check=True
                 )
-                file_list = result.stdout.strip().split("\n") if result.stdout.strip() else []
+                file_list = (
+                    result.stdout.strip().split("\n") if result.stdout.strip() else []
+                )
                 results = {}
                 for file_path in file_list:
                     path = Path(file_path)
@@ -110,13 +113,17 @@ class AutoFixCommand(BaseCommand):
         # Collect detailed messages
         all_errors = []
         all_warnings = []
-        
+
         for filepath, file_results in results.items():
             for result in file_results:
                 if result.errors:
-                    all_errors.extend([f"{filepath} ({result.tool}): {e}" for e in result.errors])
+                    all_errors.extend(
+                        [f"{filepath} ({result.tool}): {e}" for e in result.errors]
+                    )
                 if result.warnings:
-                    all_warnings.extend([f"{filepath} ({result.tool}): {w}" for w in result.warnings])
+                    all_warnings.extend(
+                        [f"{filepath} ({result.tool}): {w}" for w in result.warnings]
+                    )
 
         return CommandResult(
             status=status,

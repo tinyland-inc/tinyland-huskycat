@@ -79,7 +79,7 @@ husky:security:
         "secret.*=.*['\"].*['\"]"
         "token.*=.*['\"].*['\"]"
       )
-      
+
       for pattern in "${patterns[@]}"; do
         if grep -r -i "$pattern" . --exclude-dir=.git --exclude-dir=node_modules 2>/dev/null | grep -v "example\|test\|mock"; then
           echo "⚠️  Potential secret found!"

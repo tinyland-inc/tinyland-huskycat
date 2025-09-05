@@ -11,16 +11,16 @@ pages:
   script:
     # Build documentation
     - mkdocs build --site-dir public
-    
+
     # Create downloads directory
     - mkdir -p public/downloads
-    
+
     # Copy binary artifacts if they exist
     - |
       if [ -d "dist/binaries" ]; then
         cp -r dist/binaries/* public/downloads/ || true
       fi
-    
+
     # Copy release artifacts from previous jobs
     - |
       for artifact in huskycat-*; do
@@ -28,7 +28,7 @@ pages:
           cp "$artifact" public/downloads/
         fi
       done
-    
+
     # Generate downloads index
     - |
       cat > public/downloads/index.html << 'EOF'
@@ -52,14 +52,14 @@ pages:
       <body>
         <h1>HuskyCat Downloads</h1>
         <p>Binary releases and installation scripts for HuskyCat.</p>
-        
+
         <h2>Quick Install</h2>
         <div class="install-cmd">curl -sSL https://huskycat.pages.io/install.sh | bash</div>
-        
+
         <h2>Binary Releases</h2>
         <ul class="downloads">
       EOF
-      
+
       # List all downloads
       for file in public/downloads/*; do
         if [ -f "$file" ] && [ "$(basename "$file")" != "index.html" ]; then
@@ -68,30 +68,30 @@ pages:
           echo "<li><a href=\"$filename\">$filename</a><div class=\"meta\">Size: $size</div></li>" >> public/downloads/index.html
         fi
       done
-      
+
       echo "</ul></body></html>" >> public/downloads/index.html
-    
+
     # Generate install script
     - |
       cat > public/install.sh << 'INSTALL_EOF'
       #!/bin/bash
       set -e
-      
+
       echo "Installing HuskyCat..."
-      
+
       # Detect OS and architecture
       OS=$(uname -s | tr '[:upper:]' '[:lower:]')
       ARCH=$(uname -m)
-      
+
       if [ "$ARCH" = "x86_64" ]; then
         ARCH="amd64"
       elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
         ARCH="arm64"
       fi
-      
+
       BINARY_NAME="huskycat-${OS}-${ARCH}"
       DOWNLOAD_URL="https://huskycat.pages.io/downloads/${BINARY_NAME}"
-      
+
       # Download binary
       echo "Downloading $BINARY_NAME..."
       curl -sSL "$DOWNLOAD_URL" -o /tmp/huskycat || {
@@ -100,25 +100,25 @@ pages:
         uv tool install --from "git+https://gitlab.com/tinyland/ai/huskycat.git" huskycat
         exit 0
       }
-      
+
       # Install binary
       chmod +x /tmp/huskycat
       sudo mv /tmp/huskycat /usr/local/bin/huskycat 2>/dev/null || mv /tmp/huskycat ~/.local/bin/huskycat
-      
+
       echo "HuskyCat installed successfully!"
       echo "Run 'huskycat --help' to get started."
       INSTALL_EOF
-      
+
       chmod +x public/install.sh
-  
+
   artifacts:
     paths:
       - public
-  
+
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
-  
+
   environment:
     name: production
     url: https://huskycat.pages.io

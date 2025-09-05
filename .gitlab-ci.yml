@@ -361,7 +361,7 @@ binary:build:linux:
 binary:build:macos:
   stage: package
   # This job requires a macOS runner with Xcode Command Line Tools
-  tags: 
+  tags:
     - macos  # Requires a GitLab runner with this tag on macOS
   variables:
     # macOS signing variables - set in GitLab CI/CD variables
@@ -409,7 +409,7 @@ binary:build:macos:
         uv run python build_binary.py \
           --skip-upx
       fi
-    # Move and rename binary  
+    # Move and rename binary
     - mv dist/huskycat dist/bin/huskycat-macos-arm64
     - chmod +x dist/bin/huskycat-macos-arm64
     # Verify binary
