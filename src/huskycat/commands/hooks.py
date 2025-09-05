@@ -59,7 +59,7 @@ class SetupHooksCommand(BaseCommand):
 # Function to run validation with binary-first approach
 run_validation() {
     local args="$1"
-    
+
     if [ -f "./dist/huskycat" ]; then
         ./dist/huskycat validate --staged $args
     elif command -v huskycat >/dev/null 2>&1; then
@@ -139,7 +139,7 @@ echo "🔍 HuskyCat: Validating files being added to index..."
 run_validation() {
     local files="$1"
     local args="$2"
-    
+
     if [ -f "./dist/huskycat" ]; then
         ./dist/huskycat validate $files $args
     elif command -v huskycat >/dev/null 2>&1; then
@@ -162,17 +162,17 @@ for file in $files_to_add; do
         echo "🔍 Validating $file..."
         run_validation "$file" ""
         exit_code=$?
-        
+
         if [ $exit_code -ne 0 ]; then
             echo ""
             echo "💡 Auto-fix available for $file"
             echo -n "🤖 Apply auto-fix? [y/N]: "
             read -r response
-            
+
             if [[ "$response" =~ ^[Yy]$ ]]; then
                 echo "🔧 Applying auto-fix to $file..."
                 run_validation "$file" "--fix"
-                
+
                 if [ $? -eq 0 ]; then
                     echo "✅ Auto-fix applied to $file"
                     echo "📝 Re-staging $file with fixes..."
@@ -255,7 +255,7 @@ exit 0
 run_validation() {
     local files="$1"
     local args="$2"
-    
+
     if [ -f "./dist/huskycat" ]; then
         ./dist/huskycat validate $files $args
     elif command -v huskycat >/dev/null 2>&1; then
@@ -276,17 +276,17 @@ for file in "$@"; do
         echo "🔍 Validating $file before adding to index..."
         run_validation "$file" ""
         exit_code=$?
-        
+
         if [ $exit_code -ne 0 ]; then
             echo ""
             echo "💡 Auto-fix available for $file"
             echo -n "🤖 Apply auto-fix before adding? [y/N]: "
             read -r response
-            
+
             if [[ "$response" =~ ^[Yy]$ ]]; then
                 echo "🔧 Applying auto-fix to $file..."
                 run_validation "$file" "--fix"
-                
+
                 if [ $? -eq 0 ]; then
                     echo "✅ Auto-fix applied to $file"
                 else
@@ -320,7 +320,7 @@ echo "Setting up git aliases for HuskyCat auto-fix validation..."
 git config --global alias.add-fix '!{git_add_wrapper} "$@" && git add "$@"'
 
 # Alternative: create a function-based alias that works better
-git config --global alias.addf '!f() {{ 
+git config --global alias.addf '!f() {{
     for file in "$@"; do
         if [ -f "$file" ]; then
             echo "🔍 Validating $file before adding...";

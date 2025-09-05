@@ -192,21 +192,21 @@ Run validation on the specified files or directories:
 ## Features
 
 - **Binary-first execution**: Fast local validation using available tools
-- **Container fallback**: Comprehensive toolchain via container when needed  
+- **Container fallback**: Comprehensive toolchain via container when needed
 - **Multi-language support**: Python, YAML, Shell, Docker, GitLab CI
 - **Auto-fix capabilities**: Automatically fix issues where possible
 
 ## Examples
 
 - Validate current directory: `validate .`
-- Validate specific file: `validate src/main.py` 
+- Validate specific file: `validate src/main.py`
 - Validate with auto-fix: `validate --fix src/`
 - Validate staged files: `validate --staged`
 
 ## Available Validators
 
 - **black**: Python code formatter
-- **autoflake**: Remove unused imports and variables  
+- **autoflake**: Remove unused imports and variables
 - **flake8**: Python linting (style, complexity, errors)
 - **mypy**: Python type checking
 - **yamllint**: YAML file validation
@@ -230,7 +230,7 @@ Validate CI configuration files:
 
 - **GitLab CI**: `.gitlab-ci.yml` schema validation and pipeline testing
 - **GitHub Actions**: Workflow validation
-- **Docker Compose**: Service configuration validation  
+- **Docker Compose**: Service configuration validation
 - **Kubernetes**: Manifest validation
 
 ## Features
@@ -290,7 +290,7 @@ Validate Auto-DevOps configurations:
 ## Features
 
 - **Helm chart validation**: Validates chart structure and templates
-- **Kubernetes manifest validation**: Checks manifest syntax and best practices  
+- **Kubernetes manifest validation**: Checks manifest syntax and best practices
 - **Auto-DevOps simulation**: Simulates deployment pipeline
 - **Security scanning**: Identifies potential security issues
 
