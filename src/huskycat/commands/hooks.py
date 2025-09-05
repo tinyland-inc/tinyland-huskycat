@@ -64,6 +64,8 @@ run_validation() {
         ./dist/huskycat validate --staged $args
     elif command -v huskycat >/dev/null 2>&1; then
         huskycat validate --staged $args
+    elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
+        uv run python3 -m src.huskycat validate --staged $args
     elif command -v podman >/dev/null 2>&1; then
         podman run --rm -v "$(pwd)":/workspace -it huskycat:local validate --staged $args
     else
@@ -99,12 +101,14 @@ exit $exit_code
         # Create pre-push hook
         pre_push = hooks_dir / "pre-push"
         pre_push_content = """#!/bin/bash
-# HuskyCat pre-push hook - Binary first, container fallback
+# HuskyCat pre-push hook - Binary first, uv fallback, container last
 
 if [ -f "./dist/huskycat" ]; then
     ./dist/huskycat validate --all && glab ci lint .gitlab-ci.yml
 elif command -v huskycat >/dev/null 2>&1; then
     huskycat validate --all && glab ci lint .gitlab-ci.yml
+elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
+    uv run python3 -m src.huskycat validate --all && glab ci lint .gitlab-ci.yml
 elif command -v podman >/dev/null 2>&1; then
     podman run --rm -v "$(pwd)":/workspace huskycat:local validate --all && glab ci lint .gitlab-ci.yml
 else
@@ -140,6 +144,8 @@ run_validation() {
         ./dist/huskycat validate $files $args
     elif command -v huskycat >/dev/null 2>&1; then
         huskycat validate $files $args
+    elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
+        uv run python3 -m src.huskycat validate $files $args
     elif command -v podman >/dev/null 2>&1; then
         podman run --rm -v "$(pwd)":/workspace -it huskycat:local validate $files $args
     else
@@ -254,6 +260,8 @@ run_validation() {
         ./dist/huskycat validate $files $args
     elif command -v huskycat >/dev/null 2>&1; then
         huskycat validate $files $args
+    elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
+        uv run python3 -m src.huskycat validate $files $args
     elif command -v podman >/dev/null 2>&1; then
         podman run --rm -v "$(pwd)":/workspace -it huskycat:local validate $files $args
     else
