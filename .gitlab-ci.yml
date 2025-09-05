@@ -100,7 +100,9 @@ validate:yaml:
 # Test stage jobs
 test:unit:
   stage: test
-  image: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
+  image: 
+    name: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
+    entrypoint: [""]
   dependencies:
     - container:build:amd64
   script:
@@ -124,7 +126,9 @@ test:unit:
 
 test:e2e:deployment:
   stage: test
-  image: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
+  image: 
+    name: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
+    entrypoint: [""]
   dependencies:
     - container:build:amd64
   script:
@@ -198,7 +202,9 @@ test:e2e:playwright:
 
 test:mcp:server:
   stage: test
-  image: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
+  image: 
+    name: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
+    entrypoint: [""]
   dependencies:
     - container:build:amd64
   script:
