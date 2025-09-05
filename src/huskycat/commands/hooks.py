@@ -101,16 +101,16 @@ exit $exit_code
         # Create pre-push hook
         pre_push = hooks_dir / "pre-push"
         pre_push_content = """#!/bin/bash
-# HuskyCat pre-push hook - Binary first, uv fallback, container last
+# HuskyCat pre-push hook - Binary first with development-friendly validation
 
 if [ -f "./dist/huskycat" ]; then
-    ./dist/huskycat validate --all && glab ci lint .gitlab-ci.yml
+    ./dist/huskycat validate --all --allow-warnings && glab ci lint .gitlab-ci.yml
 elif command -v huskycat >/dev/null 2>&1; then
-    huskycat validate --all && glab ci lint .gitlab-ci.yml
+    huskycat validate --all --allow-warnings && glab ci lint .gitlab-ci.yml
 elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
-    uv run python3 -m src.huskycat validate --all && glab ci lint .gitlab-ci.yml
+    uv run python3 -m src.huskycat validate --all --allow-warnings && glab ci lint .gitlab-ci.yml
 elif command -v podman >/dev/null 2>&1; then
-    podman run --rm -v "$(pwd)":/workspace huskycat:local validate --all && glab ci lint .gitlab-ci.yml
+    podman run --rm -v "$(pwd)":/workspace huskycat:local validate --all --allow-warnings && glab ci lint .gitlab-ci.yml
 else
     echo "❌ HuskyCat not found. Install: curl -sSL https://huskycat.pages.io/install.sh | bash"
     exit 1
