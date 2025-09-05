@@ -257,7 +257,7 @@ class AutoflakeValidator(Validator):
         ]
 
         try:
-            result = subprocess.run(
+            result = self._execute_command(
                 check_cmd, capture_output=True, text=True, timeout=30
             )
             duration_ms = int((time.time() - start_time) * 1000)
@@ -282,7 +282,7 @@ class AutoflakeValidator(Validator):
                         "--remove-unused-variables",
                         str(filepath),
                     ]
-                    fix_result = subprocess.run(
+                    fix_result = self._execute_command(
                         fix_cmd, capture_output=True, text=True, timeout=30
                     )
 
