@@ -49,7 +49,7 @@ class SetupHooksCommand(BaseCommand):
         hooks_dir.mkdir(exist_ok=True)
 
         # Get absolute path to main module
-        main_module_path = Path(__file__).parent.parent / "__main__.py"
+        Path(__file__).parent.parent / "__main__.py"
 
         # Create pre-commit hook with interactive auto-fix support
         pre_commit = hooks_dir / "pre-commit"

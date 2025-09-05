@@ -698,7 +698,6 @@ class GitLabCIValidator(Validator):
 
         # Try to import the GitLab CI validator
         GitLabCISchemaValidator = None
-        import_error = None
 
         # Multiple import strategies
         import sys
@@ -712,7 +711,7 @@ class GitLabCIValidator(Validator):
 
             GitLabCISchemaValidator = gitlab_ci_validator.GitLabCISchemaValidator
             sys.path.pop(0)
-        except Exception as e:
+        except Exception:
             # Try other import strategies
             for import_strategy in [
                 lambda: __import__(
@@ -729,8 +728,7 @@ class GitLabCIValidator(Validator):
                 try:
                     GitLabCISchemaValidator = import_strategy()
                     break
-                except (ImportError, ModuleNotFoundError, AttributeError) as e:
-                    import_error = e
+                except (ImportError, ModuleNotFoundError, AttributeError):
                     continue
 
         if GitLabCISchemaValidator is None:
@@ -761,7 +759,7 @@ class GitLabCIValidator(Validator):
                 duration_ms=duration_ms,
             )
 
-        except Exception as e:
+        except Exception:
             return ValidationResult(
                 tool=self.name,
                 filepath=str(filepath),

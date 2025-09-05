@@ -4,7 +4,6 @@ Non-destructively sets up .mcp.json and .claude/ configuration.
 """
 
 import json
-import os
 from pathlib import Path
 from typing import Dict, Any
 
