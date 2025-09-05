@@ -235,7 +235,7 @@ mkdocs:build:
 
 # Build stage jobs - multi-architecture container builds
 .container_build_template: &container_build_template
-  stage: build
+  stage: security
   image: quay.io/buildah/stable:latest
   before_script:
     - buildah login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
