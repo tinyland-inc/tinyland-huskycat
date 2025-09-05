@@ -101,26 +101,39 @@ exit $exit_code
         # Create pre-push hook
         pre_push = hooks_dir / "pre-push"
         pre_push_content = """#!/bin/bash
-# HuskyCat pre-push hook - Development-friendly validation
-# Focus on validating core source code, skip problematic test/config files
+# HuskyCat pre-push hook - Staged validation strategy
+# Stage 1: Fast local validation, Stage 2: Full CI validation
 
-echo "🚀 HuskyCat: Running development-friendly pre-push validation..."
+echo "🚀 HuskyCat: Stage 1 - Fast local validation (avoiding recursive validation)"
 
-# Only validate core source files for development workflow
-src_files="src/"
+# Stage 1: Use host tools for basic validation to avoid container recursion
+echo "Running basic formatting and syntax checks..."
 
-if [ -f "./dist/huskycat" ]; then
-    ./dist/huskycat validate $src_files --allow-warnings && glab ci lint .gitlab-ci.yml
-elif command -v huskycat >/dev/null 2>&1; then
-    huskycat validate $src_files --allow-warnings && glab ci lint .gitlab-ci.yml
-elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
-    uv run python3 -m src.huskycat validate $src_files --allow-warnings && glab ci lint .gitlab-ci.yml
-elif command -v podman >/dev/null 2>&1; then
-    podman run --rm -v "$(pwd)":/workspace huskycat:local validate $src_files --allow-warnings && glab ci lint .gitlab-ci.yml
+# Check if we have basic tools available locally
+if command -v black >/dev/null 2>&1; then
+    black --check --diff src/ || { echo "❌ Black formatting required"; exit 1; }
+    echo "✓ Black formatting OK"
 else
-    echo "❌ HuskyCat not found. Install: curl -sSL https://huskycat.pages.io/install.sh | bash"
-    exit 1
+    echo "⚠️  Black not available locally, skipping format check"
 fi
+
+if command -v flake8 >/dev/null 2>&1; then
+    flake8 src/ --max-line-length=88 --extend-ignore=E203,W503 || { echo "❌ Flake8 issues found"; exit 1; }
+    echo "✓ Flake8 basic checks OK"
+else
+    echo "⚠️  Flake8 not available locally, skipping syntax check"
+fi
+
+# Validate GitLab CI configuration
+if command -v glab >/dev/null 2>&1; then
+    glab ci lint .gitlab-ci.yml || { echo "❌ GitLab CI validation failed"; exit 1; }
+    echo "✓ GitLab CI configuration OK"
+else
+    echo "⚠️  glab not available, skipping CI validation"
+fi
+
+echo "✓ Stage 1 validation complete - CI will run Stage 2 with fresh container"
+exit 0
 """
 
         pre_push.write_text(pre_push_content)

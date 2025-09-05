@@ -51,18 +51,18 @@ variables:
     - export PATH="$HOME/.local/bin:$PATH"
     - uv --version
 
-# Validation stage jobs
-validate:code:
+# Stage 1: Basic validation (before container build)
+validate:basic:
   stage: validate
   image: python:3.11-alpine
   <<: *uv_setup
   <<: *cache_template
   script:
     - uv sync --dev
-    - uv run black --check src/ tests/
-    - uv run flake8 src/ tests/
-    - uv run ruff check src/ tests/
-    - uv run mypy src/ --ignore-missing-imports
+    - echo "🚀 Stage 1 - Basic validation (pre-container)"
+    - uv run black --check src/
+    - uv run flake8 src/ --max-line-length=88 --extend-ignore=E203,W503
+    - echo "✅ Stage 1 validation complete"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
@@ -306,6 +306,30 @@ container:build:dev:
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+
+# Stage 2: Complete validation using freshly built container
+validate:complete:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  dependencies:
+    - container:build:amd64
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo "🎠 Stage 2 - Complete validation with fresh container"
+    - docker pull $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
+    - echo "Running comprehensive validation with fresh container..."
+    - |
+      docker run --rm -v "$(pwd)":/workspace \
+        $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64 \
+        validate --all --allow-warnings
+    - echo "✅ Stage 2 validation complete - No recursive validation issues!"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: false
 
 # Package stage jobs
 package:python:
