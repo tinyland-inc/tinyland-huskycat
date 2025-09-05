@@ -27,3 +27,4 @@ ignore: |
   dist/
   *.min.yml
   *.min.yaml
+  mkdocs.yml

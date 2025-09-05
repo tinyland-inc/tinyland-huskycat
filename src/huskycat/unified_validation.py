@@ -670,7 +670,7 @@ class GitLabCIValidator(Validator):
 
     @property
     def extensions(self) -> List[str]:
-        return [".yml", ".yaml"]
+        return []  # Use can_handle method instead of extension-based matching
 
     def is_available(self) -> bool:
         """Check if GitLab CI validator is available"""
