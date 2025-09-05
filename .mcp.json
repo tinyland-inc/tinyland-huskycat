@@ -17,6 +17,13 @@
         "start"
       ],
       "type": "stdio"
+    },
+    "huskycat": {
+      "command": "./dist/huskycat",
+      "args": [
+        "mcp-server"
+      ],
+      "env": {}
     }
   }
 }

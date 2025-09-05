@@ -24,6 +24,7 @@ RUN apk add --no-cache \
 RUN pip3 install --no-cache-dir --break-system-packages \
     black \
     flake8 \
+    autoflake \
     mypy \
     pylint \
     bandit \
@@ -85,6 +86,7 @@ RUN addgroup -g 1001 huskycat && \
 COPY --from=builder /usr/local/bin /usr/local/bin/
 COPY --from=builder /usr/bin/black /usr/bin/black
 COPY --from=builder /usr/bin/flake8 /usr/bin/flake8
+COPY --from=builder /usr/bin/autoflake /usr/bin/autoflake
 COPY --from=builder /usr/bin/mypy /usr/bin/mypy
 COPY --from=builder /usr/bin/pylint /usr/bin/pylint
 COPY --from=builder /usr/bin/bandit /usr/bin/bandit

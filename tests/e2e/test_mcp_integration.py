@@ -7,12 +7,8 @@ import json
 import subprocess
 import time
 import requests
-import websockets
 from pathlib import Path
-from typing import Dict, Any, List, Optional, AsyncGenerator
-from unittest.mock import Mock, patch
-import tempfile
-import shutil
+from typing import Dict, Any, Optional
 
 
 class TestMCPServerIntegration:

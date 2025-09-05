@@ -32,12 +32,14 @@ class HuskyCatFactory:
 
         command_modules = {
             "validate": f"{base_package}.commands.validate.ValidateCommand",
+            "auto-fix": f"{base_package}.commands.autofix.AutoFixCommand",
             "install": f"{base_package}.commands.install.InstallCommand",
             "setup-hooks": f"{base_package}.commands.hooks.SetupHooksCommand",
             "update-schemas": f"{base_package}.commands.schemas.UpdateSchemasCommand",
             "ci-validate": f"{base_package}.commands.ci.CIValidateCommand",
             "auto-devops": f"{base_package}.commands.autodevops.AutoDevOpsCommand",
             "mcp-server": f"{base_package}.commands.mcp.MCPServerCommand",
+            "bootstrap": f"{base_package}.commands.bootstrap.BootstrapCommand",
             "clean": f"{base_package}.commands.clean.CleanCommand",
             "status": f"{base_package}.commands.status.StatusCommand",
         }

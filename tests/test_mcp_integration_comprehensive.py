@@ -6,19 +6,13 @@ Tests MCP server functionality, protocol compliance, and real-world usage
 
 import pytest
 import subprocess
-import tempfile
-import shutil
 import os
 import json
 import time
-import threading
-import socket
 import sys
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, Optional
 from io import StringIO
-import queue
-import signal
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -32,7 +26,7 @@ except ImportError:
     HAS_MCP_SERVER = False
 
 try:
-    from unified_validation import ValidationEngine, ValidationResult
+    pass
 
     HAS_VALIDATION = True
 except ImportError:

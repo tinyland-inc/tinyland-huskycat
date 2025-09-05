@@ -16,12 +16,9 @@ class MCPServerCommand(BaseCommand):
     def description(self) -> str:
         return "Start MCP server for AI integration"
 
-    def execute(self, port: int = 5000) -> CommandResult:
+    def execute(self) -> CommandResult:
         """
-        Start the MCP server.
-
-        Args:
-            port: Port to run server on
+        Start the MCP server in stdio mode for Claude Code integration.
 
         Returns:
             CommandResult with server status
@@ -30,22 +27,12 @@ class MCPServerCommand(BaseCommand):
             # Import the MCP server
             from ..mcp_server import MCPServer
 
-            self.log(f"Starting MCP server on port {port}...")
+            # Create server with container support enabled
+            server = MCPServer(use_container=True)
 
-            # Create and run the server
-            server = MCPServer()
-
-            # For stdio mode (which is what Claude uses)
-            if port == 0:  # stdio mode
-                self.log("Running in stdio mode for Claude integration")
-                server.run_stdio()
-            else:
-                # This would be for HTTP mode if we implement it
-                return CommandResult(
-                    status=CommandStatus.WARNING,
-                    message="HTTP mode not yet implemented, use stdio mode (port=0)",
-                    warnings=["Only stdio mode is currently supported for MCP"],
-                )
+            # Always use stdio mode (only supported mode)
+            self.log("Starting MCP server in stdio mode for Claude Code integration")
+            server.run()
 
             return CommandResult(
                 status=CommandStatus.SUCCESS, message="MCP server stopped"

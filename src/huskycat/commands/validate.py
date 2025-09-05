@@ -26,6 +26,8 @@ class ValidateCommand(BaseCommand):
         files: Optional[List[str]] = None,
         staged: bool = False,
         all_files: bool = False,
+        fix: bool = False,
+        interactive: bool = False,
     ) -> CommandResult:
         """
         Execute validation on files.
@@ -34,6 +36,8 @@ class ValidateCommand(BaseCommand):
             files: List of file paths to validate
             staged: Validate only staged git files
             all_files: Validate all files in repository
+            fix: Auto-fix issues where possible
+            interactive: Prompt user for auto-fix decisions
 
         Returns:
             CommandResult with validation status
@@ -46,55 +50,56 @@ class ValidateCommand(BaseCommand):
                 status=CommandStatus.SUCCESS, message="No files to validate"
             )
 
-        # Create validation engine and run validation
-        engine = ValidationEngine(auto_fix=False)
+        # Create validation engine with auto-fix settings
+        engine = ValidationEngine(auto_fix=fix, interactive=interactive and staged)
 
-        total_errors = 0
-        total_warnings = 0
+        # Use the appropriate validation method
+        if staged:
+            results = engine.validate_staged_files()
+        else:
+            results = {}
+            for file_path in files_to_validate:
+                path = Path(file_path)
+                if path.exists():
+                    file_results = engine.validate_file(path)
+                    if file_results:
+                        results[file_path] = file_results
+
+        # Generate summary
+        summary = engine.get_summary(results)
+        
+        # Prepare detailed messages
         all_errors = []
         all_warnings = []
-
-        for file_path in files_to_validate:
-            path = Path(file_path)
-            if not path.exists():
-                continue
-
-            results = engine.validate_file(path)
-
-            for result in results:
-                if not result.success:
-                    total_errors += result.error_count
-                    all_errors.extend(
-                        [f"{file_path} ({result.tool}): {e}" for e in result.errors]
-                    )
-
+        
+        for filepath, file_results in results.items():
+            for result in file_results:
+                if result.errors:
+                    all_errors.extend([f"{filepath} ({result.tool}): {e}" for e in result.errors])
                 if result.warnings:
-                    total_warnings += result.warning_count
-                    all_warnings.extend(
-                        [f"{file_path} ({result.tool}): {w}" for w in result.warnings]
-                    )
+                    all_warnings.extend([f"{filepath} ({result.tool}): {w}" for w in result.warnings])
 
-        # Determine overall status
-        if total_errors > 0:
+        # Determine overall status based on summary
+        if summary["total_errors"] > 0:
             status = CommandStatus.FAILED
-            message = f"Validation failed: {total_errors} error(s), {total_warnings} warning(s)"
-        elif total_warnings > 0:
+            message = f"Validation failed: {summary['total_errors']} error(s), {summary['total_warnings']} warning(s)"
+        elif summary["total_warnings"] > 0:
             status = CommandStatus.WARNING
-            message = f"Validation passed with {total_warnings} warning(s)"
+            message = f"Validation passed with {summary['total_warnings']} warning(s)"
         else:
             status = CommandStatus.SUCCESS
             message = "All validations passed"
+        
+        # Include auto-fix information in message
+        if summary.get("fixed_files", 0) > 0:
+            message += f" ({summary['fixed_files']} files auto-fixed)"
 
         return CommandResult(
             status=status,
             message=message,
             errors=all_errors,
             warnings=all_warnings,
-            data={
-                "files_validated": len(files_to_validate),
-                "total_errors": total_errors,
-                "total_warnings": total_warnings,
-            },
+            data=summary,
         )
 
     def _get_files_to_validate(

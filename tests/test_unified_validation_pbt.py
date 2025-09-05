@@ -5,7 +5,7 @@ Using Hypothesis for comprehensive testing
 """
 
 import pytest
-from hypothesis import given, strategies as st, assume, settings
+from hypothesis import given, strategies as st, settings
 from pathlib import Path
 import tempfile
 import os

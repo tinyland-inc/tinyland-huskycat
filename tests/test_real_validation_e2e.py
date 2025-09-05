@@ -6,13 +6,11 @@ Tests that the actual validation pipeline works as expected
 
 import pytest
 import subprocess
-import tempfile
-import shutil
 import os
 import json
 import time
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Optional
 import sys
 
 # Add src to path for imports
@@ -20,7 +18,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 # Try to import our validation engines
 try:
-    from unified_validation import ValidationEngine, ValidationResult
+    from unified_validation import ValidationEngine
 
     HAS_UNIFIED = True
 except ImportError:

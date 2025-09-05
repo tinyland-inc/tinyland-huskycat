@@ -10,7 +10,6 @@ import os
 import sys
 import json
 from pathlib import Path
-from typing import Dict, List, Any
 
 # Test infrastructure paths
 TESTS_DIR = Path(__file__).parent

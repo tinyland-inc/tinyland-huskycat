@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """Sample Python file for MCP validation testing."""
 
-import os
-import sys
-from typing import List, Optional
+from typing import List
 
 
 def calculate_sum(numbers: List[int]) -> int:
@@ -28,7 +26,6 @@ def main():
     print(f"Sum of {test_numbers} = {result}")
 
     # Potential style issue: unused variable
-    unused_var = "This is not used"
 
     # Another test
     if result > 10:

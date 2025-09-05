@@ -54,8 +54,8 @@ class CIValidateCommand(BaseCommand):
                 result = self._validate_gitlab_ci(path)
             elif path.name == ".github" or "workflow" in str(path):
                 result = self._validate_github_actions(path)
-            elif "docker-compose" in path.name or "compose" in path.name:
-                result = self._validate_docker_compose(path)
+            elif "podman-compose" in path.name or "compose" in path.name:
+                result = self._validate_compose(path)
             else:
                 all_warnings.append(f"{file_path}: Unknown CI file type")
                 continue
@@ -107,10 +107,10 @@ class CIValidateCommand(BaseCommand):
             for workflow in workflows_dir.glob("*.yaml"):
                 ci_files.append(str(workflow))
 
-        # Docker Compose
+        # Podman Compose
         for pattern in [
-            "docker-compose.yml",
-            "docker-compose.yaml",
+            "podman-compose.yml",
+            "podman-compose.yaml",
             "compose.yml",
             "compose.yaml",
         ]:
@@ -154,11 +154,11 @@ class CIValidateCommand(BaseCommand):
             warnings=[f"{path}: Skipping GitHub Actions validation"],
         )
 
-    def _validate_docker_compose(self, path: Path) -> CommandResult:
-        """Validate Docker Compose configuration."""
-        # TODO: Implement Docker Compose validation
+    def _validate_compose(self, path: Path) -> CommandResult:
+        """Validate Compose configuration (podman-compose)."""
+        # TODO: Implement Compose validation using YAML schema
         return CommandResult(
             status=CommandStatus.WARNING,
-            message=f"{path}: Docker Compose validation not yet implemented",
-            warnings=[f"{path}: Skipping Docker Compose validation"],
+            message=f"{path}: Compose validation not yet implemented",
+            warnings=[f"{path}: Skipping Compose validation"],
         )

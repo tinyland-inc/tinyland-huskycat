@@ -40,6 +40,36 @@ def create_parser() -> argparse.ArgumentParser:
         dest="all_files",
         help="Validate all files in repository",
     )
+    validate_parser.add_argument(
+        "--fix", action="store_true", help="Auto-fix issues where possible"
+    )
+    validate_parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Prompt for auto-fix decisions (default for git hooks)",
+    )
+
+    # Auto-fix command
+    autofix_parser = subparsers.add_parser(
+        "auto-fix", help="Auto-fix issues using all available validators"
+    )
+    autofix_parser.add_argument(
+        "files", nargs="*", help="Files to fix (default: current directory)"
+    )
+    autofix_parser.add_argument(
+        "--staged", action="store_true", help="Fix only staged git files"
+    )
+    autofix_parser.add_argument(
+        "--all",
+        action="store_true",
+        dest="all_files",
+        help="Fix all files in repository",
+    )
+    autofix_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be fixed without making changes",
+    )
 
     # Install command
     install_parser = subparsers.add_parser(
@@ -114,12 +144,9 @@ def create_parser() -> argparse.ArgumentParser:
         help="Enable strict validation mode",
     )
 
-    # MCP server command
+    # MCP server command (stdio mode only)
     mcp_parser = subparsers.add_parser(
-        "mcp-server", help="Start MCP server for AI integration"
-    )
-    mcp_parser.add_argument(
-        "--port", type=int, default=5000, help="Port to run server on"
+        "mcp-server", help="Start MCP server for Claude Code integration (stdio mode)"
     )
 
     # Clean command
@@ -127,11 +154,22 @@ def create_parser() -> argparse.ArgumentParser:
         "clean", help="Clean cache and temporary files"
     )
     clean_parser.add_argument(
-        "--all", action="store_true", help="Remove all cache including schemas"
+        "--all",
+        action="store_true",
+        dest="all_files",
+        help="Remove all cache including schemas",
     )
 
     # Status command
     subparsers.add_parser("status", help="Show HuskyCat status and configuration")
+
+    # Bootstrap command for Claude Code integration
+    bootstrap_parser = subparsers.add_parser(
+        "bootstrap", help="Bootstrap Claude Code MCP integration"
+    )
+    bootstrap_parser.add_argument(
+        "--force", action="store_true", help="Overwrite existing configuration files"
+    )
 
     return parser
 

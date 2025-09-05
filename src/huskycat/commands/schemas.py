@@ -24,11 +24,6 @@ class UpdateSchemasCommand(BaseCommand):
             "fallback": None,
             "cache_file": "github-actions-schema.json",
         },
-        "docker-compose": {
-            "url": "https://json.schemastore.org/docker-compose",
-            "fallback": None,
-            "cache_file": "docker-compose-schema.json",
-        },
         "package-json": {
             "url": "https://json.schemastore.org/package",
             "fallback": None,

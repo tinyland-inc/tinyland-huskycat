@@ -5,9 +5,9 @@ import pytest
 import time
 import requests
 from pathlib import Path
-from typing import Dict, Any, Optional
-from playwright.sync_api import Page, BrowserContext, expect
-from urllib.parse import urljoin, urlparse
+from typing import Optional
+from playwright.sync_api import Page, expect
+from urllib.parse import urljoin
 import json
 import subprocess
 import re
@@ -209,12 +209,10 @@ class TestGitLabPagesDeployment:
                 ".md-search-result",
             ]
 
-            results_found = False
             for selector in results_selectors:
                 try:
                     results = page.locator(selector)
                     if results.count() > 0:
-                        results_found = True
                         break
                 except:
                     continue

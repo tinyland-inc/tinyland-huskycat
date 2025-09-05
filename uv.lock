@@ -489,6 +489,7 @@ name = "huskycat"
 version = "2.0.0"
 source = { editable = "." }
 dependencies = [
+    { name = "autoflake" },
     { name = "black" },
     { name = "flake8" },
     { name = "jsonschema" },
@@ -504,6 +505,7 @@ build = [
     { name = "staticx" },
 ]
 dev = [
+    { name = "autoflake" },
     { name = "black" },
     { name = "docker" },
     { name = "flake8" },
@@ -542,6 +544,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "autoflake", specifier = ">=2.0.0" },
+    { name = "autoflake", marker = "extra == 'dev'", specifier = ">=2.0.0" },
     { name = "black", specifier = ">=24.0.0" },
     { name = "black", marker = "extra == 'dev'", specifier = ">=24.0.0" },
     { name = "docker", marker = "extra == 'dev'", specifier = ">=6.0.0" },

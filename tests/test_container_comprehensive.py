@@ -7,19 +7,13 @@ Tests container build, security, and functionality
 import pytest
 import subprocess
 import tempfile
-import shutil
-import os
-import json
 import time
-import requests
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-import threading
-import socket
+from typing import Dict, List, Optional
 
 # Try to import docker, but don't fail if it's not available
 try:
-    import docker
+    pass
 
     HAS_DOCKER = True
 except ImportError:

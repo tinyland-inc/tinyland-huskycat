@@ -5,7 +5,6 @@ Using Hypothesis for comprehensive testing
 
 import pytest
 from hypothesis import given, strategies as st, assume, settings
-from hypothesis.provisional import urls
 from pathlib import Path
 import tempfile
 import os

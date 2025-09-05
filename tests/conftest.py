@@ -5,7 +5,6 @@ import os
 import sys
 import tempfile
 import shutil
-import json
 from pathlib import Path
 from typing import Iterator, Dict, Any
 import pytest
@@ -289,24 +288,7 @@ def test_environment_setup():
 
 # Import E2E fixtures
 try:
-    from tests.e2e.fixtures import (
-        mock_pages_server,
-        mock_mcp_server,
-        mock_container_registry,
-        temp_project_environment,
-        temp_git_repo,
-        mock_ci_environment,
-        isolated_test_environment,
-        mock_docker_client,
-        sample_validation_files,
-        performance_test_data,
-        comprehensive_test_environment,
-        free_port,
-        TempGitRepository,
-        MockGitLabPagesServer,
-        MockMCPServer,
-        MockContainerRegistry,
-    )
+    pass
 except ImportError:
     # E2E fixtures not available, skip silently
     pass

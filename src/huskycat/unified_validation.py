@@ -152,6 +152,101 @@ class BlackValidator(Validator):
             )
 
 
+class AutoflakeValidator(Validator):
+    """Python import and unused variable cleaner"""
+
+    @property
+    def name(self) -> str:
+        return "autoflake"
+
+    @property
+    def extensions(self) -> Set[str]:
+        return {".py", ".pyi"}
+
+    def validate(self, filepath: Path) -> ValidationResult:
+        start_time = time.time()
+
+        # First check what autoflake would fix (dry run)
+        check_cmd = [
+            self.command,
+            "--check",
+            "--remove-all-unused-imports",
+            "--remove-unused-variables",
+            str(filepath),
+        ]
+
+        try:
+            result = subprocess.run(
+                check_cmd, capture_output=True, text=True, timeout=30
+            )
+            duration_ms = int((time.time() - start_time) * 1000)
+
+            if result.returncode == 0:
+                # No changes needed
+                return ValidationResult(
+                    tool=self.name,
+                    filepath=str(filepath),
+                    success=True,
+                    messages=["No unused imports or variables found"],
+                    duration_ms=duration_ms,
+                )
+            else:
+                # File needs fixing
+                if self.auto_fix:
+                    # Apply fixes
+                    fix_cmd = [
+                        self.command,
+                        "--in-place",
+                        "--remove-all-unused-imports",
+                        "--remove-unused-variables",
+                        str(filepath),
+                    ]
+                    fix_result = subprocess.run(
+                        fix_cmd, capture_output=True, text=True, timeout=30
+                    )
+
+                    if fix_result.returncode == 0:
+                        return ValidationResult(
+                            tool=self.name,
+                            filepath=str(filepath),
+                            success=True,
+                            messages=["Fixed unused imports and variables"],
+                            fixed=True,
+                            duration_ms=duration_ms,
+                        )
+                    else:
+                        return ValidationResult(
+                            tool=self.name,
+                            filepath=str(filepath),
+                            success=False,
+                            errors=["Failed to apply autoflake fixes"],
+                            messages=(
+                                fix_result.stderr.splitlines()
+                                if fix_result.stderr
+                                else []
+                            ),
+                            duration_ms=duration_ms,
+                        )
+                else:
+                    # Just report issues without fixing
+                    return ValidationResult(
+                        tool=self.name,
+                        filepath=str(filepath),
+                        success=False,
+                        errors=["File has unused imports or variables"],
+                        messages=["Run with --fix to automatically clean up"],
+                        duration_ms=duration_ms,
+                    )
+        except Exception as e:
+            return ValidationResult(
+                tool=self.name,
+                filepath=str(filepath),
+                success=False,
+                errors=[str(e)],
+                duration_ms=int((time.time() - start_time) * 1000),
+            )
+
+
 class Flake8Validator(Validator):
     """Python linter"""
 
@@ -347,7 +442,7 @@ class ESLintValidator(Validator):
 
 
 class YamlLintValidator(Validator):
-    """YAML linter"""
+    """YAML linter with auto-fix for trailing spaces and newlines"""
 
     @property
     def name(self) -> str:
@@ -357,8 +452,42 @@ class YamlLintValidator(Validator):
     def extensions(self) -> Set[str]:
         return {".yaml", ".yml"}
 
+    def _auto_fix_yaml(self, filepath: Path) -> bool:
+        """Auto-fix common YAML issues like trailing spaces and missing newlines"""
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            original_content = content
+
+            # Fix trailing spaces
+            lines = content.splitlines()
+            lines = [line.rstrip() for line in lines]
+
+            # Ensure file ends with newline
+            content = "\n".join(lines)
+            if content and not content.endswith("\n"):
+                content += "\n"
+
+            # Write back if changed
+            if content != original_content:
+                with open(filepath, "w", encoding="utf-8") as f:
+                    f.write(content)
+                return True
+
+            return False
+        except Exception as e:
+            logger.warning(f"Failed to auto-fix {filepath}: {e}")
+            return False
+
     def validate(self, filepath: Path) -> ValidationResult:
         start_time = time.time()
+
+        # If auto-fix is enabled, try to fix common issues first
+        fixed = False
+        if self.auto_fix:
+            fixed = self._auto_fix_yaml(filepath)
+
         cmd = [self.command, "-f", "parsable", str(filepath)]
 
         try:
@@ -371,6 +500,7 @@ class YamlLintValidator(Validator):
                     filepath=str(filepath),
                     success=True,
                     messages=["YAML is valid"],
+                    fixed=fixed,
                     duration_ms=duration_ms,
                 )
             else:
@@ -609,9 +739,15 @@ class GitLabCIValidator(Validator):
 class ValidationEngine:
     """Main validation engine that orchestrates all validators"""
 
-    def __init__(self, auto_fix: bool = False, use_container: bool = False):
+    def __init__(
+        self,
+        auto_fix: bool = False,
+        use_container: bool = False,
+        interactive: bool = False,
+    ):
         self.auto_fix = auto_fix
         self.use_container = use_container
+        self.interactive = interactive
         self.validators = self._initialize_validators()
         self._extension_map = self._build_extension_map()
 
@@ -619,6 +755,7 @@ class ValidationEngine:
         """Initialize all available validators"""
         validators = [
             BlackValidator(self.auto_fix),
+            AutoflakeValidator(self.auto_fix),
             Flake8Validator(self.auto_fix),
             MypyValidator(self.auto_fix),
             ESLintValidator(self.auto_fix),
@@ -689,7 +826,7 @@ class ValidationEngine:
         return results
 
     def validate_staged_files(self) -> Dict[str, List[ValidationResult]]:
-        """Validate files staged for git commit"""
+        """Validate files staged for git commit with interactive auto-fix prompt"""
         try:
             # Get staged files
             result = subprocess.run(
@@ -702,6 +839,7 @@ class ValidationEngine:
                 logger.error("Failed to get staged files")
                 return {}
 
+            # First pass - validate without auto-fix
             results = {}
             for filename in result.stdout.splitlines():
                 filepath = Path(filename)
@@ -710,11 +848,43 @@ class ValidationEngine:
                     if file_results:
                         results[filename] = file_results
 
+            # Check if we have fixable issues and prompt for auto-fix
+            if self.interactive and not self.auto_fix:
+                fixable_issues = self._count_fixable_issues(results)
+                if fixable_issues > 0:
+                    print(f"\n🔧 Found {fixable_issues} auto-fixable issues.")
+                    response = input("Attempt auto-fix? [y/N]: ").strip().lower()
+                    if response in ["y", "yes"]:
+                        print("🔄 Applying auto-fixes...")
+                        # Re-run with auto-fix enabled
+                        auto_fix_engine = ValidationEngine(
+                            auto_fix=True, use_container=self.use_container
+                        )
+                        results = {}
+                        for filename in result.stdout.splitlines():
+                            filepath = Path(filename)
+                            if filepath.exists():
+                                file_results = auto_fix_engine.validate_file(filepath)
+                                if file_results:
+                                    results[filename] = file_results
+
             return results
 
         except Exception as e:
             logger.error(f"Error validating staged files: {e}")
             return {}
+
+    def _count_fixable_issues(self, results: Dict[str, List[ValidationResult]]) -> int:
+        """Count how many issues could potentially be auto-fixed"""
+        fixable_tools = {"black", "autoflake", "yamllint", "eslint"}
+        count = 0
+
+        for filepath, file_results in results.items():
+            for result in file_results:
+                if not result.success and result.tool in fixable_tools:
+                    count += result.error_count
+
+        return count
 
     def get_summary(self, results: Dict[str, List[ValidationResult]]) -> Dict[str, Any]:
         """Generate a summary of validation results"""
@@ -722,25 +892,33 @@ class ValidationEngine:
         total_errors = 0
         total_warnings = 0
         failed_files = []
+        fixed_files = []
 
         for filepath, file_results in results.items():
             has_error = False
+            has_fixes = False
             for result in file_results:
                 total_errors += result.error_count
                 total_warnings += result.warning_count
                 if not result.success:
                     has_error = True
+                if result.fixed:
+                    has_fixes = True
 
             if has_error:
                 failed_files.append(filepath)
+            if has_fixes:
+                fixed_files.append(filepath)
 
         return {
             "total_files": total_files,
             "passed_files": total_files - len(failed_files),
             "failed_files": len(failed_files),
+            "fixed_files": len(fixed_files),
             "total_errors": total_errors,
             "total_warnings": total_warnings,
             "failed_file_list": failed_files,
+            "fixed_file_list": fixed_files,
             "success": len(failed_files) == 0,
         }
 
@@ -767,8 +945,13 @@ def main():
 
     args = parser.parse_args()
 
-    # Initialize engine
-    engine = ValidationEngine(auto_fix=args.fix, use_container=args.container)
+    # Initialize engine with interactive mode for git hooks
+    interactive_mode = (
+        not args.fix and args.staged
+    )  # Interactive only for staged files when --fix not specified
+    engine = ValidationEngine(
+        auto_fix=args.fix, use_container=args.container, interactive=interactive_mode
+    )
 
     # Run validation
     if args.staged:
@@ -802,6 +985,8 @@ def main():
         print(f"Files Scanned: {summary['total_files']}")
         print(f"Files Passed:  {summary['passed_files']}")
         print(f"Files Failed:  {summary['failed_files']}")
+        if summary.get("fixed_files", 0) > 0:
+            print(f"Files Fixed:   {summary['fixed_files']}")
         print(f"Total Errors:  {summary['total_errors']}")
         print(f"Total Warnings: {summary['total_warnings']}")
 

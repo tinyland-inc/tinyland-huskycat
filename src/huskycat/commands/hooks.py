@@ -51,14 +51,39 @@ class SetupHooksCommand(BaseCommand):
         # Get absolute path to main module
         main_module_path = Path(__file__).parent.parent / "__main__.py"
 
-        # Create pre-commit hook
+        # Create pre-commit hook with interactive auto-fix support
         pre_commit = hooks_dir / "pre-commit"
-        pre_commit_content = f"""#!/bin/bash
-# HuskyCat pre-commit hook
-# Validates staged files before commit
+        pre_commit_content = """#!/bin/bash
+# HuskyCat pre-commit hook - Binary first, container fallback with auto-fix support
 
-python3 {main_module_path.absolute()} validate --staged
-exit $?
+# Function to run validation with binary-first approach
+run_validation() {
+    local args="$1"
+    
+    if [ -f "./dist/huskycat" ]; then
+        ./dist/huskycat validate --staged $args
+    elif command -v huskycat >/dev/null 2>&1; then
+        huskycat validate --staged $args
+    elif command -v podman >/dev/null 2>&1; then
+        podman run --rm -v "$(pwd)":/workspace -it huskycat:local validate --staged $args
+    else
+        echo "❌ HuskyCat not found. Install: curl -sSL https://huskycat.pages.io/install.sh | bash"
+        exit 1
+    fi
+}
+
+# Run validation with interactive auto-fix
+run_validation "--interactive"
+exit_code=$?
+
+# If validation failed and user wants auto-fix, re-stage the files
+if [ $exit_code -ne 0 ]; then
+    echo ""
+    echo "💡 Note: Fixed files need to be re-staged before committing."
+    echo "   Run: git add <fixed-files> && git commit"
+fi
+
+exit $exit_code
 """
 
         if pre_commit.exists() and not force:
@@ -73,12 +98,19 @@ exit $?
 
         # Create pre-push hook
         pre_push = hooks_dir / "pre-push"
-        pre_push_content = f"""#!/bin/bash
-# HuskyCat pre-push hook
-# Validates all changes before push
+        pre_push_content = """#!/bin/bash
+# HuskyCat pre-push hook - Binary first, container fallback
 
-python3 {main_module_path.absolute()} ci-validate
-exit $?
+if [ -f "./dist/huskycat" ]; then
+    ./dist/huskycat validate --all && glab ci lint .gitlab-ci.yml
+elif command -v huskycat >/dev/null 2>&1; then
+    huskycat validate --all && glab ci lint .gitlab-ci.yml
+elif command -v podman >/dev/null 2>&1; then
+    podman run --rm -v "$(pwd)":/workspace huskycat:local validate --all && glab ci lint .gitlab-ci.yml
+else
+    echo "❌ HuskyCat not found. Install: curl -sSL https://huskycat.pages.io/install.sh | bash"
+    exit 1
+fi
 """
 
         pre_push.write_text(pre_push_content)
@@ -86,11 +118,11 @@ exit $?
 
         # Create commit-msg hook for conventional commits
         commit_msg = hooks_dir / "commit-msg"
-        commit_msg_content = f"""#!/bin/bash
+        commit_msg_content = """#!/bin/bash
 # HuskyCat commit-msg hook
-# Validates commit message format
+# Validates commit message format using container
 
-python3 {main_module_path.absolute()} validate-commit-msg "$1"
+podman run --rm -v "$(pwd)":/workspace huskycat:local validate-commit-msg "$1"
 exit $?
 """
 

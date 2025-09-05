@@ -4,7 +4,6 @@ Comprehensive Test Runner for HuskyCat
 Orchestrates all testing phases: unit, integration, E2E, and performance
 """
 
-import os
 import sys
 import subprocess
 import time
@@ -12,8 +11,6 @@ import json
 import argparse
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
-import tempfile
-import shutil
 from dataclasses import dataclass, asdict
 from enum import Enum
 

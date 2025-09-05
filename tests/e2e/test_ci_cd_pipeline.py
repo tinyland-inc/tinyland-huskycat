@@ -6,13 +6,8 @@ import subprocess
 import yaml
 import json
 import time
-import requests
-import os
-import tempfile
-import shutil
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from unittest.mock import patch, Mock
 
 
 class TestCICDPipelineValidation:
@@ -55,7 +50,7 @@ class TestCICDPipelineValidation:
 
         # Check for essential sections
         essential_keys = ["stages", "variables", "before_script"]
-        found_keys = [key for key in essential_keys if key in gitlab_ci_config]
+        [key for key in essential_keys if key in gitlab_ci_config]
 
         # At least stages should be defined
         if "stages" in gitlab_ci_config:
@@ -132,9 +127,14 @@ class TestCICDPipelineValidation:
 
         assert len(found_targets) >= 2, f"Few standard targets found: {found_targets}"
 
-    def test_docker_compose_validation(self):
-        """Test Docker Compose configuration."""
-        compose_files = ["docker-compose.yml", "docker-compose.yaml"]
+    def test_compose_validation(self):
+        """Test Compose configuration (podman-compose)."""
+        compose_files = [
+            "podman-compose.yml",
+            "podman-compose.yaml",
+            "compose.yml",
+            "compose.yaml",
+        ]
         compose_file = None
 
         for cf in compose_files:
@@ -143,7 +143,7 @@ class TestCICDPipelineValidation:
                 break
 
         if not compose_file:
-            pytest.skip("No docker-compose file found")
+            pytest.skip("No compose file found")
 
         with open(compose_file) as f:
             compose_config = yaml.safe_load(f)
@@ -578,7 +578,7 @@ class TestDeploymentEnvironments:
             "config/staging.yml",
             "staging.env",
             ".env.staging",
-            "docker-compose.staging.yml",
+            "podman-compose.staging.yml",
         ]
 
         staging_configs = [ec for ec in env_configs if Path(ec).exists()]
@@ -592,7 +592,7 @@ class TestDeploymentEnvironments:
                 "config/production.yml",
                 "production.env",
                 ".env.production",
-                "docker-compose.prod.yml",
+                "podman-compose.prod.yml",
             ]
 
             prod_configs_found = [pc for pc in prod_configs if Path(pc).exists()]
@@ -668,7 +668,7 @@ class TestDeploymentIntegration:
     def _simulate_deploy_stage(self) -> bool:
         """Simulate deploy stage."""
         # Check if deployment artifacts exist
-        deploy_artifacts = ["deploy.sh", "docker-compose.yml", "Makefile"]
+        deploy_artifacts = ["deploy.sh", "podman-compose.yml", "Makefile"]
         return any(Path(da).exists() for da in deploy_artifacts)
 
     def test_deployment_monitoring_setup(self):

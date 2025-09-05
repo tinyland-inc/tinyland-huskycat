@@ -360,33 +360,81 @@ binary:build:linux:
 
 binary:build:macos:
   stage: package
-  # Use a macOS runner/image if available, otherwise cross-compile
-  # For now, we'll simulate this with a cross-compilation attempt
-  image: python:3.11-alpine
-  <<: *uv_setup
-  <<: *cache_template
+  # This job requires a macOS runner with Xcode Command Line Tools
+  tags: 
+    - macos  # Requires a GitLab runner with this tag on macOS
+  variables:
+    # macOS signing variables - set in GitLab CI/CD variables
+    APPLE_SIGNING_IDENTITY: $APPLE_SIGNING_IDENTITY  # e.g., "Developer ID Application: Your Name (TEAM_ID)"
+    APPLE_TEAM_ID: $APPLE_TEAM_ID
+    KEYCHAIN_PATH: $HOME/Library/Keychains/login.keychain-db
   before_script:
-    - apk add --no-cache git curl bash gcc musl-dev
+    # Install UV (Python package manager)
     - curl -LsSf https://astral.sh/uv/install.sh | sh
     - export PATH="$HOME/.local/bin:$PATH"
     - uv --version
-  script:
+    # Setup Python environment
     - uv sync --extra build
+    # Verify code signing tools are available
+    - which codesign
+    - security find-identity -v -p codesigning || echo "No signing identities found"
+    # Import signing certificate from CI variables if provided
+    - |
+      if [ -n "$APPLE_CERTIFICATE_P12_BASE64" ] && [ -n "$APPLE_CERTIFICATE_PASSWORD" ]; then
+        echo "🔐 Importing signing certificate..."
+        echo "$APPLE_CERTIFICATE_P12_BASE64" | base64 -D > certificate.p12
+        # Create temporary keychain for CI
+        security create-keychain -p "$KEYCHAIN_PASSWORD" ci.keychain
+        security default-keychain -s ci.keychain
+        security unlock-keychain -p "$KEYCHAIN_PASSWORD" ci.keychain
+        security import certificate.p12 -k ci.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -A
+        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" ci.keychain
+        rm certificate.p12
+        echo "✅ Certificate imported successfully"
+      else
+        echo "ℹ️  No certificate provided - will use ad-hoc signing"
+      fi
+  script:
     - mkdir -p dist/bin
-    - echo "macOS binary build would require macOS runner or cross-compilation setup"
-    - echo "Creating placeholder macOS binary info file"
-    - echo "HuskyCat macOS Binary - Build $CI_COMMIT_SHORT_SHA" > dist/bin/huskycat-macos-info.txt
-    - 'echo "Built on: $(date)" >> dist/bin/huskycat-macos-info.txt'
-    - 'echo "Commit: $CI_COMMIT_SHA" >> dist/bin/huskycat-macos-info.txt'
+    # Build binary with appropriate signing
+    - |
+      if [ -n "$APPLE_SIGNING_IDENTITY" ]; then
+        echo "🔐 Building signed macOS binary..."
+        uv run python build_binary.py \
+          --codesign-identity "$APPLE_SIGNING_IDENTITY" \
+          --entitlements-file entitlements.plist \
+          --skip-upx
+      else
+        echo "ℹ️  Building unsigned macOS binary..."
+        uv run python build_binary.py \
+          --skip-upx
+      fi
+    # Move and rename binary  
+    - mv dist/huskycat dist/bin/huskycat-macos-arm64
+    - chmod +x dist/bin/huskycat-macos-arm64
+    # Verify binary
+    - file dist/bin/huskycat-macos-arm64
+    - dist/bin/huskycat-macos-arm64 --version
+    # Check code signing status
+    - codesign -dv dist/bin/huskycat-macos-arm64 || echo "Binary verification failed"
+    - ls -la dist/bin/
+  after_script:
+    # Clean up keychain if created
+    - |
+      if [ -f ci.keychain ]; then
+        security delete-keychain ci.keychain || true
+      fi
   artifacts:
     paths:
-      - dist/bin/huskycat-macos-info.txt
+      - dist/bin/huskycat-macos-arm64
     expire_in: 1 month
     name: 'huskycat-macos-binary-$CI_COMMIT_SHORT_SHA'
-  allow_failure: true # Allow this job to fail since it's a placeholder
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
+    # Allow manual triggering for testing
+    - when: manual
+      allow_failure: true
 
 # Deploy stage jobs
 release:create:

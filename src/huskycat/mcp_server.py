@@ -7,6 +7,7 @@ Uses the unified validation engine
 
 import json
 import logging
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Dict
@@ -25,9 +26,85 @@ logger = logging.getLogger(__name__)
 class MCPServer:
     """Simple MCP stdio server for validation tools"""
 
-    def __init__(self):
-        self.engine = ValidationEngine(auto_fix=False, use_container=False)
+    def __init__(self, use_container: bool = None):
+        # Auto-detect container availability if not specified
+        if use_container is None:
+            use_container = self._detect_container_available()
+
+        self.use_container = use_container
+        self.engine = ValidationEngine(auto_fix=False, use_container=use_container)
         self.request_id = 0
+
+        logger.info(f"MCP Server initialized with container support: {use_container}")
+
+    def _detect_container_available(self) -> bool:
+        """Detect if container runtime is available"""
+        try:
+            # Try podman first (preferred), then docker
+            for runtime in ["podman", "docker"]:
+                result = subprocess.run(
+                    [runtime, "--version"], capture_output=True, text=True, timeout=5
+                )
+                if result.returncode == 0:
+                    logger.info(f"Container runtime detected: {runtime}")
+                    return True
+        except (
+            subprocess.SubprocessError,
+            FileNotFoundError,
+            subprocess.TimeoutExpired,
+        ):
+            pass
+
+        logger.info("No container runtime detected, using local tools only")
+        return False
+
+    def _run_container_validation(
+        self, command_args: list, cwd: str = "."
+    ) -> Dict[str, Any]:
+        """Run validation using the HuskyCat container"""
+        try:
+            # Try podman first, then docker
+            for runtime in ["podman", "docker"]:
+                try:
+                    cmd = [
+                        runtime,
+                        "run",
+                        "--rm",
+                        "-v",
+                        f"{cwd}:/workspace",
+                        "huskycat:local",
+                    ] + command_args
+
+                    logger.info(f"Running container validation: {' '.join(cmd)}")
+
+                    result = subprocess.run(
+                        cmd, cwd=cwd, capture_output=True, text=True, timeout=60
+                    )
+
+                    return {
+                        "success": result.returncode == 0,
+                        "stdout": result.stdout,
+                        "stderr": result.stderr,
+                        "returncode": result.returncode,
+                        "runtime": runtime,
+                    }
+
+                except subprocess.SubprocessError as e:
+                    logger.warning(f"Container runtime {runtime} failed: {e}")
+                    continue
+
+            # If no runtime worked
+            raise RuntimeError("No container runtime available")
+
+        except Exception as e:
+            logger.error(f"Container validation failed: {e}")
+            return {
+                "success": False,
+                "stdout": "",
+                "stderr": str(e),
+                "returncode": -1,
+                "runtime": "none",
+            }
 
     def handle_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         """Handle a JSON-RPC request"""
@@ -54,13 +131,22 @@ class MCPServer:
 
     def _handle_initialize(self, request_id: Any) -> Dict[str, Any]:
         """Handle initialization request"""
+        # Include execution mode in server info
+        execution_mode = "container" if self.use_container else "local"
+        tool_count = len(self.engine.validators)
+
         return {
             "jsonrpc": "2.0",
             "id": request_id,
             "result": {
                 "protocolVersion": "2024-11-05",
                 "capabilities": {"tools": {}, "prompts": {}},
-                "serverInfo": {"name": "huskycat-mcp", "version": "2.0.0"},
+                "serverInfo": {
+                    "name": "huskycat-mcp",
+                    "version": "2.0.0",
+                    "executionMode": execution_mode,
+                    "toolCount": tool_count,
+                },
             },
         }
 
@@ -174,6 +260,28 @@ class MCPServer:
         path_str = arguments.get("path", ".")
         fix = arguments.get("fix", False)
 
+        # Use container execution if enabled
+        if self.use_container:
+            # Build container command
+            cmd_args = ["validate"]
+            if fix:
+                cmd_args.append("--fix")
+            if path_str != ".":
+                cmd_args.append(path_str)
+
+            # Run in container
+            result = self._run_container_validation(cmd_args, cwd=".")
+
+            # Parse container output and return structured result
+            return {
+                "summary": f"Container validation ({'success' if result['success'] else 'failed'})",
+                "container_output": result["stdout"],
+                "container_errors": result["stderr"],
+                "success": result["success"],
+                "runtime": result["runtime"],
+            }
+
+        # Fallback to local engine execution
         # Update engine settings
         self.engine.auto_fix = fix
 
@@ -200,6 +308,26 @@ class MCPServer:
         """Validate staged files"""
         fix = arguments.get("fix", False)
 
+        # Use container execution if enabled
+        if self.use_container:
+            # Build container command
+            cmd_args = ["validate", "--staged"]
+            if fix:
+                cmd_args.append("--fix")
+
+            # Run in container
+            result = self._run_container_validation(cmd_args, cwd=".")
+
+            # Parse container output and return structured result
+            return {
+                "summary": f"Container staged validation ({'success' if result['success'] else 'failed'})",
+                "container_output": result["stdout"],
+                "container_errors": result["stderr"],
+                "success": result["success"],
+                "runtime": result["runtime"],
+            }
+
+        # Fallback to local engine execution
         # Update engine settings
         self.engine.auto_fix = fix
 
@@ -224,6 +352,29 @@ class MCPServer:
         path_str = arguments.get("path", ".")
         fix = arguments.get("fix", False)
 
+        # Use container execution if enabled - specific tools through general validate
+        if self.use_container:
+            # Container mode: run general validation (comprehensive)
+            cmd_args = ["validate"]
+            if fix:
+                cmd_args.append("--fix")
+            if path_str != ".":
+                cmd_args.append(path_str)
+
+            # Run in container
+            result = self._run_container_validation(cmd_args, cwd=".")
+
+            # Parse container output and return structured result
+            return {
+                "tool": f"{tool_name} (via container)",
+                "summary": f"Container {tool_name} validation ({'success' if result['success'] else 'failed'})",
+                "container_output": result["stdout"],
+                "container_errors": result["stderr"],
+                "success": result["success"],
+                "runtime": result["runtime"],
+            }
+
+        # Fallback to local engine execution
         # Find the validator
         validator = None
         for v in self.engine.validators:

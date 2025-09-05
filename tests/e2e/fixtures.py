@@ -2,22 +2,17 @@
 """E2E test fixtures for temporary environments and mock services."""
 
 import pytest
-import asyncio
 import subprocess
 import tempfile
 import shutil
-import json
 import time
 import socket
 import threading
-import signal
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Generator, AsyncGenerator
-from contextlib import contextmanager, asynccontextmanager
-from unittest.mock import Mock, patch
-import requests
+from typing import Dict, List, Generator
+from contextlib import contextmanager
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 

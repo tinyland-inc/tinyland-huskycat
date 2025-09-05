@@ -58,19 +58,16 @@ class BaseCommand(ABC):
         Returns:
             CommandResult with status and any output data
         """
-        pass
 
     @property
     @abstractmethod
     def name(self) -> str:
         """Get the command name."""
-        pass
 
     @property
     @abstractmethod
     def description(self) -> str:
         """Get the command description."""
-        pass
 
     def validate_prerequisites(self) -> CommandResult:
         """

@@ -2,11 +2,10 @@
 """Property-based tests using Hypothesis for core functionality."""
 
 import pytest
-from hypothesis import given, assume, strategies as st, example
+from hypothesis import given, strategies as st, example
 from typing import List, Dict, Any
 import tempfile
 import os
-from pathlib import Path
 
 
 # Import the sample code functions for testing
@@ -318,7 +317,7 @@ class TestPerformanceProperties:
 
 # Integration with pytest-benchmark if available
 try:
-    import pytest_benchmark
+    pass
 
     class TestBenchmarkProperties:
         """Benchmark-based property tests."""

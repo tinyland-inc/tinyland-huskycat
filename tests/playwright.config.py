@@ -2,7 +2,6 @@
 """Playwright configuration for E2E testing."""
 
 import os
-from playwright.sync_api import Playwright
 from typing import Dict, Any
 
 

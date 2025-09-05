@@ -8,7 +8,7 @@ import argparse
 import json
 import time
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any
 
 
 class E2ETestRunner:
@@ -372,7 +372,7 @@ def main():
             results["performance"] = runner.run_performance_tests()
 
         # Generate and print summary
-        summary = runner.generate_summary_report(results)
+        runner.generate_summary_report(results)
         all_passed = runner.print_results_summary(results)
 
         # Exit with appropriate code

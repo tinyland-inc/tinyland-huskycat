@@ -10,7 +10,7 @@ import time
 import json
 import requests
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, Any
 from contextlib import contextmanager
 
 # Try to import docker, but don't fail if it's not available
@@ -272,23 +272,23 @@ class TestContainerDeployment:
 
     @pytest.mark.slow
     def test_multi_container_deployment(self, docker_client):
-        """Test multi-container deployment scenario."""
-        docker_compose_file = Path("docker-compose.yml")
-        compose_override = Path("docker-compose.override.yml")
+        """Test multi-container deployment scenario with podman-compose."""
+        compose_file = Path("podman-compose.yml")
+        compose_override = Path("podman-compose.override.yml")
 
-        if not (docker_compose_file.exists() or compose_override.exists()):
-            pytest.skip("No docker-compose files found")
+        if not (compose_file.exists() or compose_override.exists()):
+            pytest.skip("No podman-compose files found")
 
-        # Use docker-compose CLI if available
+        # Use podman-compose CLI if available
         try:
-            # Check if docker-compose is available
+            # Check if podman-compose is available
             subprocess.run(
-                ["docker-compose", "--version"], check=True, capture_output=True
+                ["podman-compose", "--version"], check=True, capture_output=True
             )
 
             # Start services
             result = subprocess.run(
-                ["docker-compose", "up", "-d", "--build"],
+                ["podman-compose", "up", "-d", "--build"],
                 capture_output=True,
                 text=True,
                 timeout=300,
@@ -301,7 +301,7 @@ class TestContainerDeployment:
 
                     # Check service status
                     status_result = subprocess.run(
-                        ["docker-compose", "ps"], capture_output=True, text=True
+                        ["podman-compose", "ps"], capture_output=True, text=True
                     )
 
                     # Services should be running
@@ -313,11 +313,11 @@ class TestContainerDeployment:
                 finally:
                     # Clean up
                     subprocess.run(
-                        ["docker-compose", "down", "-v"], capture_output=True
+                        ["podman-compose", "down", "-v"], capture_output=True
                     )
 
         except (subprocess.CalledProcessError, FileNotFoundError):
-            pytest.skip("docker-compose not available or failed")
+            pytest.skip("podman-compose not available or failed")
 
 
 class TestConfigurationDeployment:
