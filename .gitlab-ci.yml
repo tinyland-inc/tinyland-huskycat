@@ -103,7 +103,7 @@ test:unit:
   image:
     name: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
     entrypoint: [""]
-  dependencies:
+  needs:
     - container:build:amd64
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
@@ -131,7 +131,7 @@ test:e2e:deployment:
   image:
     name: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
     entrypoint: [""]
-  dependencies:
+  needs:
     - container:build:amd64
   script:
     - echo "🐳 Using HuskyCat container for E2E deployment testing"
@@ -207,7 +207,7 @@ test:mcp:server:
   image:
     name: $CONTAINER_REGISTRY:$CONTAINER_TAG-amd64
     entrypoint: [""]
-  dependencies:
+  needs:
     - container:build:amd64
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
