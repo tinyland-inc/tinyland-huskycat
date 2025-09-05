@@ -338,6 +338,6 @@ lint:all:
 
 ## 📚 Next Steps
 
-- [Local Development](local-usage.md) - Use the same tools locally
-- [Customization](customization.md) - Configure linting rules
-- [Auto DevOps](auto-devops-validation.md) - Kubernetes validation
+- [Installation Guide](installation.md) - Setup and install HuskyCat
+- [Configuration](configuration.md) - Configure validation rules
+- [Auto DevOps](gitlab-auto-devops-complete.md) - Kubernetes validation

@@ -250,4 +250,4 @@ Add these helpful scripts:
    - Check Git version (needs 2.9+)
    - Ensure core.hooksPath is not set
 
-See [Troubleshooting Guide](troubleshooting.md) for more solutions.
+For additional support, see our [GitLab Issues](https://gitlab.com/tinyland/ai/huskycat/-/issues) page.

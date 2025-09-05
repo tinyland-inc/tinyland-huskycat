@@ -949,8 +949,8 @@ husky:security:
 
 - [GitLab Auto DevOps Documentation](https://docs.gitlab.com/ee/topics/autodevops/)
 - [Auto Deploy Image Repository](https://gitlab.com/gitlab-org/cluster-integration/auto-deploy-image)
-- [HuskyCats Local Usage Guide](local-usage.md)
-- [HuskyCats Customization Guide](customization.md)
+- [HuskyCat Installation Guide](installation.md)
+- [HuskyCat Configuration](configuration.md)
 - [Kubernetes Best Practices](https://kubernetes.io/docs/concepts/configuration/overview/)
 - [Helm Chart Development](https://helm.sh/docs/chart_best_practices/)
 

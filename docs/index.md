@@ -145,8 +145,8 @@ echo '{"jsonrpc": "2.0", "method": "tools/list", "id": 1}' | npm run mcp:server
 - [Installation Guide](installation.md) - Detailed installation instructions
 - [Configuration](configuration.md) - Customize validation rules
 - [MCP Server](features/mcp-server.md) - Claude Code integration
-- [Git Hooks](features/git-hooks.md) - Automated validation setup
-- [API Reference](api/cli.md) - Complete command reference
+- [MCP Tools API](api/mcp-tools.md) - MCP server tools reference
+- [GitLab CI/CD](gitlab-ci-cd.md) - GitLab integration guide
 
 ## Support
 
