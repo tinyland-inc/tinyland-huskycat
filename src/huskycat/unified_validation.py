@@ -62,9 +62,8 @@ class ValidationResult:
 class Validator(ABC):
     """Abstract base class for all validators"""
 
-    def __init__(self, auto_fix: bool = False, use_container: bool = False):
+    def __init__(self, auto_fix: bool = False):
         self.auto_fix = auto_fix
-        self.use_container = use_container
 
     @property
     @abstractmethod
@@ -82,71 +81,35 @@ class Validator(ABC):
         return self.name
 
     def is_available(self) -> bool:
-        """Check if the validator tool is available locally or via container"""
-        # First try local availability
-        try:
-            result = subprocess.run(
-                [self.command, "--version"], capture_output=True, text=True, timeout=5
-            )
-            if result.returncode == 0:
-                return True
-        except (subprocess.SubprocessError, FileNotFoundError):
-            pass
-
-        # If local tool not available, check if container runtime is available
-        if self.use_container:
+        """Check if container runtime is available (container-only mode)"""
+        # Container-only mode: check if container runtime is available
+        for runtime in ["podman", "docker"]:
             try:
                 result = subprocess.run(
-                    ["podman", "--version"], capture_output=True, text=True, timeout=5
+                    [runtime, "--version"], capture_output=True, text=True, timeout=5
                 )
-                return result.returncode == 0
+                if result.returncode == 0:
+                    return True
             except (subprocess.SubprocessError, FileNotFoundError):
-                try:
-                    result = subprocess.run(
-                        ["docker", "--version"],
-                        capture_output=True,
-                        text=True,
-                        timeout=5,
-                    )
-                    return result.returncode == 0
-                except (subprocess.SubprocessError, FileNotFoundError):
-                    return False
-
+                continue
         return False
 
-    def _execute_command(self, cmd: List[str], **kwargs) -> subprocess.CompletedProcess:
-        """Execute command either locally or in container"""
-        if self.use_container and not self._is_tool_available_locally():
-            # Execute in container
-            container_cmd = self._build_container_command(cmd)
-            return subprocess.run(container_cmd, **kwargs)
-        else:
-            # Execute locally
-            return subprocess.run(cmd, **kwargs)
-
-    def _is_tool_available_locally(self) -> bool:
-        """Check if tool is available locally"""
-        try:
-            result = subprocess.run(
-                [self.command, "--version"], capture_output=True, text=True, timeout=5
-            )
-            return result.returncode == 0
-        except (subprocess.SubprocessError, FileNotFoundError):
-            return False
+    def _execute_command(self, cmd: List[str], **kwargs: Any) -> subprocess.CompletedProcess:
+        """Execute command in container (container-only mode)"""
+        container_cmd = self._build_container_command(cmd)
+        return subprocess.run(container_cmd, **kwargs)
 
     def _build_container_command(self, cmd: List[str]) -> List[str]:
         """Build container command for tool execution"""
-        # Try podman first, then docker
         container_runtime = self._get_available_container_runtime()
-        if not container_runtime:
-            raise RuntimeError("No container runtime available")
 
-        # Build container command
+        # Build container command that bypasses the ENTRYPOINT to run tools directly
         # Mount current directory as workspace and execute the validation command
         container_cmd = [
             container_runtime,
             "run",
             "--rm",
+            "--entrypoint=",  # Override the entrypoint to run commands directly
             "-v",
             f"{Path.cwd()}:/workspace",
             "-w",
@@ -156,7 +119,7 @@ class Validator(ABC):
 
         return container_cmd
 
-    def _get_available_container_runtime(self) -> "Optional[str]":
+    def _get_available_container_runtime(self) -> str:
         """Get available container runtime (podman or docker)"""
         for runtime in ["podman", "docker"]:
             try:
@@ -167,7 +130,12 @@ class Validator(ABC):
                     return runtime
             except (subprocess.SubprocessError, FileNotFoundError):
                 continue
-        return None
+        raise RuntimeError(
+            "No container runtime available. Please install Podman or Docker.\n"
+            "Installation instructions:\n"
+            "- Podman: https://podman.io/getting-started/installation\n"
+            "- Docker: https://docs.docker.com/get-docker/"
+        )
 
     @abstractmethod
     def validate(self, filepath: Path) -> ValidationResult:
@@ -762,8 +730,8 @@ class GitLabCIValidator(Validator):
         return "gitlab-ci"
 
     @property
-    def extensions(self) -> List[str]:
-        return []  # Use can_handle method instead of extension-based matching
+    def extensions(self) -> Set[str]:
+        return set()  # Use can_handle method instead of extension-based matching
 
     def is_available(self) -> bool:
         """Check if GitLab CI validator is available"""
@@ -806,7 +774,7 @@ class GitLabCIValidator(Validator):
         current_dir = os.path.dirname(__file__)
         try:
             sys.path.insert(0, current_dir)
-            import gitlab_ci_validator
+            import gitlab_ci_validator  # type: ignore
 
             GitLabCISchemaValidator = gitlab_ci_validator.GitLabCISchemaValidator
             sys.path.pop(0)
@@ -884,29 +852,25 @@ class ValidationEngine:
     def __init__(
         self,
         auto_fix: bool = False,
-        use_container: bool = False,
         interactive: bool = False,
     ):
         self.auto_fix = auto_fix
-        self.use_container = use_container
         self.interactive = interactive
         self.validators = self._initialize_validators()
         self._extension_map = self._build_extension_map()
 
     def _initialize_validators(self) -> List[Validator]:
-        """Initialize all available validators"""
+        """Initialize all available validators (container-only mode)"""
         validators = [
-            BlackValidator(self.auto_fix, self.use_container),
-            AutoflakeValidator(self.auto_fix, self.use_container),
-            Flake8Validator(self.auto_fix, self.use_container),
-            MypyValidator(self.auto_fix, self.use_container),
-            ESLintValidator(self.auto_fix, self.use_container),
-            YamlLintValidator(self.auto_fix, self.use_container),
-            HadolintValidator(self.auto_fix, self.use_container),
-            ShellcheckValidator(self.auto_fix, self.use_container),
-            GitLabCIValidator(
-                self.auto_fix, self.use_container
-            ),  # Added GitLab CI validator
+            BlackValidator(self.auto_fix),
+            AutoflakeValidator(self.auto_fix),
+            Flake8Validator(self.auto_fix),
+            MypyValidator(self.auto_fix),
+            ESLintValidator(self.auto_fix),
+            YamlLintValidator(self.auto_fix),
+            HadolintValidator(self.auto_fix),
+            ShellcheckValidator(self.auto_fix),
+            GitLabCIValidator(self.auto_fix),
         ]
 
         # Filter to only available validators
@@ -922,7 +886,7 @@ class ValidationEngine:
 
     def _build_extension_map(self) -> Dict[str, List[Validator]]:
         """Build a map of file extensions to validators"""
-        ext_map = {}
+        ext_map: Dict[str, List[Validator]] = {}
         for validator in self.validators:
             for ext in validator.extensions:
                 if ext not in ext_map:
@@ -932,7 +896,7 @@ class ValidationEngine:
 
     def validate_file(self, filepath: Path) -> List[ValidationResult]:
         """Validate a single file with all applicable validators"""
-        results = []
+        results: List[ValidationResult] = []
 
         # Find applicable validators
         validators = self._extension_map.get(filepath.suffix, [])
@@ -1001,9 +965,7 @@ class ValidationEngine:
                     if response in ["y", "yes"]:
                         print("🔄 Applying auto-fixes...")
                         # Re-run with auto-fix enabled
-                        auto_fix_engine = ValidationEngine(
-                            auto_fix=True, use_container=self.use_container
-                        )
+                        auto_fix_engine = ValidationEngine(auto_fix=True)
                         results = {}
                         for filename in result.stdout.splitlines():
                             filepath = Path(filename)
@@ -1068,7 +1030,7 @@ class ValidationEngine:
 
 
 # CLI Interface
-def main():
+def main() -> None:
     """Main entry point for CLI usage"""
     import argparse
 
@@ -1093,9 +1055,12 @@ def main():
     interactive_mode = (
         not args.fix and args.staged
     )  # Interactive only for staged files when --fix not specified
-    engine = ValidationEngine(
-        auto_fix=args.fix, use_container=args.container, interactive=interactive_mode
-    )
+
+    # Note: --container flag is now ignored as container is the only execution mode
+    if args.container:
+        print("Note: --container flag is now default behavior (container-only mode)")
+
+    engine = ValidationEngine(auto_fix=args.fix, interactive=interactive_mode)
 
     # Run validation
     if args.staged:

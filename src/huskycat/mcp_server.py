@@ -26,16 +26,15 @@ logger = logging.getLogger(__name__)
 class MCPServer:
     """Simple MCP stdio server for validation tools"""
 
-    def __init__(self, use_container: bool = None):
-        # Auto-detect container availability if not specified
-        if use_container is None:
-            use_container = self._detect_container_available()
-
-        self.use_container = use_container
-        self.engine = ValidationEngine(auto_fix=False, use_container=use_container)
+    def __init__(self) -> None:
+        # Container-only mode - check if container runtime is available
+        self.container_available = self._detect_container_available()
+        self.engine = ValidationEngine(auto_fix=False)
         self.request_id = 0
 
-        logger.info(f"MCP Server initialized with container support: {use_container}")
+        logger.info(
+            f"MCP Server initialized (container-only mode): {self.container_available}"
+        )
 
     def _detect_container_available(self) -> bool:
         """Detect if container runtime is available"""
@@ -55,7 +54,7 @@ class MCPServer:
         ):
             pass
 
-        logger.info("No container runtime detected, using local tools only")
+        logger.warning("No container runtime detected - validation may fail")
         return False
 
     def _run_container_validation(
@@ -131,8 +130,8 @@ class MCPServer:
 
     def _handle_initialize(self, request_id: Any) -> Dict[str, Any]:
         """Handle initialization request"""
-        # Include execution mode in server info
-        execution_mode = "container" if self.use_container else "local"
+        # Include execution mode in server info (always container-only now)
+        execution_mode = "container-only"
         tool_count = len(self.engine.validators)
 
         return {
@@ -145,6 +144,7 @@ class MCPServer:
                     "name": "huskycat-mcp",
                     "version": "2.0.0",
                     "executionMode": execution_mode,
+                    "containerAvailable": self.container_available,
                     "toolCount": tool_count,
                 },
             },
@@ -260,8 +260,8 @@ class MCPServer:
         path_str = arguments.get("path", ".")
         fix = arguments.get("fix", False)
 
-        # Use container execution if enabled
-        if self.use_container:
+        # Container-only execution mode
+        if self.container_available:
             # Build container command
             cmd_args = ["validate"]
             if fix:
@@ -308,8 +308,8 @@ class MCPServer:
         """Validate staged files"""
         fix = arguments.get("fix", False)
 
-        # Use container execution if enabled
-        if self.use_container:
+        # Container-only execution mode
+        if self.container_available:
             # Build container command
             cmd_args = ["validate", "--staged"]
             if fix:
@@ -353,7 +353,7 @@ class MCPServer:
         fix = arguments.get("fix", False)
 
         # Use container execution if enabled - specific tools through general validate
-        if self.use_container:
+        if self.container_available:
             # Container mode: run general validation (comprehensive)
             cmd_args = ["validate"]
             if fix:
@@ -390,9 +390,9 @@ class MCPServer:
 
         # Validate
         path = Path(path_str)
-        result = validator.validate(path)
+        validation_result = validator.validate(path)
 
-        return {"tool": tool_name, "result": result.to_dict()}
+        return {"tool": tool_name, "result": validation_result.to_dict()}
 
     def _error_response(
         self, request_id: Any, code: int, message: str
@@ -404,7 +404,7 @@ class MCPServer:
             "error": {"code": code, "message": message},
         }
 
-    def run(self):
+    def run(self) -> None:
         """Run the MCP server"""
         logger.info("HuskyCat MCP Server starting...")
 
@@ -439,7 +439,7 @@ class MCPServer:
         logger.info("HuskyCat MCP Server stopped")
 
 
-def main():
+def main() -> None:
     """Main entry point"""
     server = MCPServer()
     server.run()

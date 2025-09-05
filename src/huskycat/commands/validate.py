@@ -50,12 +50,9 @@ class ValidateCommand(BaseCommand):
                 status=CommandStatus.SUCCESS, message="No files to validate"
             )
 
-        # Create validation engine with intelligent container fallback
-        # Enable container mode if essential Python tools are missing
-        use_container = self._should_use_container()
+        # Create validation engine (container-only mode)
         engine = ValidationEngine(
             auto_fix=fix,
-            use_container=use_container,
             interactive=interactive and staged,
         )
 
@@ -111,52 +108,6 @@ class ValidateCommand(BaseCommand):
             warnings=all_warnings,
             data=summary,
         )
-
-    def _should_use_container(self) -> bool:
-        """
-        Determine if container should be used based on tool availability.
-
-        Uses container if essential Python validation tools are missing.
-        """
-        essential_tools = ["flake8", "mypy", "autoflake"]
-        missing_tools = []
-
-        for tool in essential_tools:
-            try:
-                subprocess.run(
-                    [tool, "--version"],
-                    capture_output=True,
-                    text=True,
-                    timeout=5,
-                    check=True,
-                )
-            except (
-                subprocess.CalledProcessError,
-                FileNotFoundError,
-                subprocess.TimeoutExpired,
-            ):
-                missing_tools.append(tool)
-
-        if missing_tools:
-            # Check if container runtime is available
-            try:
-                subprocess.run(
-                    ["podman", "--version"],
-                    capture_output=True,
-                    text=True,
-                    timeout=5,
-                    check=True,
-                )
-                return True  # Use container fallback
-            except (
-                subprocess.CalledProcessError,
-                FileNotFoundError,
-                subprocess.TimeoutExpired,
-            ):
-                # Neither local tools nor container available - proceed with available tools
-                return False
-
-        return False  # All essential tools available locally
 
     def _get_files_to_validate(
         self, files: Optional[List[str]], staged: bool, all_files: bool
