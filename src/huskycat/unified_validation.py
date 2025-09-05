@@ -778,15 +778,17 @@ class GitLabCIValidator(Validator):
         """Check if this file is a GitLab CI file"""
         name = filepath.name
         parent_path = str(filepath.parent)
-        
+
         # Specific GitLab CI files
         if name == ".gitlab-ci.yml" or name.startswith(".gitlab-ci"):
             return True
-            
+
         # Files in .gitlab/ci/ directory that are YAML files
-        if (".gitlab/ci" in parent_path or parent_path.endswith(".gitlab/ci")) and (name.endswith(".yml") or name.endswith(".yaml")):
+        if (".gitlab/ci" in parent_path or parent_path.endswith(".gitlab/ci")) and (
+            name.endswith(".yml") or name.endswith(".yaml")
+        ):
             return True
-            
+
         return False
 
     def validate(self, filepath: Path) -> ValidationResult:
