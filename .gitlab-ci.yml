@@ -486,5 +486,14 @@ release:create:
         --assets-link "{\"name\":\"Documentation\",\"url\":\"https://tinyland.gitlab.io/ai/huskycat/\"}"
   rules:
     - if: $CI_COMMIT_TAG
+# Security job overrides to handle network timeouts and improve reliability
+container_scanning:
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  timeout: 10m
+
 # Security scanning jobs (using GitLab security templates)
 # These are automatically included via the templates at the top
