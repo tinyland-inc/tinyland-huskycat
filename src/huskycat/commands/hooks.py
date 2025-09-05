@@ -198,10 +198,38 @@ exit 0
         commit_msg = hooks_dir / "commit-msg"
         commit_msg_content = """#!/bin/bash
 # HuskyCat commit-msg hook
-# Simple commit message validation (placeholder)
+# Validates commit message format (conventional commits)
 
-# For now, just allow all commits through
-# TODO: Implement proper commit message validation
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\\(.+\\))?!?: .+'
+
+# Read the commit message
+commit_message=$(cat "$1")
+
+# Skip validation for merge commits and revert commits
+if [[ "$commit_message" =~ ^Merge.* ]] || [[ "$commit_message" =~ ^Revert.* ]]; then
+    exit 0
+fi
+
+# Get just the first line for validation (conventional commits validate the first line)
+first_line=$(echo "$commit_message" | head -n1)
+
+# Check if first line follows conventional commit format
+if [[ ! "$first_line" =~ $commit_regex ]]; then
+    echo "❌ Commit message does not follow conventional commit format!"
+    echo ""
+    echo "Format: <type>[optional scope]: <description>"
+    echo ""
+    echo "Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add new user authentication"
+    echo "  fix(api): resolve login endpoint error"
+    echo "  docs: update installation guide"
+    echo ""
+    echo "Your first line: $first_line"
+    exit 1
+fi
+
 exit 0
 """
 
