@@ -27,4 +27,3 @@ ignore: |
   dist/
   *.min.yml
   *.min.yaml
-  .gitlab-ci-autodevops.yml

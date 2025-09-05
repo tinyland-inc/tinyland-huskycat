@@ -1,0 +1,562 @@
+# HuskyCat AutoDevOps Pipeline v2.0
+# Optimized CI/CD with consolidated scripts and E2E testing
+# Features: multi-arch builds, comprehensive testing, MCP integration
+
+stages:
+  - validate
+  - build
+  - test
+  - e2e
+  - package
+  - publish
+  - release
+  - cleanup
+
+variables:
+  # Container settings
+  CONTAINER_IMAGE: $CI_REGISTRY_IMAGE
+  CONTAINER_TAG: $CI_COMMIT_REF_SLUG
+  CONTAINER_LATEST: $CI_REGISTRY_IMAGE:latest
+
+  # Build settings
+  BUILDX_VERSION: "0.11.2"
+  UPX_VERSION: "4.0.2"
+
+  # Test settings
+  MCP_PORT: "8080"
+  E2E_TIMEOUT: "300"
+
+  # Performance settings
+  PARALLEL_JOBS: "4"
+  CACHE_VERSION: "v2"
+
+  # Release settings
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/huskycat"
+
+# Global cache configuration
+cache:
+  key: "${CI_COMMIT_REF_SLUG}-${CACHE_VERSION}"
+  paths:
+    - node_modules/
+    - mcp-server/node_modules/
+    - .cache/
+    - build_venv/
+  policy: pull-push
+
+# Validation stage - using consolidated script
+validate:code:
+  stage: validate
+  image: python:3.11
+  cache:
+    key: "validation-${CACHE_VERSION}"
+    paths:
+      - .cache/
+    policy: pull-push
+  before_script:
+    - apt-get update && apt-get install -y shellcheck yamllint
+    - pip install --cache-dir .cache/ pyyaml jsonschema bandit black flake8 mypy
+  script:
+    - echo "🔍 Validating code with unified validation script..."
+    - chmod +x scripts/validate-ci-unified.sh
+    - ./scripts/validate-ci-unified.sh --verbose --parallel $PARALLEL_JOBS
+  artifacts:
+    reports:
+      junit: reports/validation-*.xml
+    paths:
+      - reports/
+    expire_in: 1 day
+    when: always
+
+validate:security:
+  stage: validate
+  image: aquasec/trivy:latest
+  script:
+    - trivy fs --exit-code 0 --severity HIGH,CRITICAL --format json -o security-report.json .
+    - trivy fs --exit-code 1 --severity HIGH,CRITICAL .
+  artifacts:
+    reports:
+      security: security-report.json
+    when: always
+
+# Build stage - Multi-arch container
+build:container:multiarch:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - |
+      # Install buildx
+      mkdir -p ~/.docker/cli-plugins/
+      wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-amd64
+      chmod +x ~/.docker/cli-plugins/docker-buildx
+      docker buildx create --use --name multiarch-builder
+      docker buildx inspect --bootstrap
+  script:
+    - |
+      echo "🐳 Building multi-arch container..."
+      docker buildx build \
+        --platform linux/amd64,linux/arm64 \
+        --push \
+        -t $CONTAINER_IMAGE:$CI_COMMIT_SHA \
+        -t $CONTAINER_IMAGE:$CI_COMMIT_REF_SLUG \
+        -f ContainerFile.huskycat \
+        .
+
+      # Tag as latest for main branch
+      if [ "$CI_COMMIT_BRANCH" = "main" ]; then
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --push \
+          -t $CONTAINER_LATEST \
+          -f ContainerFile.huskycat \
+          .
+      fi
+  only:
+    - branches
+    - tags
+
+# Build stage - UPX packed binaries
+build:binaries:
+  stage: build
+  image: python:3.11
+  before_script:
+    - apt-get update && apt-get install -y upx-ucl
+    - pip install pyinstaller
+    - |
+      # Install container runtime for build
+      curl -fsSL https://get.docker.com | sh
+  script:
+    - echo "📦 Building HuskyCat binaries..."
+    - python3 build.py
+    - |
+      # Create checksums
+      cd dist
+      sha256sum huskycat > huskycat.sha256
+      sha256sum huskycat_light > huskycat_light.sha256
+
+      # Create version info
+      echo "{
+        \"version\": \"${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}\",
+        \"commit\": \"$CI_COMMIT_SHA\",
+        \"date\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
+        \"pipeline\": \"$CI_PIPELINE_URL\"
+      }" > version.json
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+# Test stage - enhanced with unified testing
+test:integration:
+  stage: test
+  image: $CONTAINER_IMAGE:$CI_COMMIT_SHA
+  parallel:
+    matrix:
+      - TEST_TYPE: ["basic", "advanced", "security"]
+  script:
+    - echo "🧪 Running integration tests ($TEST_TYPE)..."
+    - |
+      case $TEST_TYPE in
+        "basic")
+          cd /tmp
+          mkdir test-repo && cd test-repo
+          git init
+          /workspace/dist/huskycat init
+          echo "print('test')" > test.py
+          /workspace/dist/huskycat validate test.py
+          ;;
+        "advanced")
+          cd /workspace
+          ./scripts/validate-ci-unified.sh --no-environment --staged
+          ;;
+        "security")
+          cd /workspace
+          /workspace/dist/huskycat validate --tool python-bandit .
+          ;;
+      esac
+  dependencies:
+    - build:binaries
+  artifacts:
+    reports:
+      junit: test-results-*.xml
+    when: always
+    expire_in: 1 day
+
+test:binary:platforms:
+  stage: test
+  parallel:
+    matrix:
+      - PLATFORM: ["ubuntu:22.04", "debian:12", "fedora:39", "alpine:3.19"]
+  image: $PLATFORM
+  before_script:
+    - |
+      case $PLATFORM in
+        ubuntu*|debian*)
+          apt-get update && apt-get install -y git
+          ;;
+        fedora*)
+          dnf install -y git
+          ;;
+        alpine*)
+          apk add --no-cache git bash
+          ;;
+      esac
+  script:
+    - echo "🧪 Testing on $PLATFORM..."
+    - cd /tmp && /builds/$CI_PROJECT_PATH/dist/huskycat version
+  dependencies:
+    - build:binaries
+
+# E2E Testing stage - comprehensive end-to-end tests
+e2e:mcp-server:
+  stage: e2e
+  image: node:18
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+  cache:
+    key: "e2e-mcp-${CACHE_VERSION}"
+    paths:
+      - mcp-server/node_modules/
+      - .cache/
+    policy: pull-push
+  before_script:
+    - cd mcp-server
+    - npm ci --cache /builds/$CI_PROJECT_PATH/.cache/npm
+    - npm run build
+    - cd ..
+  script:
+    - echo "🚀 Running MCP Server E2E Tests..."
+    - chmod +x tests/e2e-test-mcp.sh
+    - MCP_PORT=$MCP_PORT TEST_TIMEOUT=$E2E_TIMEOUT ./tests/e2e-test-mcp.sh
+  artifacts:
+    reports:
+      junit: e2e-test-results.xml
+    paths:
+      - mcp-server.log
+      - e2e-test-results.xml
+    when: always
+    expire_in: 2 days
+  dependencies:
+    - build:binaries
+
+e2e:git-hooks:
+  stage: e2e
+  image: python:3.11
+  cache:
+    key: "e2e-hooks-${CACHE_VERSION}"
+    paths:
+      - build_venv/
+      - .cache/
+    policy: pull
+  before_script:
+    - apt-get update && apt-get install -y git
+    - git config --global user.name "CI Test"
+    - git config --global user.email "ci@test.local"
+  script:
+    - echo "🔗 Running Git Hooks E2E Tests..."
+    - chmod +x tests/e2e-test-hooks.sh
+    - ./tests/e2e-test-hooks.sh
+  artifacts:
+    reports:
+      junit: hooks-test-results.xml
+    when: always
+    expire_in: 2 days
+  dependencies:
+    - build:binaries
+
+e2e:upx-package:
+  stage: e2e
+  image: ubuntu:22.04
+  cache:
+    key: "e2e-upx-${CACHE_VERSION}"
+    paths:
+      - .cache/
+    policy: pull
+  before_script:
+    - apt-get update && apt-get install -y git python3
+    - git config --global user.name "CI Test"
+    - git config --global user.email "ci@test.local"
+  script:
+    - echo "📦 Running UPX Package E2E Tests..."
+    - chmod +x tests/e2e-upx-package.test.sh
+    - ./tests/e2e-upx-package.test.sh
+  artifacts:
+    reports:
+      junit: upx-test-results.xml
+    paths:
+      - test-results.txt
+    when: always
+    expire_in: 2 days
+  dependencies:
+    - build:binaries
+
+# Package stage
+package:artifacts:
+  stage: package
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl tar gzip
+  script:
+    - |
+      VERSION=${CI_COMMIT_TAG:-v0.0.0-${CI_COMMIT_SHORT_SHA}}
+
+      # Create release archives
+      cd dist
+      tar czf huskycat-linux-amd64.tar.gz huskycat huskycat.sha256
+      tar czf huskycat-light-linux-amd64.tar.gz huskycat_light huskycat_light.sha256
+
+      # Upload to package registry
+      for file in *.tar.gz; do
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+             --upload-file $file \
+             "${PACKAGE_REGISTRY_URL}/${VERSION}/${file}"
+      done
+
+      # Upload individual binaries
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+           --upload-file huskycat \
+           "${PACKAGE_REGISTRY_URL}/${VERSION}/huskycat-linux-amd64"
+  dependencies:
+    - build:binaries
+  only:
+    - tags
+    - main
+
+# Publish stage
+publish:container:metadata:
+  stage: publish
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - |
+      # Create container metadata
+      echo "{
+        \"image\": \"$CONTAINER_IMAGE:$CI_COMMIT_SHA\",
+        \"platforms\": [\"linux/amd64\", \"linux/arm64\"],
+        \"size\": \"655MB\",
+        \"tools\": {
+          \"python\": [\"black\", \"flake8\", \"mypy\", \"pylint\", \"bandit\"],
+          \"javascript\": [\"eslint\", \"prettier\"],
+          \"shell\": [\"shellcheck\"],
+          \"yaml\": [\"yamllint\"],
+          \"docker\": [\"hadolint\"]
+        }
+      }" | jq . > container-metadata.json
+
+      # Create SBOM
+      curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /tmp
+      /tmp/syft $CONTAINER_IMAGE:$CI_COMMIT_SHA -o json > sbom.json
+  artifacts:
+    paths:
+      - container-metadata.json
+      - sbom.json
+  only:
+    - tags
+
+# Release stage
+create:release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  before_script:
+    - apk add --no-cache git bash jq curl
+    - npm install -g claude-flow@alpha
+  script:
+    - |
+      VERSION=${CI_COMMIT_TAG}
+
+      # Use MCP-powered release notes generator
+      echo "🤖 Generating release notes with MCP analysis..."
+      chmod +x ./generate-release-notes.sh
+      ./generate-release-notes.sh
+
+      # Create release with generated notes
+      release-cli create \
+        --name "Release $VERSION" \
+        --tag-name "$VERSION" \
+        --description release-notes.md \
+        --assets-link "{\"name\":\"huskycat-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/${VERSION}/huskycat-linux-amd64\"}" \
+        --assets-link "{\"name\":\"huskycat-light\",\"url\":\"${PACKAGE_REGISTRY_URL}/${VERSION}/huskycat-light-linux-amd64.tar.gz\"}"
+  only:
+    - tags
+
+# Pages job for download site
+pages:
+  stage: release
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache git
+  script:
+    - |
+      mkdir -p public
+
+      # Create download page
+      cat > public/index.html << 'HTMLEOF'
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>HuskyCat - Download</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+          .hero { text-align: center; padding: 40px 0; }
+          .download-section { background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0; }
+          .button { display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 4px; margin: 10px; }
+          .button:hover { background: #0052a3; }
+          code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+          .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 40px 0; }
+          .feature { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        </style>
+      </head>
+      <body>
+        <div class="hero">
+          <h1>🐱 HuskyCat</h1>
+          <p>Enterprise Code Validation Platform</p>
+        </div>
+
+        <div class="download-section">
+          <h2>Quick Install</h2>
+          <pre><code>curl -fsSL https://${CI_PROJECT_PATH}.gitlab.io/install.sh | bash</code></pre>
+        </div>
+
+        <div class="download-section">
+          <h2>Downloads</h2>
+          <a href="https://gitlab.com/${CI_PROJECT_PATH}/-/releases" class="button">Latest Release</a>
+          <a href="${CI_REGISTRY}/${CI_PROJECT_PATH}" class="button">Container Registry</a>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <h3>🎯 Single Executable</h3>
+            <p>Download and run - no dependencies required</p>
+          </div>
+          <div class="feature">
+            <h3>🔧 Multi-Tool Support</h3>
+            <p>Python, JavaScript, Shell, YAML, Docker validation</p>
+          </div>
+          <div class="feature">
+            <h3>🤖 AI Integration</h3>
+            <p>MCP server for Claude Desktop</p>
+          </div>
+          <div class="feature">
+            <h3>🚀 Fast & Efficient</h3>
+            <p>Optimized container with caching</p>
+          </div>
+        </div>
+
+        <div class="download-section">
+          <h2>Installation</h2>
+          <pre><code># Download latest binary
+curl -fsSL https://gitlab.com/${CI_PROJECT_PATH}/-/releases/permalink/latest/downloads/huskycat-linux-amd64 -o huskycat
+# chmod +x huskycat
+
+# Initialize in your repository
+# ./huskycat init
+
+# Run validation
+# ./huskycat validate</code></pre>
+        </div>
+      </body>
+      </html>
+HTMLEOF
+
+      # Create install script
+      cat > public/install.sh << 'SHELLEOF'
+      #!/bin/bash
+      set -e
+
+      echo "🐱 Installing HuskyCat..."
+
+      # Detect architecture
+      ARCH=$(uname -m)
+      case $ARCH in
+        x86_64) ARCH="amd64" ;;
+        aarch64) ARCH="arm64" ;;
+        *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
+      esac
+
+      # Download binary
+      URL="https://gitlab.com/${CI_PROJECT_PATH}/-/releases/permalink/latest/downloads/huskycat-linux-${ARCH}"
+      curl -fsSL "$URL" -o huskycat || { echo "Failed to download"; exit 1; }
+      chmod +x huskycat
+
+      # Install to /usr/local/bin if possible
+      if [ -w /usr/local/bin ]; then
+        sudo mv huskycat /usr/local/bin/
+        echo "✅ Installed to /usr/local/bin/huskycat"
+      else
+        echo "✅ Downloaded to ./huskycat"
+        echo "Add to PATH or move to /usr/local/bin/"
+      fi
+
+      huskycat version
+SHELLEOF
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+
+# Cleanup stage - manage artifacts and resources
+cleanup:temp-files:
+  stage: cleanup
+  image: alpine:latest
+  script:
+    - echo "🧹 Cleaning up temporary files and optimizing artifacts..."
+    - find . -name "*.tmp" -delete || true
+    - find . -name "*.log" -size +10M -delete || true
+    - echo "Cleanup completed"
+  when: always
+  allow_failure: true
+
+cleanup:docker-images:
+  stage: cleanup
+  image: docker:24-cli
+  services:
+    - docker:24-dind
+  script:
+    - echo "🐳 Cleaning up old Docker images..."
+    - docker system prune -f --volumes || true
+    - docker image prune -f --filter="until=24h" || true
+    - echo "Docker cleanup completed"
+  when: always
+  allow_failure: true
+  only:
+    - main
+    - develop
+
+# Performance monitoring
+monitor:pipeline-performance:
+  stage: cleanup
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - |
+      echo "📊 Pipeline Performance Report"
+      echo "============================="
+      echo "Pipeline ID: $CI_PIPELINE_ID"
+      echo "Duration: $(date -d @$(($(date +%s) - $(date -d "$CI_PIPELINE_CREATED_AT" +%s))) -u +%H:%M:%S)"
+      echo "Jobs: $(echo $CI_JOB_NAME | wc -w)"
+      echo "Commit: $CI_COMMIT_SHORT_SHA"
+
+      # Store metrics for analysis
+      cat > pipeline-metrics.json << EOF
+      {
+        "pipeline_id": "$CI_PIPELINE_ID",
+        "commit": "$CI_COMMIT_SHA",
+        "branch": "$CI_COMMIT_REF_NAME",
+        "duration": $(date -d @$(($(date +%s) - $(date -d "$CI_PIPELINE_CREATED_AT" +%s))) +%s),
+        "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      }
+EOF
+  artifacts:
+    paths:
+      - pipeline-metrics.json
+    expire_in: 30 days
+  when: always
+  allow_failure: true
