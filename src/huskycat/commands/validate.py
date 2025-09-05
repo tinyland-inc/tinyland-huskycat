@@ -98,7 +98,9 @@ class ValidateCommand(BaseCommand):
                 message = f"Validation passed with {summary['total_warnings']} warning(s) (warnings allowed)"
             else:
                 status = CommandStatus.WARNING
-                message = f"Validation passed with {summary['total_warnings']} warning(s)"
+                message = (
+                    f"Validation passed with {summary['total_warnings']} warning(s)"
+                )
         else:
             status = CommandStatus.SUCCESS
             message = "All validations passed"
