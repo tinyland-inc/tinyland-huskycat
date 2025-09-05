@@ -27,8 +27,8 @@ class MCPServerCommand(BaseCommand):
             # Import the MCP server
             from ..mcp_server import MCPServer
 
-            # Create server with container support enabled
-            server = MCPServer(use_container=True)
+            # Create server (container detection is automatic)
+            server = MCPServer()
 
             # Always use stdio mode (only supported mode)
             self.log("Starting MCP server in stdio mode for Claude Code integration")

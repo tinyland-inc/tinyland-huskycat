@@ -81,18 +81,43 @@ class Validator(ABC):
         return self.name
 
     def is_available(self) -> bool:
-        """Check if container runtime is available (container-only mode)"""
-        # Container-only mode: check if container runtime is available
-        for runtime in ["podman", "docker"]:
+        """Check if validator is available in current execution context"""
+        # Detect if we're running inside a container
+        if self._is_running_in_container():
+            # Direct tool availability check when inside container
             try:
                 result = subprocess.run(
-                    [runtime, "--version"], capture_output=True, text=True, timeout=5
+                    ["which", self.command], capture_output=True, text=True, timeout=5
                 )
-                if result.returncode == 0:
-                    return True
+                return result.returncode == 0
             except (subprocess.SubprocessError, FileNotFoundError):
-                continue
-        return False
+                return False
+        else:
+            # Host mode: check if container runtime is available
+            for runtime in ["podman", "docker"]:
+                try:
+                    result = subprocess.run(
+                        [runtime, "--version"],
+                        capture_output=True,
+                        text=True,
+                        timeout=5,
+                    )
+                    if result.returncode == 0:
+                        return True
+                except (subprocess.SubprocessError, FileNotFoundError):
+                    continue
+            return False
+
+    def _is_running_in_container(self) -> bool:
+        """Detect if we're running inside a container"""
+        import os
+
+        # Check for container-specific environment indicators
+        return (
+            os.path.exists("/.dockerenv")  # Docker
+            or bool(os.environ.get("container"))  # Podman
+            or os.path.exists("/run/.containerenv")  # Podman
+        )
 
     def _execute_command(
         self, cmd: List[str], **kwargs: Any
