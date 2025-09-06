@@ -143,11 +143,12 @@ class TestValidationEngineProperties:
             for result in results:
                 assert isinstance(result, ValidationResult)
                 assert result.tool in [
-                    "python-black",
-                    "python-flake8",
-                    "python-mypy",
-                    "python-bandit",
-                    "python-ruff",
+                    "black",
+                    "flake8", 
+                    "mypy",
+                    "bandit",
+                    "ruff",
+                    "autoflake",
                 ]
                 assert isinstance(result.success, bool)
                 assert isinstance(result.messages, list)
@@ -194,7 +195,7 @@ class TestValidationEngineProperties:
             assert isinstance(results, list)
             if results:  # May have no YAML validator installed
                 for result in results:
-                    assert result.tool == "yaml-yamllint"
+                    assert result.tool == "yamllint"
                     assert hasattr(result, "duration_ms")
                     assert result.duration_ms >= 0
         finally:
@@ -403,7 +404,7 @@ class TestEngineInvariants:
         engine2 = ValidationEngine()
 
         # Same validators should be discovered
-        assert set(engine1.validators.keys()) == set(engine2.validators.keys())
+        assert set(v.name for v in engine1.validators) == set(v.name for v in engine2.validators)
 
         # Extension map should be the same
         assert engine1._extension_map.keys() == engine2._extension_map.keys()

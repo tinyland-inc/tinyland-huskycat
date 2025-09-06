@@ -14,7 +14,7 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Optional, Set
 
 # Configure logging
 logging.basicConfig(
@@ -886,10 +886,12 @@ class ValidationEngine:
         auto_fix: bool = False,
         interactive: bool = False,
         allow_warnings: bool = False,
+        use_container: bool = False,
     ):
         self.auto_fix = auto_fix
         self.interactive = interactive
         self.allow_warnings = allow_warnings
+        self.use_container = use_container
         self.validators = self._initialize_validators()
         self._extension_map = self._build_extension_map()
 
@@ -928,7 +930,23 @@ class ValidationEngine:
                 ext_map[ext].append(validator)
         return ext_map
 
-    def validate_file(self, filepath: Path) -> List[ValidationResult]:
+    def get_validators_for_file(self, filepath: Path) -> List[Validator]:
+        """Get applicable validators for a file (for testing compatibility)"""
+        validators = self._extension_map.get(filepath.suffix, [])
+
+        # Also check validators with custom can_handle logic
+        for v in self.validators:
+            if v.can_handle(filepath) and v not in validators:
+                validators.append(v)
+
+        return validators
+
+    def validate_file(
+        self,
+        filepath: Path,
+        fix: Optional[bool] = None,
+        tools: Optional[List[str]] = None,
+    ) -> List[ValidationResult]:
         """Validate a single file with all applicable validators"""
         results: List[ValidationResult] = []
 
@@ -953,17 +971,30 @@ class ValidationEngine:
         return results
 
     def validate_directory(
-        self, directory: Path, recursive: bool = True
+        self,
+        directory: Path,
+        recursive: bool = True,
+        exclude_patterns: Optional[List[str]] = None,
     ) -> Dict[str, List[ValidationResult]]:
         """Validate all files in a directory"""
         results = {}
 
         pattern = "**/*" if recursive else "*"
+        exclude_patterns = exclude_patterns or []
+
         for filepath in directory.glob(pattern):
             if filepath.is_file() and not filepath.name.startswith("."):
-                file_results = self.validate_file(filepath)
-                if file_results:
-                    results[str(filepath)] = file_results
+                # Check if file should be excluded
+                should_exclude = False
+                for exclude_pattern in exclude_patterns:
+                    if exclude_pattern in str(filepath):
+                        should_exclude = True
+                        break
+
+                if not should_exclude:
+                    file_results = self.validate_file(filepath)
+                    if file_results:
+                        results[str(filepath)] = file_results
 
         return results
 

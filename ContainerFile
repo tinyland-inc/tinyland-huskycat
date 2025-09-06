@@ -39,7 +39,10 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     jsonschema \
     pyyaml \
     requests \
-    pydantic
+    pydantic \
+    mkdocs \
+    mkdocs-material \
+    mkdocs-mermaid2-plugin
 
 # Install Node.js tools
 RUN npm install -g \

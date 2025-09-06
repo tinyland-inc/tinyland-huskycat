@@ -92,10 +92,10 @@ class TestValidationEngineProperties:
                 # Each result should be a ValidationResult
                 for result in results:
                     assert isinstance(result, ValidationResult)
-                    assert hasattr(result, "line")
-                    assert hasattr(result, "column")
-                    assert hasattr(result, "message")
-                    assert hasattr(result, "severity")
+                    assert hasattr(result, "messages")
+                    assert hasattr(result, "errors")
+                    assert hasattr(result, "warnings")
+                    assert hasattr(result, "duration_ms")
                     assert hasattr(result, "tool")
             finally:
                 os.unlink(f.name)
