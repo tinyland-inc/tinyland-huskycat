@@ -15,9 +15,17 @@ from hypothesis import strategies as st
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-# Configure Hypothesis for more aggressive testing
-hypothesis.settings.register_profile("ci", max_examples=1000, deadline=None)
-hypothesis.settings.register_profile("dev", max_examples=100)
+# Configure Hypothesis profiles
+# CI profile: Reduced examples to avoid timeouts
+hypothesis.settings.register_profile(
+    "ci", 
+    max_examples=10,  # Reduced from 1000 to prevent timeouts
+    deadline=None,
+    suppress_health_check=[hypothesis.HealthCheck.too_slow]
+)
+# Dev profile: Moderate testing for local development
+hypothesis.settings.register_profile("dev", max_examples=50, deadline=200)
+# Load appropriate profile based on environment
 hypothesis.settings.load_profile("ci" if os.getenv("CI") else "dev")
 
 

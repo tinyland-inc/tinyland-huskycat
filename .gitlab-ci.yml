@@ -100,7 +100,9 @@ test:unit:
     - which python3 && python3 --version
     - which pytest && pytest --version
     - pwd && ls -la
-    - pytest tests/test_validation_pbt.py tests/test_unified_validation_pbt.py -v --tb=short --cov=src/ --cov-report=xml --cov-report=html --cov-report=term
+    - export HYPOTHESIS_PROFILE=ci
+    - echo "Using Hypothesis profile: $HYPOTHESIS_PROFILE"
+    - pytest tests/test_*pbt.py -v --tb=short --hypothesis-profile=ci --timeout=300 --cov=src/
   coverage: '/TOTAL.*\s+(\d+)%/'
   artifacts:
     reports:
@@ -235,7 +237,7 @@ mkdocs:build:
   <<: *cache_template
   script:
     - echo "📚 Building MkDocs site for GitLab Pages deployment"
-    - uv sync --extra docs
+    - uv pip install mkdocs mkdocs-material mkdocs-mermaid2-plugin
     - uv run mkdocs build --verbose --site-dir public
   artifacts:
     paths:

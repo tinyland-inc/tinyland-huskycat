@@ -237,14 +237,3 @@ dev = [
     "types-requests>=2.32.4.20250809",
     "yamllint>=1.37.1",
 ]
-
-# Hypothesis settings for property-based testing
-[tool.hypothesis]
-# CI profile with reduced examples to avoid timeouts
-profiles.ci.max_examples = 10
-profiles.ci.deadline = 30000  # 30 seconds
-profiles.ci.suppress_health_check = ["too_slow"]
-
-# Dev profile for local development  
-profiles.dev.max_examples = 50
-profiles.dev.deadline = 200  # 200ms
