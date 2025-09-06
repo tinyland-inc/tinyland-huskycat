@@ -101,7 +101,7 @@ test:unit:
     - which pytest && pytest --version
     - pwd && ls -la
     - export HYPOTHESIS_PROFILE=ci
-    - echo "Using Hypothesis profile: $HYPOTHESIS_PROFILE"
+    - 'echo "Using Hypothesis profile: $HYPOTHESIS_PROFILE"'
     - pytest tests/test_*pbt.py -v --tb=short --hypothesis-profile=ci --timeout=300 --cov=src/
   coverage: '/TOTAL.*\s+(\d+)%/'
   artifacts:
