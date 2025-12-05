@@ -271,7 +271,9 @@ binary:build:linux:
     - job: validate:complete
       optional: true
   before_script:
-    - dnf install -y git curl gcc python3 python3-pip upx zlib-devel
+    - dnf install -y epel-release  # Enable EPEL for UPX
+    - dnf install -y git curl gcc python3 python3-pip zlib-devel
+    - dnf install -y upx || echo "UPX not available, skipping compression"
     - curl -LsSf https://astral.sh/uv/install.sh | sh
     - export PATH="$HOME/.local/bin:$PATH"
     - uv --version
@@ -304,7 +306,9 @@ binary:build:linux-arm64:
     - job: validate:complete
       optional: true
   before_script:
-    - dnf install -y git curl gcc python3 python3-pip
+    - dnf install -y epel-release  # Enable EPEL for UPX
+    - dnf install -y git curl gcc python3 python3-pip zlib-devel
+    - dnf install -y upx || echo "UPX not available, skipping compression"
     - curl -LsSf https://astral.sh/uv/install.sh | sh
     - export PATH="$HOME/.local/bin:$PATH"
     - uv --version
@@ -314,6 +318,7 @@ binary:build:linux-arm64:
     - uv run pyinstaller --onefile --name huskycat-linux-arm64 huskycat_main.py
     - mv dist/huskycat-linux-arm64 dist/bin/
     - chmod +x dist/bin/huskycat-linux-arm64
+    - upx --best --lzma dist/bin/huskycat-linux-arm64 || echo "UPX compression failed, continuing without compression"
     - ls -la dist/bin/
     - file dist/bin/huskycat-linux-arm64 || true  # file command may not be available
     - dist/bin/huskycat-linux-arm64 --version || echo "Binary test failed, but continuing"
