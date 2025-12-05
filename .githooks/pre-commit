@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
-# .githooks/pre-commit - Validate and auto-fix staged files before commit
+# .githooks/pre-commit - Validate staged files using HuskyCat
+#
+# PARADIGM: Eat your own dogfood - uses HuskyCat's own validation engine
 #
 # REQUIREMENT: UV venv must be active for development in this repository.
 #
 # Features:
+#   - Uses HuskyCat validate command (not direct tool invocations)
 #   - Interactive auto-fix prompts when issues found
 #   - Auto-approve mode: HUSKYCAT_AUTO_APPROVE=1 or AUTO_FIX=1
 #   - Skip hooks: SKIP_HOOKS=1 git commit (or git commit --no-verify)
-#
-# Tools run (in order):
-#   1. Black - Python code formatting
-#   2. Ruff - Fast Python linting
-#   3. Flake8 - Additional Python linting (E501 length check skipped)
 
 set -euo pipefail
 
@@ -40,7 +38,7 @@ main() {
         exit 1
     fi
 
-    # Get staged Python files
+    # Get staged Python files (just to check if any exist)
     local staged_py
     staged_py=$(staged_files "py")
 
@@ -49,53 +47,49 @@ main() {
         exit 0
     fi
 
-    # Convert to array for proper handling
-    local -a py_files
-    mapfile -t py_files <<< "$staged_py"
+    # Count staged files for display
+    local file_count
+    file_count=$(echo "$staged_py" | wc -l | tr -d ' ')
+    log_step "Validating ${file_count} Python file(s) with HuskyCat..."
 
-    log_step "Validating ${#py_files[@]} Python file(s)..."
+    # ------------------------------------------------------------------------
+    # RUN HUSKYCAT VALIDATE
+    # ------------------------------------------------------------------------
+    # Build the command based on auto-approve setting
+    local huskycat_cmd="uv run python -m src.huskycat validate --staged"
+
+    if is_auto_approve; then
+        # Auto-approve mode: apply fixes automatically
+        huskycat_cmd="$huskycat_cmd --fix"
+        log_info "Auto-fix mode enabled (HUSKYCAT_AUTO_APPROVE=1)"
+    elif is_interactive; then
+        # Interactive mode: prompt for fixes
+        huskycat_cmd="$huskycat_cmd --interactive"
+    fi
+
+    log_step "Running: $huskycat_cmd"
 
     local exit_code=0
+    if ! $huskycat_cmd; then
+        exit_code=$?
 
-    # ------------------------------------------------------------------------
-    # 1. BLACK - Code Formatting
-    # ------------------------------------------------------------------------
-    if ! run_with_autofix "Black" \
-        "uv_run black --check --diff" \
-        "uv_run black" \
-        "${py_files[@]}"; then
-        exit_code=1
-    fi
+        # If validation failed, check if files were modified (auto-fixed)
+        # and need to be re-staged
+        local modified_staged
+        modified_staged=$(git diff --name-only --cached 2>/dev/null || true)
 
-    # If Black failed and user declined fix, stop here
-    [[ $exit_code -ne 0 ]] && exit $exit_code
+        if [[ -n "$modified_staged" ]]; then
+            log_info "Re-staging fixed files..."
+            echo "$modified_staged" | xargs -r git add
+        fi
 
-    # ------------------------------------------------------------------------
-    # 2. RUFF - Fast Linting
-    # ------------------------------------------------------------------------
-    if ! run_with_autofix "Ruff" \
-        "uv_run ruff check" \
-        "uv_run ruff check --fix" \
-        "${py_files[@]}"; then
-        exit_code=1
-    fi
-
-    # If Ruff failed and user declined fix, stop here
-    [[ $exit_code -ne 0 ]] && exit $exit_code
-
-    # ------------------------------------------------------------------------
-    # 3. FLAKE8 - Additional Linting (no auto-fix available)
-    # ------------------------------------------------------------------------
-    log_step "Running Flake8..."
-    if ! uv_run flake8 "${py_files[@]}" 2>&1; then
-        log_error "Flake8 found issues (no auto-fix available)"
-        echo ""
-        echo "  Fix manually and re-stage files"
-        echo "  To skip: SKIP_HOOKS=1 git commit"
-        echo ""
-        exit_code=1
-    else
-        log_info "Flake8: All files pass"
+        if [[ $exit_code -ne 0 ]]; then
+            log_error "HuskyCat validation failed"
+            echo ""
+            echo "  To fix manually: uv run python -m src.huskycat validate --staged --fix"
+            echo "  To skip hooks:   SKIP_HOOKS=1 git commit"
+            echo ""
+        fi
     fi
 
     # ------------------------------------------------------------------------

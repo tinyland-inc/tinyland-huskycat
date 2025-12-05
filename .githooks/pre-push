@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# .githooks/pre-push - Full validation before push
+# .githooks/pre-push - Full validation before push using HuskyCat
+#
+# PARADIGM: Eat your own dogfood - uses HuskyCat's own validation engine
 #
 # REQUIREMENT: UV venv must be active for development in this repository.
 #
@@ -7,8 +9,8 @@
 # affects the remote repository and CI pipeline.
 #
 # Features:
-#   - Full codebase validation (not just staged files)
-#   - GitLab CI configuration validation (if glab available)
+#   - Uses HuskyCat validate command for full codebase validation
+#   - Uses HuskyCat ci-validate for GitLab CI configuration
 #   - Interactive auto-fix prompts
 #   - Auto-approve mode: HUSKYCAT_AUTO_APPROVE=1 or AUTO_FIX=1
 #   - Skip hooks: SKIP_HOOKS=1 git push (or git push --no-verify)
@@ -43,92 +45,51 @@ main() {
     local exit_code=0
 
     # ------------------------------------------------------------------------
-    # 1. BLACK - Full Codebase Formatting Check
+    # 1. HUSKYCAT VALIDATE --ALL (Full codebase validation)
     # ------------------------------------------------------------------------
-    log_step "Checking Black formatting on src/ and tests/..."
-    if ! uv_run black --check --diff src/ tests/ 2>&1; then
-        log_warn "Black found formatting issues"
+    log_step "Running HuskyCat full codebase validation..."
 
-        if is_auto_approve || ask_yes_no "Apply Black formatting fixes?"; then
-            log_step "Applying Black fixes..."
-            uv_run black src/ tests/
-            log_info "Black fixes applied"
+    local huskycat_cmd="uv run python -m src.huskycat validate --all"
+
+    if is_auto_approve; then
+        huskycat_cmd="$huskycat_cmd --fix"
+        log_info "Auto-fix mode enabled (HUSKYCAT_AUTO_APPROVE=1)"
+    elif is_interactive; then
+        huskycat_cmd="$huskycat_cmd --interactive"
+    fi
+
+    log_step "Running: $huskycat_cmd"
+
+    if ! $huskycat_cmd; then
+        local validation_exit=$?
+        log_error "HuskyCat validation failed"
+
+        # Check if files were modified
+        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
             log_warn "Files modified - please commit changes before pushing"
             echo ""
             echo "  Run: git add -u && git commit --amend --no-edit && git push"
             echo ""
-            exit 1
-        else
-            log_error "Black formatting required before push"
-            exit_code=1
         fi
+
+        exit_code=$validation_exit
     else
-        log_info "Black: All files properly formatted"
+        log_info "HuskyCat: All validations passed"
     fi
 
     [[ $exit_code -ne 0 ]] && exit $exit_code
 
     # ------------------------------------------------------------------------
-    # 2. RUFF - Full Codebase Linting
-    # ------------------------------------------------------------------------
-    log_step "Running Ruff on src/ and tests/..."
-    if ! uv_run ruff check src/ tests/ 2>&1; then
-        log_warn "Ruff found issues"
-
-        if is_auto_approve || ask_yes_no "Apply Ruff auto-fixes?"; then
-            log_step "Applying Ruff fixes..."
-            uv_run ruff check --fix src/ tests/
-            log_info "Ruff fixes applied"
-
-            # Check if there are still unfixable issues
-            if ! uv_run ruff check src/ tests/ 2>&1; then
-                log_error "Ruff still has issues that require manual fixes"
-                exit_code=1
-            else
-                log_warn "Files modified - please commit changes before pushing"
-                echo ""
-                echo "  Run: git add -u && git commit --amend --no-edit && git push"
-                echo ""
-                exit 1
-            fi
-        else
-            log_error "Ruff issues must be fixed before push"
-            exit_code=1
-        fi
-    else
-        log_info "Ruff: All files pass"
-    fi
-
-    [[ $exit_code -ne 0 ]] && exit $exit_code
-
-    # ------------------------------------------------------------------------
-    # 3. FLAKE8 - Additional Linting
-    # ------------------------------------------------------------------------
-    log_step "Running Flake8 on src/ and tests/..."
-    if ! uv_run flake8 src/ tests/ 2>&1; then
-        log_error "Flake8 found issues (manual fix required)"
-        exit_code=1
-    else
-        log_info "Flake8: All files pass"
-    fi
-
-    [[ $exit_code -ne 0 ]] && exit $exit_code
-
-    # ------------------------------------------------------------------------
-    # 4. GITLAB CI VALIDATION (if glab available)
+    # 2. HUSKYCAT CI-VALIDATE (GitLab CI configuration)
     # ------------------------------------------------------------------------
     if [[ -f ".gitlab-ci.yml" ]]; then
-        if command -v glab &> /dev/null; then
-            log_step "Validating GitLab CI configuration..."
-            if ! glab ci lint .gitlab-ci.yml 2>&1; then
-                log_error "GitLab CI configuration is invalid"
-                exit_code=1
-            else
-                log_info "GitLab CI: Configuration valid"
-            fi
+        log_step "Validating GitLab CI configuration with HuskyCat..."
+
+        if ! uv run python -m src.huskycat ci-validate .gitlab-ci.yml 2>&1; then
+            log_error "GitLab CI configuration validation failed"
+            exit_code=1
         else
-            log_warn "glab not available, skipping CI validation"
-            echo "  Install: brew install glab (macOS) or see https://gitlab.com/gitlab-org/cli"
+            log_info "HuskyCat CI: Configuration valid"
         fi
     fi
 

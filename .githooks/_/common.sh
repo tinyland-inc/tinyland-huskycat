@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # .githooks/_/common.sh - Shared hook utilities for HuskyCat
 #
+# PARADIGM: Eat your own dogfood - hooks use HuskyCat's validation engine
+#
 # REQUIREMENT: UV venv must be active for development in this repository.
 # Run: uv sync --dev
 #
@@ -98,11 +100,6 @@ verify_uv_environment() {
     return 0
 }
 
-# Run a command through UV
-uv_run() {
-    uv run "$@"
-}
-
 # ============================================================================
 # GIT UTILITIES
 # ============================================================================
@@ -179,60 +176,4 @@ ask_yes_no() {
             return 1
             ;;
     esac
-}
-
-# ============================================================================
-# VALIDATION HELPERS
-# ============================================================================
-
-# Run validation and optionally auto-fix
-# Usage: run_with_autofix "tool_name" "check_cmd" "fix_cmd" files...
-run_with_autofix() {
-    local tool_name="$1"
-    local check_cmd="$2"
-    local fix_cmd="$3"
-    shift 3
-    local files=("$@")
-
-    if [[ ${#files[@]} -eq 0 ]]; then
-        log_info "$tool_name: No files to check"
-        return 0
-    fi
-
-    log_step "Running $tool_name..."
-
-    # Try check first
-    if $check_cmd "${files[@]}" 2>&1; then
-        log_info "$tool_name: All files pass"
-        return 0
-    fi
-
-    # Check failed - offer auto-fix
-    log_warn "$tool_name found issues"
-
-    if is_auto_approve || ask_yes_no "Apply $tool_name auto-fix?"; then
-        log_step "Applying $tool_name fixes..."
-        if $fix_cmd "${files[@]}" 2>&1; then
-            log_info "$tool_name: Fixes applied"
-
-            # Re-stage fixed files
-            for file in "${files[@]}"; do
-                if [[ -f "$file" ]]; then
-                    git add "$file"
-                fi
-            done
-            log_info "Fixed files re-staged"
-            return 0
-        else
-            log_error "$tool_name: Auto-fix failed"
-            return 1
-        fi
-    else
-        log_error "$tool_name: Issues not fixed"
-        echo ""
-        echo "  To fix manually: $fix_cmd ${files[*]}"
-        echo "  To skip hooks:   SKIP_HOOKS=1 git commit"
-        echo ""
-        return 1
-    fi
 }
