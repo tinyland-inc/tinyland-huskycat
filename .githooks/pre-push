@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
-# .githooks/pre-push - Full validation before push using HuskyCat
+# .githooks/pre-push - Fast pre-push validation using HuskyCat
 #
 # PARADIGM: Eat your own dogfood - uses HuskyCat's own validation engine
 #
 # REQUIREMENT: UV venv must be active for development in this repository.
 #
-# This hook runs more comprehensive checks than pre-commit since pushing
-# affects the remote repository and CI pipeline.
+# This hook is intentionally FAST - it only validates CI configuration.
+# Full codebase validation happens in:
+#   - pre-commit hook (staged files only)
+#   - CI pipeline (full validation)
 #
 # Features:
-#   - Uses HuskyCat validate command for full codebase validation
 #   - Uses HuskyCat ci-validate for GitLab CI configuration
-#   - Interactive auto-fix prompts
-#   - Auto-approve mode: HUSKYCAT_AUTO_APPROVE=1 or AUTO_FIX=1
 #   - Skip hooks: SKIP_HOOKS=1 git push (or git push --no-verify)
 
 set -euo pipefail
@@ -45,50 +44,11 @@ main() {
     local exit_code=0
 
     # ------------------------------------------------------------------------
-    # 1. HUSKYCAT VALIDATE --ALL (Full codebase validation)
-    # ------------------------------------------------------------------------
-    log_step "Running HuskyCat full codebase validation..."
-
-    local huskycat_args="--all"
-
-    if is_auto_approve; then
-        huskycat_args="$huskycat_args --fix"
-        log_info "Auto-fix mode enabled (HUSKYCAT_AUTO_APPROVE=1)"
-    elif is_interactive; then
-        huskycat_args="$huskycat_args --interactive"
-    fi
-
-    log_step "Running: uv run python -m src.huskycat validate $huskycat_args"
-
-    # Run validation and capture exit code properly
-    set +e
-    uv run python -m src.huskycat validate $huskycat_args
-    local validation_exit=$?
-    set -e
-
-    if [[ $validation_exit -ne 0 ]]; then
-        log_error "HuskyCat validation failed (exit code: $validation_exit)"
-
-        # Check if files were modified
-        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-            log_warn "Files modified - please commit changes before pushing"
-            echo ""
-            echo "  Run: git add -u && git commit --amend --no-edit && git push"
-            echo ""
-        fi
-
-        exit_code=$validation_exit
-    else
-        log_info "HuskyCat: All validations passed"
-    fi
-
-    [[ $exit_code -ne 0 ]] && exit $exit_code
-
-    # ------------------------------------------------------------------------
-    # 2. HUSKYCAT CI-VALIDATE (GitLab CI configuration)
+    # HUSKYCAT CI-VALIDATE (GitLab CI configuration only - FAST)
+    # Full codebase validation is handled by pre-commit and CI pipeline
     # ------------------------------------------------------------------------
     if [[ -f ".gitlab-ci.yml" ]]; then
-        log_step "Validating GitLab CI configuration with HuskyCat..."
+        log_step "Validating GitLab CI configuration..."
 
         set +e
         uv run python -m src.huskycat ci-validate .gitlab-ci.yml
@@ -99,8 +59,10 @@ main() {
             log_error "GitLab CI configuration validation failed"
             exit_code=$ci_exit
         else
-            log_info "HuskyCat CI: Configuration valid"
+            log_info "CI configuration valid"
         fi
+    else
+        log_info "No .gitlab-ci.yml found, skipping CI validation"
     fi
 
     # ------------------------------------------------------------------------
@@ -108,7 +70,7 @@ main() {
     # ------------------------------------------------------------------------
     if [[ $exit_code -eq 0 ]]; then
         log_header "Pre-Push Passed"
-        log_info "All validations passed! Proceeding with push..."
+        log_info "CI config valid. Full validation will run in CI pipeline."
     else
         log_header "Pre-Push Failed"
         log_error "Fix issues above or use: SKIP_HOOKS=1 git push"

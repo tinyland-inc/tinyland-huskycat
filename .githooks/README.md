@@ -80,13 +80,13 @@ This is also done automatically by `npm install` (via postinstall script).
 │                                  │                                      │
 │                                  ▼                                      │
 │  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │                         PRE-PUSH HOOK                             │  │
+│  │                    PRE-PUSH HOOK (FAST)                           │  │
 │  │                                                                   │  │
 │  │   1. Verify UV venv active                                        │  │
-│  │   2. Run: huskycat validate --all [--fix|--interactive]           │  │
-│  │      └── Full codebase validation with HuskyCat                   │  │
-│  │   3. Run: huskycat ci-validate .gitlab-ci.yml                     │  │
-│  │      └── GitLab CI configuration validation                       │  │
+│  │   2. Run: huskycat ci-validate .gitlab-ci.yml                     │  │
+│  │      └── GitLab CI configuration validation only                  │  │
+│  │                                                                   │  │
+│  │   NOTE: Full codebase validation happens in CI pipeline           │  │
 │  │                                                                   │  │
 │  └───────────────────────────────────────────────────────────────────┘  │
 │                                  │                                      │
@@ -101,7 +101,7 @@ This is also done automatically by `npm install` (via postinstall script).
 |------|---------|--------------|
 | `pre-commit` | Before commit is created | `huskycat validate --staged` on Python files |
 | `commit-msg` | After commit message entered | Validates conventional commit format |
-| `pre-push` | Before push to remote | `huskycat validate --all` + `huskycat ci-validate` |
+| `pre-push` | Before push to remote | `huskycat ci-validate` (CI config only - fast!) |
 
 ## Environment Variables
 
@@ -160,9 +160,11 @@ uv run python -m src.huskycat validate --staged
 uv run python -m src.huskycat validate --staged --fix           # with auto-fix
 uv run python -m src.huskycat validate --staged --interactive   # with prompts
 
-# Pre-push (full codebase)
-uv run python -m src.huskycat validate --all
+# Pre-push (CI config validation only - FAST)
 uv run python -m src.huskycat ci-validate .gitlab-ci.yml
+
+# Full codebase validation (done by CI pipeline, not hooks)
+uv run python -m src.huskycat validate --all
 ```
 
 ## File Structure
