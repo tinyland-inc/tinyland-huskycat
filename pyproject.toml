@@ -65,7 +65,7 @@ docs = [
 ]
 
 [project.scripts]
-huskycat = "huskycat:main"
+huskycat = "huskycat.__main__:main"
 
 [project.urls]
 Homepage = "https://huskycat.pages.io"

@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 # Try to import MCP server components
 try:
-    from mcp_server import MCPServer
+    from huskycat.mcp_server import MCPServer
 
     HAS_MCP_SERVER = True
 except ImportError:

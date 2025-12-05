@@ -1,5 +1,13 @@
 # Claude Code Instructions for HuskyCat Project
 
+## Sprint Plan Reference
+
+See `docs/SPRINT_PLAN.md` for comprehensive development roadmap covering:
+- **Product Mode Architecture**: 5 distinct modes (Git Hooks, CI, CLI, Pipeline, MCP)
+- **Execution Modes**: Container vs Binary
+- **Auto-Fix Framework**: Confidence tiers, mode-specific behavior
+- **Sprint 0-8**: From architecture foundation to auto-fix implementation
+
 ## CRITICAL: Git Commit Rules
 
 **Prefer using validation hooks, but `--no-verify` is acceptable during development.**

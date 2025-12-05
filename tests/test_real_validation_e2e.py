@@ -18,14 +18,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 # Try to import our validation engines
 try:
-    from unified_validation import ValidationEngine
+    from huskycat.unified_validation import ValidationEngine
 
     HAS_UNIFIED = True
 except ImportError:
     HAS_UNIFIED = False
 
 try:
-    from mcp_server import MCPServer
+    from huskycat.mcp_server import MCPServer
 
     HAS_MCP = True
 except ImportError:

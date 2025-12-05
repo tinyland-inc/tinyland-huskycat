@@ -214,16 +214,8 @@ container:build:manifest:
     - if: $CI_COMMIT_TAG
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-container:build:dev:
-  <<: *container_build_template
-  script:
-    - buildah build -f ContainerFile.dev -t $CONTAINER_REGISTRY:dev-$CONTAINER_TAG .
-    - buildah build -f ContainerFile.dev -t $CONTAINER_REGISTRY:dev-latest .
-    - buildah push $CONTAINER_REGISTRY:dev-$CONTAINER_TAG
-    - buildah push $CONTAINER_REGISTRY:dev-latest
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+# NOTE: container:build:dev job removed - ContainerFile.dev does not exist
+# To re-enable, create ContainerFile.dev with development tools
 
 # Stage 2: Complete validation using freshly built container
 validate:complete:
@@ -284,7 +276,7 @@ binary:build:linux:
   script:
     - uv sync --extra build
     - mkdir -p dist/bin
-    - uv run pyinstaller --onefile --name huskycat-linux-amd64 src/__main__.py
+    - uv run pyinstaller --onefile --name huskycat-linux-amd64 huskycat_main.py
     - mv dist/huskycat-linux-amd64 dist/bin/
     - chmod +x dist/bin/huskycat-linux-amd64
     - upx --best --lzma dist/bin/huskycat-linux-amd64 || echo "UPX compression failed, continuing without compression"

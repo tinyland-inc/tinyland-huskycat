@@ -196,14 +196,13 @@ podman run --rm -v .:/workspace huskycat/validator
 podman run -it --rm -v .:/workspace huskycat/validator:dev bash
 ```
 
-## Performance
+## Benefits
 
 After simplification:
-- **Startup time**: <1 second
-- **Validation speed**: 10x faster (no network overhead)
-- **Container size**: 70% smaller
-- **Memory usage**: 50% reduction
-- **Code maintenance**: 40% less code to maintain
+- **Consistent execution**: Container ensures same toolchain everywhere
+- **No network overhead**: stdio-based MCP communication
+- **Reduced complexity**: Fewer components to maintain
+- **Portable**: Single container or binary works across platforms
 
 ## Migration Guide
 
