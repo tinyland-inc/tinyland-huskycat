@@ -499,14 +499,25 @@ sign:darwin-arm64:
         echo "=== Signing identities ==="
         security find-identity -v "$KEYCHAIN_NAME"
 
-        # Sign the binary
-        echo "Signing HuskyCat binary..."
-        codesign --force --options runtime --sign "$APPLE_DEVELOPER_ID_APPLICATION" --keychain "$KEYCHAIN_NAME" dist/bin/huskycat-darwin-arm64
-        codesign --verify --verbose dist/bin/huskycat-darwin-arm64
-        echo "Binary signed with Developer ID"
+        # Check if we have an Application certificate (not just Installer)
+        APP_CERT_COUNT=$(security find-identity -v "$KEYCHAIN_NAME" | grep -c "Developer ID Application" || true)
+        if [ "$APP_CERT_COUNT" -eq 0 ]; then
+          echo "WARNING: No Developer ID Application certificate found"
+          echo "Certificate imported is Developer ID Installer (for PKG signing)"
+          echo "Falling back to ad-hoc signing for binary..."
+          codesign --force --sign - dist/bin/huskycat-darwin-arm64
+          codesign --verify --verbose dist/bin/huskycat-darwin-arm64
+          echo "Binary ad-hoc signed (suitable for testing, not App Store/notarization)"
+        else
+          # Sign the binary with Developer ID Application
+          echo "Signing HuskyCat binary with Developer ID Application..."
+          codesign --force --options runtime --sign "$APPLE_DEVELOPER_ID_APPLICATION" --keychain "$KEYCHAIN_NAME" dist/bin/huskycat-darwin-arm64
+          codesign --verify --verbose dist/bin/huskycat-darwin-arm64
+          echo "Binary signed with Developer ID"
+        fi
 
-        # Notarize if credentials available
-        if [ -n "$APPLE_ID" ] && [ -n "$APPLE_NOTARIZE_PASSWORD" ] && [ -n "$APPLE_TEAM_ID" ]; then
+        # Notarize if credentials available and we used Developer ID signing (not ad-hoc)
+        if [ "$APP_CERT_COUNT" -gt 0 ] && [ -n "$APPLE_ID" ] && [ -n "$APPLE_NOTARIZE_PASSWORD" ] && [ -n "$APPLE_TEAM_ID" ]; then
           echo "Notarizing binary..."
 
           # Create a zip for notarization
