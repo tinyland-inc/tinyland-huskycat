@@ -58,24 +58,25 @@ class SetupHooksCommand(BaseCommand):
 
 # Function to run validation with binary-first approach
 run_validation() {
-    local args="$1"
+    local mode="$1"
 
     if [ -f "./dist/huskycat" ]; then
-        ./dist/huskycat validate --staged $args
+        ./dist/huskycat $mode validate --staged
     elif command -v huskycat >/dev/null 2>&1; then
-        huskycat validate --staged $args
+        huskycat $mode validate --staged
     elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
-        uv run python3 -m src.huskycat validate --staged $args
+        uv run python3 -m src.huskycat $mode validate --staged
     elif command -v podman >/dev/null 2>&1; then
-        podman run --rm -v "$(pwd)":/workspace -it huskycat:local validate --staged $args
+        podman run --rm -v "$(pwd)":/workspace -it huskycat:local $mode validate --staged
     else
         echo "❌ HuskyCat not found. Install: curl -sSL https://huskycat.pages.io/install.sh | bash"
         exit 1
     fi
 }
 
-# Run validation with interactive auto-fix
-run_validation "--interactive"
+# Run validation with git_hooks mode (auto-detected, but explicit for clarity)
+# The git_hooks mode uses fast tools only and respects TTY for interactivity
+run_validation "--mode git_hooks"
 exit_code=$?
 
 # If validation failed and user wants auto-fix, re-stage the files
@@ -150,18 +151,19 @@ fi
 echo "🔍 HuskyCat: Validating files being added to index..."
 
 # Function to run validation with binary-first approach
+# Uses CLI mode for interactive validation on git add
 run_validation() {
     local files="$1"
     local args="$2"
 
     if [ -f "./dist/huskycat" ]; then
-        ./dist/huskycat validate $files $args
+        ./dist/huskycat --mode cli validate $files $args
     elif command -v huskycat >/dev/null 2>&1; then
-        huskycat validate $files $args
+        huskycat --mode cli validate $files $args
     elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
-        uv run python3 -m src.huskycat validate $files $args
+        uv run python3 -m src.huskycat --mode cli validate $files $args
     elif command -v podman >/dev/null 2>&1; then
-        podman run --rm -v "$(pwd)":/workspace -it huskycat:local validate $files $args
+        podman run --rm -v "$(pwd)":/workspace -it huskycat:local --mode cli validate $files $args
     else
         echo "❌ HuskyCat not found. Install: curl -sSL https://huskycat.pages.io/install.sh | bash"
         exit 1
@@ -266,18 +268,19 @@ exit 0
 # Usage: git-add-with-validation [files...]
 
 # Function to run validation with binary-first approach
+# Uses CLI mode for interactive validation
 run_validation() {
     local files="$1"
     local args="$2"
 
     if [ -f "./dist/huskycat" ]; then
-        ./dist/huskycat validate $files $args
+        ./dist/huskycat --mode cli validate $files $args
     elif command -v huskycat >/dev/null 2>&1; then
-        huskycat validate $files $args
+        huskycat --mode cli validate $files $args
     elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
-        uv run python3 -m src.huskycat validate $files $args
+        uv run python3 -m src.huskycat --mode cli validate $files $args
     elif command -v podman >/dev/null 2>&1; then
-        podman run --rm -v "$(pwd)":/workspace -it huskycat:local validate $files $args
+        podman run --rm -v "$(pwd)":/workspace -it huskycat:local --mode cli validate $files $args
     else
         echo "❌ HuskyCat not found. Install: curl -sSL https://huskycat.pages.io/install.sh | bash"
         exit 1
@@ -334,39 +337,40 @@ echo "Setting up git aliases for HuskyCat auto-fix validation..."
 git config --global alias.add-fix '!{git_add_wrapper} "$@" && git add "$@"'
 
 # Alternative: create a function-based alias that works better
+# Uses CLI mode for interactive validation with auto-fix prompts
 git config --global alias.addf '!f() {{
     for file in "$@"; do
         if [ -f "$file" ]; then
             echo "🔍 Validating $file before adding...";
             if [ -f "./dist/huskycat" ]; then
-                ./dist/huskycat validate "$file" || {{
+                ./dist/huskycat --mode cli validate "$file" || {{
                     echo "💡 Auto-fix available for $file";
                     echo -n "🤖 Apply auto-fix? [y/N]: ";
                     read -r response;
                     if [[ "$response" =~ ^[Yy]$ ]]; then
-                        ./dist/huskycat validate "$file" --fix && echo "✅ Fixed $file";
+                        ./dist/huskycat --mode cli validate "$file" --fix && echo "✅ Fixed $file";
                     else
                         echo "❌ Skipping $file - fix manually"; exit 1;
                     fi;
                 }};
             elif command -v huskycat >/dev/null 2>&1; then
-                huskycat validate "$file" || {{
+                huskycat --mode cli validate "$file" || {{
                     echo "💡 Auto-fix available for $file";
                     echo -n "🤖 Apply auto-fix? [y/N]: ";
                     read -r response;
                     if [[ "$response" =~ ^[Yy]$ ]]; then
-                        huskycat validate "$file" --fix && echo "✅ Fixed $file";
+                        huskycat --mode cli validate "$file" --fix && echo "✅ Fixed $file";
                     else
                         echo "❌ Skipping $file - fix manually"; exit 1;
                     fi;
                 }};
             elif command -v uv >/dev/null 2>&1 && [ -f "pyproject.toml" ]; then
-                uv run python3 -m src.huskycat validate "$file" || {{
+                uv run python3 -m src.huskycat --mode cli validate "$file" || {{
                     echo "💡 Auto-fix available for $file";
                     echo -n "🤖 Apply auto-fix? [y/N]: ";
                     read -r response;
                     if [[ "$response" =~ ^[Yy]$ ]]; then
-                        uv run python3 -m src.huskycat validate "$file" --fix && echo "✅ Fixed $file";
+                        uv run python3 -m src.huskycat --mode cli validate "$file" --fix && echo "✅ Fixed $file";
                     else
                         echo "❌ Skipping $file - fix manually"; exit 1;
                     fi;

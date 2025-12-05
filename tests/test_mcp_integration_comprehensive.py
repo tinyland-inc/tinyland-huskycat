@@ -24,6 +24,8 @@ try:
     HAS_MCP_SERVER = True
 except ImportError:
     HAS_MCP_SERVER = False
+    # Define placeholder for type hints
+    MCPServer = type("MCPServer", (), {})  # type: ignore
 
 try:
     pass

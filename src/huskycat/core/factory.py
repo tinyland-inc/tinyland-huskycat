@@ -3,25 +3,35 @@ Command factory pattern for HuskyCat validation platform.
 """
 
 from pathlib import Path
-from typing import Dict, List, Optional, Type, Any
+from typing import Dict, List, Optional, Type, Any, TYPE_CHECKING
 from importlib import import_module
 
 from .base import BaseCommand, CommandResult, CommandStatus
+
+if TYPE_CHECKING:
+    from .adapters.base import ModeAdapter
 
 
 class HuskyCatFactory:
     """Factory for creating and managing validation commands."""
 
-    def __init__(self, config_dir: Optional[Path] = None, verbose: bool = False):
+    def __init__(
+        self,
+        config_dir: Optional[Path] = None,
+        verbose: bool = False,
+        adapter: Optional["ModeAdapter"] = None,
+    ):
         """
         Initialize the factory.
 
         Args:
             config_dir: Directory containing configuration files
             verbose: Enable verbose output
+            adapter: Mode adapter for mode-specific behavior
         """
         self.config_dir = config_dir or Path.home() / ".huskycat"
         self.verbose = verbose
+        self.adapter = adapter
         self._commands: Dict[str, Type[BaseCommand]] = {}
         self._register_commands()
 
@@ -68,7 +78,11 @@ class HuskyCatFactory:
         if not command_class:
             return None
 
-        return command_class(config_dir=self.config_dir, verbose=self.verbose)
+        return command_class(
+            config_dir=self.config_dir,
+            verbose=self.verbose,
+            adapter=self.adapter,
+        )
 
     def execute_command(
         self, command_name: str, *args: Any, **kwargs: Any

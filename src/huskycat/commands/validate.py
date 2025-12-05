@@ -1,5 +1,8 @@
 """
 Validation command for running all configured validators.
+
+Uses the mode adapter to determine which tools to run based on the
+current product mode (git_hooks, ci, cli, pipeline, mcp).
 """
 
 from pathlib import Path
@@ -51,12 +54,29 @@ class ValidateCommand(BaseCommand):
                 status=CommandStatus.SUCCESS, message="No files to validate"
             )
 
-        # Create validation engine (container-only mode)
+        # Get mode-specific settings from adapter if available
+        adapter_config = self.adapter.config if self.adapter else None
+        tool_selection = self.adapter.get_tool_selection() if self.adapter else ["all"]
+
+        # Override interactive based on adapter if not explicitly set
+        effective_interactive = interactive
+        if adapter_config and not interactive:
+            effective_interactive = adapter_config.interactive and staged
+
+        # Create validation engine with mode-aware settings
         engine = ValidationEngine(
             auto_fix=fix,
-            interactive=interactive and staged,
+            interactive=effective_interactive,
             allow_warnings=allow_warnings,
         )
+
+        # Convert tool selection to filter list (None means all tools)
+        tools_filter = None if "all" in tool_selection else tool_selection
+
+        # Log tool selection in verbose mode
+        if self.verbose:
+            mode_name = self.adapter.name if self.adapter else "default"
+            print(f"[TOOLS] Mode '{mode_name}' using: {tool_selection}")
 
         # Use the appropriate validation method
         if staged:
@@ -66,7 +86,7 @@ class ValidateCommand(BaseCommand):
             for file_path in files_to_validate:
                 path = Path(file_path)
                 if path.exists():
-                    file_results = engine.validate_file(path)
+                    file_results = engine.validate_file(path, tools=tools_filter)
                     if file_results:
                         results[file_path] = file_results
 
@@ -109,12 +129,24 @@ class ValidateCommand(BaseCommand):
         if summary.get("fixed_files", 0) > 0:
             message += f" ({summary['fixed_files']} files auto-fixed)"
 
+        # Prepare data for structured output (JSON, JUnit, etc.)
+        data = {
+            **summary,
+            "mode": self.adapter.name if self.adapter else "cli",
+            "tools_used": tool_selection,
+            "files_checked": len(files_to_validate),
+            "results": {
+                filepath: [r.to_dict() for r in file_results]
+                for filepath, file_results in results.items()
+            },
+        }
+
         return CommandResult(
             status=status,
             message=message,
             errors=all_errors,
             warnings=all_warnings,
-            data=summary,
+            data=data,
         )
 
     def _get_files_to_validate(

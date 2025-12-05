@@ -24,6 +24,33 @@ class OutputFormat(Enum):
     JSONRPC = "jsonrpc"  # MCP protocol
 
 
+class FixConfidence(Enum):
+    """Confidence level for auto-fix operations.
+
+    Used to determine whether to apply fixes automatically or prompt user.
+
+    Levels:
+    - SAFE: Formatting changes that cannot change semantics (black, prettier)
+    - LIKELY: Code style fixes that are usually safe (autoflake import removal)
+    - UNCERTAIN: Semantic changes that need human review
+    """
+
+    SAFE = "safe"  # Always safe to apply (formatting)
+    LIKELY = "likely"  # Usually safe (style fixes)
+    UNCERTAIN = "uncertain"  # Needs human review
+
+
+# Tool confidence mapping - which tools produce which confidence fixes
+TOOL_FIX_CONFIDENCE = {
+    "python-black": FixConfidence.SAFE,  # Formatting only
+    "js-prettier": FixConfidence.SAFE,  # Formatting only
+    "autoflake": FixConfidence.LIKELY,  # Import removal
+    "ruff": FixConfidence.LIKELY,  # Style fixes
+    "yamllint": FixConfidence.SAFE,  # Whitespace fixes
+    "js-eslint": FixConfidence.LIKELY,  # Style fixes
+}
+
+
 @dataclass
 class AdapterConfig:
     """Configuration container for adapter settings."""
@@ -61,9 +88,7 @@ class ModeAdapter(ABC):
     def config(self) -> AdapterConfig:
         """Get the adapter configuration."""
 
-    def format_output(
-        self, results: Dict[str, Any], summary: Dict[str, Any]
-    ) -> str:
+    def format_output(self, results: Dict[str, Any], summary: Dict[str, Any]) -> str:
         """
         Format validation results for output.
 
@@ -89,9 +114,7 @@ class ModeAdapter(ABC):
         else:
             return self._format_human(results, summary)
 
-    def _format_minimal(
-        self, results: Dict[str, Any], summary: Dict[str, Any]
-    ) -> str:
+    def _format_minimal(self, results: Dict[str, Any], summary: Dict[str, Any]) -> str:
         """Minimal output - only errors."""
         lines = []
         for filepath, file_results in results.items():
@@ -101,9 +124,7 @@ class ModeAdapter(ABC):
                         lines.append(f"{filepath}: {error}")
         return "\n".join(lines) if lines else ""
 
-    def _format_human(
-        self, results: Dict[str, Any], summary: Dict[str, Any]
-    ) -> str:
+    def _format_human(self, results: Dict[str, Any], summary: Dict[str, Any]) -> str:
         """Human-readable colored output."""
         lines = []
 
@@ -141,9 +162,7 @@ class ModeAdapter(ABC):
 
         return "\n".join(lines)
 
-    def _format_json(
-        self, results: Dict[str, Any], summary: Dict[str, Any]
-    ) -> str:
+    def _format_json(self, results: Dict[str, Any], summary: Dict[str, Any]) -> str:
         """JSON output for pipeline integration."""
         import json
 
@@ -158,12 +177,14 @@ class ModeAdapter(ABC):
                 if hasattr(result, "to_dict"):
                     output["results"][filepath].append(result.to_dict())
                 else:
-                    output["results"][filepath].append({
-                        "tool": getattr(result, "tool", "unknown"),
-                        "success": getattr(result, "success", True),
-                        "errors": getattr(result, "errors", []),
-                        "warnings": getattr(result, "warnings", []),
-                    })
+                    output["results"][filepath].append(
+                        {
+                            "tool": getattr(result, "tool", "unknown"),
+                            "success": getattr(result, "success", True),
+                            "errors": getattr(result, "errors", []),
+                            "warnings": getattr(result, "warnings", []),
+                        }
+                    )
 
         return json.dumps(output, indent=2)
 
@@ -201,32 +222,35 @@ class ModeAdapter(ABC):
         lines.append("</testsuites>")
         return "\n".join(lines)
 
-    def _format_jsonrpc(
-        self, results: Dict[str, Any], summary: Dict[str, Any]
-    ) -> str:
+    def _format_jsonrpc(self, results: Dict[str, Any], summary: Dict[str, Any]) -> str:
         """JSON-RPC format for MCP protocol."""
         import json
 
         # MCP responses are wrapped in JSON-RPC format elsewhere
         # Here we just prepare the result content
-        return json.dumps({
-            "summary": summary,
-            "results": {
-                filepath: [
-                    result.to_dict() if hasattr(result, "to_dict")
-                    else {"tool": getattr(result, "tool", "unknown")}
-                    for result in file_results
-                ]
-                for filepath, file_results in results.items()
-            },
-        })
+        return json.dumps(
+            {
+                "summary": summary,
+                "results": {
+                    filepath: [
+                        (
+                            result.to_dict()
+                            if hasattr(result, "to_dict")
+                            else {"tool": getattr(result, "tool", "unknown")}
+                        )
+                        for result in file_results
+                    ]
+                    for filepath, file_results in results.items()
+                },
+            }
+        )
 
-    def should_prompt_for_fix(self, confidence: str) -> bool:
+    def should_prompt_for_fix(self, confidence: "FixConfidence") -> bool:
         """
         Determine if we should prompt user for a fix at given confidence.
 
         Args:
-            confidence: Fix confidence level ("safe", "likely", "uncertain")
+            confidence: Fix confidence level (FixConfidence enum)
 
         Returns:
             True if should prompt, False if should auto-apply or skip
@@ -235,7 +259,48 @@ class ModeAdapter(ABC):
             return False
 
         # In interactive mode, prompt for uncertain fixes
-        return confidence == "uncertain"
+        return confidence == FixConfidence.UNCERTAIN
+
+    def should_auto_fix(self, confidence: "FixConfidence") -> bool:
+        """
+        Determine if we should auto-apply a fix at given confidence.
+
+        The decision depends on mode:
+        - Git Hooks: Auto-apply SAFE fixes only (fast feedback)
+        - CLI: Auto-apply SAFE and LIKELY (user initiated)
+        - CI/Pipeline/MCP: Never auto-fix (read-only)
+
+        Args:
+            confidence: Fix confidence level (FixConfidence enum)
+
+        Returns:
+            True if should auto-apply, False otherwise
+        """
+        # Non-interactive modes never auto-fix
+        if not self.config.interactive and self.config.output_format not in (
+            OutputFormat.MINIMAL,  # Git hooks can fix
+            OutputFormat.HUMAN,  # CLI can fix
+        ):
+            return False
+
+        # Fail-fast modes (git_hooks) only apply SAFE fixes
+        if self.config.fail_fast:
+            return confidence == FixConfidence.SAFE
+
+        # Interactive modes apply SAFE and LIKELY fixes
+        return confidence in (FixConfidence.SAFE, FixConfidence.LIKELY)
+
+    def get_fix_confidence(self, tool_name: str) -> "FixConfidence":
+        """
+        Get the fix confidence level for a tool.
+
+        Args:
+            tool_name: Name of the validation tool
+
+        Returns:
+            FixConfidence level for the tool's fixes
+        """
+        return TOOL_FIX_CONFIDENCE.get(tool_name, FixConfidence.UNCERTAIN)
 
     def get_tool_selection(self) -> List[str]:
         """
@@ -248,7 +313,8 @@ class ModeAdapter(ABC):
 
         if tools_config == "fast":
             # Fast tools for git hooks - Python formatters and basic linters
-            return ["black", "ruff", "mypy", "flake8"]
+            # Names must match validator names in unified_validation.py
+            return ["python-black", "ruff", "mypy", "flake8"]
         elif tools_config == "all":
             # All available tools
             return ["all"]

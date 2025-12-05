@@ -15,7 +15,12 @@ from pathlib import Path
 
 from .core.factory import HuskyCatFactory
 from .core.base import CommandStatus
-from .core.mode_detector import ProductMode, detect_mode, get_adapter, get_mode_description
+from .core.mode_detector import (
+    ProductMode,
+    detect_mode,
+    get_adapter,
+    get_mode_description,
+)
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -218,10 +223,11 @@ def main() -> int:
     if verbose:
         print(f"[MODE] {get_mode_description(mode)}")
 
-    # Create factory
+    # Create factory with mode adapter
     factory = HuskyCatFactory(
         config_dir=args.config_dir if hasattr(args, "config_dir") else None,
         verbose=verbose,
+        adapter=adapter,
     )
 
     # Build kwargs from args
@@ -257,13 +263,21 @@ def _print_result(result, adapter):
     config = adapter.config
 
     # JSON/JSONRPC modes: use adapter formatting with results data
-    if config.output_format in (OutputFormat.JSON, OutputFormat.JSONRPC, OutputFormat.JUNIT_XML):
+    if config.output_format in (
+        OutputFormat.JSON,
+        OutputFormat.JSONRPC,
+        OutputFormat.JUNIT_XML,
+    ):
         # For structured output, format the result data
         if result.data:
             results = result.data.get("results", {})
             summary = {
-                "total_errors": result.data.get("total_errors", len(result.errors or [])),
-                "total_warnings": result.data.get("total_warnings", len(result.warnings or [])),
+                "total_errors": result.data.get(
+                    "total_errors", len(result.errors or [])
+                ),
+                "total_warnings": result.data.get(
+                    "total_warnings", len(result.warnings or [])
+                ),
                 "files_checked": result.data.get("files_checked", 0),
                 "fixed_files": result.data.get("fixed_files", 0),
             }
@@ -271,12 +285,17 @@ def _print_result(result, adapter):
         else:
             # Simple JSON for commands without detailed results
             import json
-            print(json.dumps({
-                "status": result.status.value,
-                "message": result.message,
-                "errors": result.errors or [],
-                "warnings": result.warnings or [],
-            }))
+
+            print(
+                json.dumps(
+                    {
+                        "status": result.status.value,
+                        "message": result.message,
+                        "errors": result.errors or [],
+                        "warnings": result.warnings or [],
+                    }
+                )
+            )
         return
 
     # Minimal mode (git hooks): silent on success

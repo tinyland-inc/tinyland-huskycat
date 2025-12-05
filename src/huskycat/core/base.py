@@ -6,7 +6,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .adapters.base import ModeAdapter
 
 
 class CommandStatus(Enum):
@@ -38,16 +41,23 @@ class CommandResult:
 class BaseCommand(ABC):
     """Abstract base class for all commands."""
 
-    def __init__(self, config_dir: Optional[Path] = None, verbose: bool = False):
+    def __init__(
+        self,
+        config_dir: Optional[Path] = None,
+        verbose: bool = False,
+        adapter: Optional["ModeAdapter"] = None,
+    ):
         """
         Initialize the command.
 
         Args:
             config_dir: Directory containing configuration files
             verbose: Enable verbose output
+            adapter: Mode adapter for mode-specific behavior
         """
         self.config_dir = config_dir or Path.home() / ".huskycat"
         self.verbose = verbose
+        self.adapter = adapter
         self.config_dir.mkdir(parents=True, exist_ok=True)
 
     @abstractmethod

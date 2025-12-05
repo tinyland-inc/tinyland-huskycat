@@ -4,7 +4,13 @@ Mode Adapters for HuskyCat.
 Each adapter configures behavior for a specific product mode.
 """
 
-from .base import ModeAdapter, OutputFormat
+from .base import (
+    ModeAdapter,
+    OutputFormat,
+    FixConfidence,
+    TOOL_FIX_CONFIDENCE,
+    AdapterConfig,
+)
 from .git_hooks import GitHooksAdapter
 from .ci import CIAdapter
 from .cli import CLIAdapter
@@ -14,6 +20,9 @@ from .mcp import MCPAdapter
 __all__ = [
     "ModeAdapter",
     "OutputFormat",
+    "FixConfidence",
+    "TOOL_FIX_CONFIDENCE",
+    "AdapterConfig",
     "GitHooksAdapter",
     "CIAdapter",
     "CLIAdapter",

@@ -32,6 +32,8 @@ from huskycat.core.adapters import (
     PipelineAdapter,
     MCPAdapter,
     OutputFormat,
+    FixConfidence,
+    TOOL_FIX_CONFIDENCE,
 )
 
 
@@ -239,6 +241,178 @@ class TestModeDescriptions:
             assert desc is not None
             assert len(desc) > 0
             assert mode.value in desc.lower() or mode.name.lower().replace("_", " ") in desc.lower()
+
+
+class TestAdapterToolSelection:
+    """Test adapter tool selection for different modes."""
+
+    def test_git_hooks_selects_fast_tools(self):
+        """Git hooks mode should only use fast tools."""
+        adapter = GitHooksAdapter()
+        tools = adapter.get_tool_selection()
+
+        # Should be fast tools only (names match unified_validation.py)
+        assert "python-black" in tools
+        assert "ruff" in tools
+        assert "mypy" in tools
+        assert "flake8" in tools
+        # Should NOT include slower tools
+        assert "bandit" not in tools
+        assert "shellcheck" not in tools
+
+    def test_ci_mode_selects_all_tools(self):
+        """CI mode should use all tools for comprehensive validation."""
+        adapter = CIAdapter()
+        tools = adapter.get_tool_selection()
+
+        # Should return ["all"] for all tools
+        assert tools == ["all"]
+
+    def test_cli_mode_uses_configured_tools(self):
+        """CLI mode should use configured tools (defaults to all)."""
+        adapter = CLIAdapter()
+        tools = adapter.get_tool_selection()
+
+        # Should default to all tools
+        assert tools == ["all"]
+
+    def test_pipeline_mode_uses_all_tools(self):
+        """Pipeline mode should use all tools."""
+        adapter = PipelineAdapter()
+        tools = adapter.get_tool_selection()
+
+        assert tools == ["all"]
+
+    def test_mcp_mode_uses_all_tools(self):
+        """MCP mode should use all tools."""
+        adapter = MCPAdapter()
+        tools = adapter.get_tool_selection()
+
+        assert tools == ["all"]
+
+
+class TestValidateCommandWithAdapter:
+    """Test ValidateCommand integration with adapters."""
+
+    def test_validate_command_receives_adapter(self):
+        """ValidateCommand should receive adapter from factory."""
+        from huskycat.core.factory import HuskyCatFactory
+        from huskycat.commands.validate import ValidateCommand
+
+        adapter = GitHooksAdapter()
+        factory = HuskyCatFactory(adapter=adapter)
+
+        command = factory.create_command("validate")
+        assert command is not None
+        assert command.adapter is adapter
+
+    def test_validate_command_uses_adapter_tool_selection(self):
+        """ValidateCommand should use adapter's tool selection."""
+        from huskycat.commands.validate import ValidateCommand
+
+        adapter = GitHooksAdapter()
+        command = ValidateCommand(adapter=adapter)
+
+        # Verify adapter is set
+        assert command.adapter is adapter
+
+        # Verify tool selection would use fast tools (names match unified_validation.py)
+        tools = command.adapter.get_tool_selection()
+        assert tools == ["python-black", "ruff", "mypy", "flake8"]
+
+
+class TestAutoFixConfidenceTiers:
+    """Test auto-fix confidence tier system."""
+
+    def test_fix_confidence_enum_values(self):
+        """FixConfidence enum should have correct values."""
+        assert FixConfidence.SAFE.value == "safe"
+        assert FixConfidence.LIKELY.value == "likely"
+        assert FixConfidence.UNCERTAIN.value == "uncertain"
+
+    def test_tool_confidence_mapping(self):
+        """Tools should have correct confidence mappings."""
+        # Formatting tools are SAFE
+        assert TOOL_FIX_CONFIDENCE["python-black"] == FixConfidence.SAFE
+        assert TOOL_FIX_CONFIDENCE["js-prettier"] == FixConfidence.SAFE
+        assert TOOL_FIX_CONFIDENCE["yamllint"] == FixConfidence.SAFE
+
+        # Style tools are LIKELY
+        assert TOOL_FIX_CONFIDENCE["autoflake"] == FixConfidence.LIKELY
+        assert TOOL_FIX_CONFIDENCE["ruff"] == FixConfidence.LIKELY
+        assert TOOL_FIX_CONFIDENCE["js-eslint"] == FixConfidence.LIKELY
+
+    def test_unknown_tool_returns_uncertain(self):
+        """Unknown tools should default to UNCERTAIN confidence."""
+        adapter = CLIAdapter()
+        confidence = adapter.get_fix_confidence("unknown-tool")
+        assert confidence == FixConfidence.UNCERTAIN
+
+    def test_git_hooks_only_auto_fixes_safe(self):
+        """Git hooks mode should only auto-fix SAFE confidence."""
+        adapter = GitHooksAdapter()
+
+        # SAFE should auto-fix
+        assert adapter.should_auto_fix(FixConfidence.SAFE) is True
+
+        # LIKELY and UNCERTAIN should NOT auto-fix in fail-fast mode
+        assert adapter.should_auto_fix(FixConfidence.LIKELY) is False
+        assert adapter.should_auto_fix(FixConfidence.UNCERTAIN) is False
+
+    def test_cli_auto_fixes_safe_and_likely(self):
+        """CLI mode should auto-fix SAFE and LIKELY confidence."""
+        adapter = CLIAdapter()
+
+        # SAFE and LIKELY should auto-fix
+        assert adapter.should_auto_fix(FixConfidence.SAFE) is True
+        assert adapter.should_auto_fix(FixConfidence.LIKELY) is True
+
+        # UNCERTAIN should NOT auto-fix
+        assert adapter.should_auto_fix(FixConfidence.UNCERTAIN) is False
+
+    def test_ci_never_auto_fixes(self):
+        """CI mode should never auto-fix (read-only)."""
+        adapter = CIAdapter()
+
+        # Nothing should auto-fix in CI
+        assert adapter.should_auto_fix(FixConfidence.SAFE) is False
+        assert adapter.should_auto_fix(FixConfidence.LIKELY) is False
+        assert adapter.should_auto_fix(FixConfidence.UNCERTAIN) is False
+
+    def test_pipeline_never_auto_fixes(self):
+        """Pipeline mode should never auto-fix (read-only)."""
+        adapter = PipelineAdapter()
+
+        assert adapter.should_auto_fix(FixConfidence.SAFE) is False
+        assert adapter.should_auto_fix(FixConfidence.LIKELY) is False
+        assert adapter.should_auto_fix(FixConfidence.UNCERTAIN) is False
+
+    def test_mcp_never_auto_fixes(self):
+        """MCP mode should never auto-fix (read-only)."""
+        adapter = MCPAdapter()
+
+        assert adapter.should_auto_fix(FixConfidence.SAFE) is False
+        assert adapter.should_auto_fix(FixConfidence.LIKELY) is False
+        assert adapter.should_auto_fix(FixConfidence.UNCERTAIN) is False
+
+    def test_cli_prompts_for_uncertain(self):
+        """CLI mode should prompt for UNCERTAIN fixes."""
+        adapter = CLIAdapter()
+
+        # Should prompt for UNCERTAIN
+        assert adapter.should_prompt_for_fix(FixConfidence.UNCERTAIN) is True
+
+        # Should NOT prompt for SAFE or LIKELY (auto-applied)
+        assert adapter.should_prompt_for_fix(FixConfidence.SAFE) is False
+        assert adapter.should_prompt_for_fix(FixConfidence.LIKELY) is False
+
+    def test_ci_never_prompts(self):
+        """CI mode should never prompt (non-interactive)."""
+        adapter = CIAdapter()
+
+        assert adapter.should_prompt_for_fix(FixConfidence.SAFE) is False
+        assert adapter.should_prompt_for_fix(FixConfidence.LIKELY) is False
+        assert adapter.should_prompt_for_fix(FixConfidence.UNCERTAIN) is False
 
 
 # Mock classes for testing

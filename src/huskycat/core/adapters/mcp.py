@@ -48,15 +48,17 @@ class MCPAdapter(ModeAdapter):
         """
         import json
 
-        return json.dumps({
-            "content": [
-                {
-                    "type": "text",
-                    "text": self._format_mcp_text(results, summary),
-                }
-            ],
-            "isError": summary.get("total_errors", 0) > 0,
-        })
+        return json.dumps(
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": self._format_mcp_text(results, summary),
+                    }
+                ],
+                "isError": summary.get("total_errors", 0) > 0,
+            }
+        )
 
     def _format_mcp_text(self, results, summary):
         """Format results as readable text for MCP response."""
@@ -69,7 +71,9 @@ class MCPAdapter(ModeAdapter):
         if total_errors == 0 and total_warnings == 0:
             lines.append(f"✓ Validation passed ({files_checked} files)")
         else:
-            lines.append(f"Validation: {total_errors} errors, {total_warnings} warnings")
+            lines.append(
+                f"Validation: {total_errors} errors, {total_warnings} warnings"
+            )
 
             for filepath, file_results in results.items():
                 for result in file_results:

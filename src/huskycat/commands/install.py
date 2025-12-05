@@ -66,7 +66,12 @@ class InstallCommand(BaseCommand):
                 if Path(executable).resolve() != target.resolve():
                     shutil.copy2(executable, target)
                     # Ensure executable permissions
-                    target.chmod(target.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+                    target.chmod(
+                        target.stat().st_mode
+                        | stat.S_IXUSR
+                        | stat.S_IXGRP
+                        | stat.S_IXOTH
+                    )
                     data["binary_installed"] = str(target)
                     self.log(f"✓ Binary installed to {target}")
                 else:
@@ -98,7 +103,9 @@ class InstallCommand(BaseCommand):
                 )
                 hooks_result = hooks_cmd.execute()
                 if hooks_result.status == CommandStatus.SUCCESS:
-                    data["hooks_installed"] = hooks_result.data.get("hooks_installed", [])
+                    data["hooks_installed"] = hooks_result.data.get(
+                        "hooks_installed", []
+                    )
                     self.log("✓ Git hooks installed")
                 else:
                     warnings.extend(hooks_result.warnings or [])
@@ -167,9 +174,9 @@ class InstallCommand(BaseCommand):
         shell = os.environ.get("SHELL", "")
 
         if "zsh" in shell:
-            return f'echo \'export PATH="$PATH:{install_dir}"\' >> ~/.zshrc && source ~/.zshrc'
+            return f"echo 'export PATH=\"$PATH:{install_dir}\"' >> ~/.zshrc && source ~/.zshrc"
         elif "bash" in shell:
-            return f'echo \'export PATH="$PATH:{install_dir}"\' >> ~/.bashrc && source ~/.bashrc'
+            return f"echo 'export PATH=\"$PATH:{install_dir}\"' >> ~/.bashrc && source ~/.bashrc"
         elif "fish" in shell:
             return f"fish_add_path {install_dir}"
         else:
