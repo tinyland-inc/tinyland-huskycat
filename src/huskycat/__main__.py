@@ -1,5 +1,12 @@
 """
-CLI interface for HuskyCat using factory pattern.
+CLI interface for HuskyCat using factory pattern with mode detection.
+
+HuskyCat operates in 5 distinct product modes:
+- Git Hooks: Pre-commit/pre-push validation
+- CI: Pipeline integration with structured reports
+- CLI: Interactive terminal with rich output
+- Pipeline: Machine-readable JSON for toolchains
+- MCP: AI assistant integration via JSON-RPC
 """
 
 import sys
@@ -8,6 +15,7 @@ from pathlib import Path
 
 from .core.factory import HuskyCatFactory
 from .core.base import CommandStatus
+from .core.mode_detector import ProductMode, detect_mode, get_adapter, get_mode_description
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -22,6 +30,14 @@ def create_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--config-dir", type=Path, help="Configuration directory (default: ~/.huskycat)"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["git_hooks", "ci", "cli", "pipeline", "mcp"],
+        help="Override auto-detected product mode",
+    )
+    parser.add_argument(
+        "--json", action="store_true", help="Force JSON output (sets pipeline mode)"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -189,10 +205,23 @@ def main() -> int:
         parser.print_help()
         return 0
 
+    # Detect product mode
+    mode_override = getattr(args, "mode", None)
+    if getattr(args, "json", False):
+        mode_override = "pipeline"
+
+    mode = detect_mode(override=mode_override)
+    adapter = get_adapter(mode)
+
+    # Log mode detection in verbose mode
+    verbose = getattr(args, "verbose", False)
+    if verbose:
+        print(f"[MODE] {get_mode_description(mode)}")
+
     # Create factory
     factory = HuskyCatFactory(
         config_dir=args.config_dir if hasattr(args, "config_dir") else None,
-        verbose=args.verbose if hasattr(args, "verbose") else False,
+        verbose=verbose,
     )
 
     # Build kwargs from args
@@ -200,32 +229,94 @@ def main() -> int:
     command_name = kwargs.pop("command")
     kwargs.pop("verbose", None)
     kwargs.pop("config_dir", None)
+    kwargs.pop("mode", None)
+    kwargs.pop("json", None)
 
     # Execute command
     result = factory.execute_command(command_name, **kwargs)
 
-    # Print results
-    if result.status == CommandStatus.SUCCESS:
-        print(f"✅ {result.message}")
-    elif result.status == CommandStatus.WARNING:
-        print(f"⚠️  {result.message}")
-    else:
-        print(f"❌ {result.message}")
-
-    if result.errors:
-        print("\nErrors:")
-        for error in result.errors:
-            print(f"  • {error}")
-
-    if result.warnings:
-        print("\nWarnings:")
-        for warning in result.warnings:
-            print(f"  • {warning}")
+    # Format output based on mode
+    _print_result(result, adapter)
 
     # Return appropriate exit code
     if result.status == CommandStatus.FAILED:
         return 1
     return 0
+
+
+def _print_result(result, adapter):
+    """
+    Print command result using mode-appropriate formatting.
+
+    For Pipeline/MCP modes, uses adapter formatting.
+    For CLI/Git Hooks modes, uses emoji-based formatting.
+    """
+    from .core.mode_detector import ProductMode
+    from .core.adapters.base import OutputFormat
+
+    config = adapter.config
+
+    # JSON/JSONRPC modes: use adapter formatting with results data
+    if config.output_format in (OutputFormat.JSON, OutputFormat.JSONRPC, OutputFormat.JUNIT_XML):
+        # For structured output, format the result data
+        if result.data:
+            results = result.data.get("results", {})
+            summary = {
+                "total_errors": result.data.get("total_errors", len(result.errors or [])),
+                "total_warnings": result.data.get("total_warnings", len(result.warnings or [])),
+                "files_checked": result.data.get("files_checked", 0),
+                "fixed_files": result.data.get("fixed_files", 0),
+            }
+            print(adapter.format_output(results, summary))
+        else:
+            # Simple JSON for commands without detailed results
+            import json
+            print(json.dumps({
+                "status": result.status.value,
+                "message": result.message,
+                "errors": result.errors or [],
+                "warnings": result.warnings or [],
+            }))
+        return
+
+    # Minimal mode (git hooks): silent on success
+    if config.output_format == OutputFormat.MINIMAL:
+        if result.status == CommandStatus.SUCCESS:
+            return  # Silent success
+        if result.status == CommandStatus.WARNING and not result.errors:
+            return  # Silent warnings in git hooks
+
+    # Human/CLI mode: emoji-based formatting
+    if config.color:
+        if result.status == CommandStatus.SUCCESS:
+            print(f"\033[92m✅ {result.message}\033[0m")
+        elif result.status == CommandStatus.WARNING:
+            print(f"\033[93m⚠️  {result.message}\033[0m")
+        else:
+            print(f"\033[91m❌ {result.message}\033[0m")
+    else:
+        if result.status == CommandStatus.SUCCESS:
+            print(f"✅ {result.message}")
+        elif result.status == CommandStatus.WARNING:
+            print(f"⚠️  {result.message}")
+        else:
+            print(f"❌ {result.message}")
+
+    if result.errors:
+        print("\nErrors:")
+        for error in result.errors:
+            if config.color:
+                print(f"\033[91m  • {error}\033[0m")
+            else:
+                print(f"  • {error}")
+
+    if result.warnings:
+        print("\nWarnings:")
+        for warning in result.warnings:
+            if config.color:
+                print(f"\033[93m  • {warning}\033[0m")
+            else:
+                print(f"  • {warning}")
 
 
 if __name__ == "__main__":
