@@ -45,7 +45,7 @@ In Claude Code, you should now see HuskyCat tools available:
 
 - `validate` - Validate files or directories
 - `validate_staged` - Validate staged Git files
-- Individual validator tools (e.g., `validate_black`, `validate_flake8`)
+- Individual validator tools (e.g., `validate_python-black`, `validate_flake8`, `validate_mypy`)
 
 ## Available Tools
 
@@ -78,13 +78,18 @@ Check my staged files before I commit them.
 
 Each validator has its own tool for targeted validation:
 
-- `validate_black` - Python code formatting
+- `validate_python-black` - Python code formatting
+- `validate_autoflake` - Python unused import removal
 - `validate_flake8` - Python linting
 - `validate_mypy` - Python type checking
-- `validate_eslint` - JavaScript/TypeScript linting
+- `validate_ruff` - Python fast linting
+- `validate_bandit` - Python security scanning
+- `validate_js-eslint` - JavaScript/TypeScript linting
+- `validate_js-prettier` - JavaScript/TypeScript formatting
 - `validate_yamllint` - YAML validation
-- `validate_hadolint` - Dockerfile validation
+- `validate_docker-hadolint` - Dockerfile validation
 - `validate_shellcheck` - Shell script validation
+- `validate_gitlab-ci` - GitLab CI validation
 
 **Parameters:**
 - `path` (required): File path to validate

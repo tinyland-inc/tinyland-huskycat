@@ -139,9 +139,9 @@ Validates files that are staged for Git commit.
 
 ## Individual Validator Tools
 
-Each validator is exposed as a separate tool for targeted validation.
+Each validator is exposed as a separate tool for targeted validation. The tool name follows the pattern `validate_{validator_name}`.
 
-### `validate_black`
+### `validate_python-black`
 
 Python code formatter using Black.
 
@@ -210,7 +210,7 @@ Python type checker using MyPy.
 }
 ```
 
-### `validate_eslint`
+### `validate_js-eslint`
 
 JavaScript/TypeScript linter using ESLint.
 
@@ -256,7 +256,7 @@ YAML validator using yamllint.
 }
 ```
 
-### `validate_hadolint`
+### `validate_docker-hadolint`
 
 Dockerfile/ContainerFile linter using hadolint.
 

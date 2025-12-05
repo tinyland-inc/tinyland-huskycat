@@ -1,583 +1,361 @@
-# HuskyCats MCP Server Architecture v2.0.0
+# HuskyCat MCP Server Architecture v2.0.0
 
-## Executive Summary
+## Overview
 
-This document outlines the comprehensive system architecture for the HuskyCats MCP (Model Context Protocol) Server v2.0.0, designed for production-grade code validation services with enterprise security, scalability, and maintainability requirements.
-
-## System Overview
-
-The HuskyCats MCP Server provides a secure, scalable platform for AI-powered code validation, supporting multiple deployment modes from local development to production Kubernetes clusters.
-
-### Key Architectural Principles
-- **Security First**: Rocky Linux 10 base with hardening
-- **Cloud Native**: Kubernetes-ready with horizontal autoscaling
-- **Modern TypeScript**: No compilation, tsx execution, fat arrows
-- **Zero Trust**: Authentication, authorization, and audit trails
-- **Filesystem Sync**: Real-time repository synchronization
-- **Container Native**: Podman/Docker compatible with multi-stage builds
+The HuskyCat MCP Server provides AI-powered code validation through the Model Context Protocol (MCP). It uses a **stdio-based JSON-RPC 2.0** implementation for seamless Claude Code integration.
 
 ## Architecture Diagram
 
 ```mermaid
 graph TB
-    subgraph "Client Layer"
-        A[Claude Desktop] --> B[MCP Client]
-        C[VS Code] --> B
-        D[API Clients] --> B
+    subgraph "Claude Code"
+        CC[Claude Code] --> |JSON-RPC stdin| MCP
     end
-    
-    subgraph "Load Balancer & Ingress"
-        B --> E[Kubernetes Ingress]
-        E --> F[Service Mesh]
+
+    subgraph "HuskyCat MCP Server"
+        MCP[MCPServer] --> |parse request| RH[Request Handler]
+        RH --> |initialize| INIT[Initialize Handler]
+        RH --> |tools/list| TL[Tools List Handler]
+        RH --> |tools/call| TC[Tool Call Handler]
+
+        TC --> |validate| VE[Validation Engine]
+        TC --> |validate_staged| VE
+        TC --> |validate_{tool}| VE
+
+        VE --> |run validators| V1[BlackValidator]
+        VE --> V2[Flake8Validator]
+        VE --> V3[MypyValidator]
+        VE --> V4[...12 validators]
     end
-    
-    subgraph "Application Layer"
-        F --> G[MCP Server Pod 1]
-        F --> H[MCP Server Pod 2]
-        F --> I[MCP Server Pod N]
-        
-        subgraph "MCP Server Pod"
-            G --> J[HTTP Server]
-            J --> K[RPC Handler]
-            J --> L[Tools Handler]
-            J --> M[Resources Handler]
-            J --> N[Health Handler]
-            
-            K --> O[Tool Executor]
-            L --> P[Validation Tools]
-            M --> Q[Syncthing Client]
-        end
+
+    subgraph "Execution Layer"
+        V1 --> |in container| CONT[Container Runtime]
+        V1 --> |direct| DIRECT[Local Execution]
+        CONT --> |podman/docker| TOOLS[Validation Tools]
+        DIRECT --> TOOLS
     end
-    
-    subgraph "Storage Layer"
-        Q --> R[Syncthing Network]
-        R --> S[User Repositories]
-        T[Persistent Volumes] --> G
-        T --> H
-        T --> I
-    end
-    
-    subgraph "Security & Monitoring"
-        U[fail2ban] --> G
-        V[firewalld] --> G
-        W[Prometheus] --> G
-        X[Grafana] --> W
-        Y[Loki] --> G
-    end
-    
-    subgraph "Container Registry"
-        Z[GHCR] --> AA[Rocky Linux Images]
-        Z --> BB[Alpine Images]
-    end
+
+    MCP --> |JSON-RPC stdout| CC
+
+    style MCP fill:#e1f5fe
+    style VE fill:#e8f5e8
+    style CONT fill:#fff3e0
 ```
 
-## Component Architecture
+## Key Components
 
-### 1. Container Architecture
+### 1. Entry Point (`src/huskycat/mcp_server.py`)
 
-#### Multi-Stage Container Build
-```dockerfile
-# Stage 1: Node.js tools
-FROM node:20-alpine AS node-builder
-RUN npm install -g eslint prettier tsx
+The MCP server is a single Python module that:
+- Reads JSON-RPC requests from stdin
+- Processes requests through the ValidationEngine
+- Writes JSON-RPC responses to stdout
 
-# Stage 2: Python tools  
-FROM python:3.11-alpine AS python-builder
-RUN pip install black flake8 mypy pylint
+```python
+class MCPServer:
+    def __init__(self):
+        self.container_available = self._detect_container_available()
+        self.engine = ValidationEngine(auto_fix=False)
 
-# Stage 3: Rocky Linux production
-FROM rockylinux/rockylinux:9 AS production
-COPY --from=node-builder /usr/local /usr/local
-COPY --from=python-builder /usr/local /usr/local
+    def run(self):
+        while True:
+            line = sys.stdin.readline()
+            request = json.loads(line.strip())
+            response = self.handle_request(request)
+            sys.stdout.write(json.dumps(response) + "\n")
+            sys.stdout.flush()
 ```
 
-#### Security Hardening
-- **Non-root execution**: UID 1001 (mcp-server)
-- **Read-only filesystem**: Except for /tmp and /workspace
-- **Minimal attack surface**: Only required packages
-- **fail2ban integration**: Automated threat response
-- **firewalld rules**: Port-specific access control
-- **SSH hardening**: Key-based auth only, no root login
+**File**: `src/huskycat/mcp_server.py:26-474`
 
-### 2. Application Architecture
+### 2. Request Handling
 
-#### Server Core (`src/server.ts`)
-```typescript
-// Modern ES modules with top-level await
-import { createServer } from 'http';
+The server handles three MCP methods:
 
-const server = createServer(handleRequest);
+| Method | Handler | Purpose |
+|--------|---------|---------|
+| `initialize` | `_handle_initialize()` | Protocol handshake |
+| `tools/list` | `_handle_list_tools()` | Discover available tools |
+| `tools/call` | `_handle_tool_call()` | Execute validation |
 
-// Fat arrow request handler
-const handleRequest = async (req: IncomingMessage, res: ServerResponse) => {
-  // Route to specialized handlers
-  switch (url) {
-    case '/health': await handleHealth(req, res); break;
-    case '/tools': await handleTools(req, res); break;
-    case '/rpc': await handleRPC(req, res); break;
-    case '/pairing': await handlePairing(req, res); break;
-  }
-};
+**File**: `src/huskycat/mcp_server.py:143-164`
+
+### 3. Validation Engine (`src/huskycat/unified_validation.py`)
+
+Single source of truth for all validation logic:
+
+```python
+class ValidationEngine:
+    def __init__(self, auto_fix: bool = False):
+        self.auto_fix = auto_fix
+        self.validators = [
+            BlackValidator(auto_fix),
+            AutoflakeValidator(auto_fix),
+            Flake8Validator(auto_fix),
+            # ... 12 validators total
+        ]
 ```
 
-#### MCP Protocol Implementation
-- **JSON-RPC 2.0**: Standard protocol compliance
-- **HTTP Transport**: RESTful with RPC endpoint
-- **Session Management**: Persistent connections with cleanup
-- **Capabilities Negotiation**: Dynamic feature enablement
-- **Real-time Notifications**: WebSocket-like behavior over HTTP
+**File**: `src/huskycat/unified_validation.py:1-1000+`
 
-#### Handler Architecture
+### 4. Validator Base Class
+
+Each validator follows a common pattern:
+
+```python
+class Validator(ABC):
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Unique validator name (e.g., 'python-black')"""
+
+    @property
+    @abstractmethod
+    def extensions(self) -> Set[str]:
+        """File extensions this validator handles"""
+
+    @abstractmethod
+    def validate(self, filepath: Path) -> ValidationResult:
+        """Validate a single file"""
 ```
-src/handlers/
-├── health.ts      # Kubernetes health probes
-├── tools.ts       # Tool discovery and execution  
-├── rpc.ts         # MCP protocol implementation
-├── resources.ts   # File system access
-├── prompts.ts     # Validation workflows
-└── hooks.ts       # Claude Code integration
-```
 
-### 3. Security Architecture
+**File**: `src/huskycat/unified_validation.py:62-179`
 
-#### Multi-Layer Security Model
+## Available Validators
 
-1. **Container Security**
-   - Rocky Linux 10 hardened base
-   - Non-root execution (UID 1001)
-   - Read-only root filesystem
-   - Resource limits (CPU: 500m, Memory: 512Mi)
-   - Security contexts with dropped capabilities
+| Validator Class | Name Property | Extensions | Command |
+|-----------------|---------------|------------|---------|
+| `BlackValidator` | `python-black` | `.py`, `.pyi` | `black` |
+| `AutoflakeValidator` | `autoflake` | `.py` | `autoflake` |
+| `Flake8Validator` | `flake8` | `.py` | `flake8` |
+| `MypyValidator` | `mypy` | `.py` | `mypy` |
+| `RuffValidator` | `ruff` | `.py` | `ruff` |
+| `BanditValidator` | `bandit` | `.py` | `bandit` |
+| `ESLintValidator` | `js-eslint` | `.js`, `.ts`, `.jsx`, `.tsx` | `eslint` |
+| `PrettierValidator` | `js-prettier` | `.js`, `.ts`, `.json`, `.md` | `prettier` |
+| `YamlLintValidator` | `yamllint` | `.yml`, `.yaml` | `yamllint` |
+| `HadolintValidator` | `docker-hadolint` | `Dockerfile`, `ContainerFile` | `hadolint` |
+| `ShellcheckValidator` | `shellcheck` | `.sh`, `.bash` | `shellcheck` |
+| `GitLabCIValidator` | `gitlab-ci` | `.gitlab-ci.yml` | `glab` |
 
-2. **Network Security**
-   ```yaml
-   # fail2ban configuration
-   [mcp-server]
-   enabled = true
-   maxretry = 5
-   bantime = 3600
-   findtime = 600
-   
-   # firewalld rules
-   ports: 8080/tcp, 8384/tcp, 22000/tcp, 21027/udp
+**File**: `src/huskycat/unified_validation.py:184-1000+`
+
+## MCP Tools Exposed
+
+The server exposes these tools to Claude Code:
+
+### Core Tools
+
+1. **`validate`** - Validate files or directories
+   ```json
+   {
+     "name": "validate",
+     "inputSchema": {
+       "properties": {
+         "path": { "type": "string", "description": "File or directory path" },
+         "fix": { "type": "boolean", "default": false }
+       },
+       "required": ["path"]
+     }
+   }
    ```
 
-3. **Authentication & Authorization**
-   - Bearer token authentication
-   - Session-based access control
-   - User isolation with volume keying
-   - API rate limiting
+2. **`validate_staged`** - Validate git staged files
+   ```json
+   {
+     "name": "validate_staged",
+     "inputSchema": {
+       "properties": {
+         "fix": { "type": "boolean", "default": false }
+       }
+     }
+   }
+   ```
 
-4. **File System Security**
-   - User-isolated workspaces
-   - Syncthing receive-only mode
-   - SELinux contexts (`:z` volumes)
-   - Temporary file cleanup
+### Individual Validator Tools
 
-### 4. Syncthing Integration Architecture
+Each validator is exposed as `validate_{name}`:
+- `validate_python-black`
+- `validate_autoflake`
+- `validate_flake8`
+- `validate_mypy`
+- `validate_ruff`
+- `validate_bandit`
+- `validate_js-eslint`
+- `validate_js-prettier`
+- `validate_yamllint`
+- `validate_docker-hadolint`
+- `validate_shellcheck`
+- `validate_gitlab-ci`
 
-#### Repository Synchronization Flow
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant S as MCP Server
-    participant ST as Syncthing
-    participant R as Repository
-    
-    C->>S: POST /pairing/generate
-    S->>ST: Generate device ID
-    ST->>S: Return pairing code
-    S->>C: Return pairing code
-    
-    C->>ST: Add device with code
-    ST->>ST: Establish connection
-    ST->>R: Sync repository files
-    
-    S->>ST: Monitor sync status
-    S->>C: Notify sync complete
-    C->>S: Access synced files via Resources API
+**File**: `src/huskycat/mcp_server.py:188-257`
+
+## Execution Modes
+
+### Container Execution (Preferred)
+
+When a container runtime (podman/docker) is available:
+
+```python
+def _build_container_command(self, cmd: List[str]) -> List[str]:
+    return [
+        container_runtime,
+        "run", "--rm",
+        "--entrypoint=",  # Override entrypoint
+        "-v", f"{Path.cwd()}:/workspace",
+        "-w", "/workspace",
+        "huskycat:local",
+    ] + cmd
 ```
 
-#### Syncthing Configuration
-```xml
-<configuration>
-    <device id="server-device-id" name="MCP Server"/>
-    <folder id="user-repo" path="/mnt/repos/user-repo" type="receiveonly">
-        <device id="client-device-id"/>
-    </folder>
-</configuration>
+**File**: `src/huskycat/unified_validation.py:134-152`
+
+### Direct Execution (Fallback)
+
+When running inside a container or no runtime available:
+
+```python
+def _is_running_in_container(self) -> bool:
+    return (
+        os.path.exists("/.dockerenv") or
+        bool(os.environ.get("container")) or
+        os.path.exists("/run/.containerenv")
+    )
 ```
 
-### 5. Kubernetes Architecture
+**File**: `src/huskycat/unified_validation.py:111-120`
 
-#### Deployment Strategy
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-spec:
-  replicas: 2
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+## Protocol Details
+
+### JSON-RPC 2.0 Format
+
+**Request**:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "validate",
+    "arguments": { "path": "src/", "fix": false }
+  }
+}
 ```
 
-#### Horizontal Pod Autoscaling
-```yaml
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-spec:
-  minReplicas: 2
-  maxReplicas: 10
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: Utilization
-        averageUtilization: 80
+**Response**:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [{
+      "type": "text",
+      "text": "{\"summary\": {...}, \"results\": {...}}"
+    }]
+  }
+}
 ```
 
-#### Service Mesh Integration
-- **Ingress Controller**: NGINX or Istio
-- **Load Balancing**: Round-robin with health checks
-- **TLS Termination**: Automatic certificate management
-- **Traffic Policies**: Rate limiting and circuit breakers
+### Error Codes
 
-### 6. Monitoring & Observability
+| Code | Meaning |
+|------|---------|
+| -32700 | Parse error |
+| -32601 | Method not found |
+| -32602 | Invalid params |
+| -32603 | Internal error |
 
-#### Metrics Collection
-```typescript
-// Prometheus metrics
-const metrics = {
-  'mcp_server_uptime': process.uptime(),
-  'mcp_server_memory_usage': process.memoryUsage().heapUsed,
-  'mcp_tool_execution_duration': executionTime,
-  'mcp_api_requests_total': requestCount,
-  'mcp_api_errors_total': errorCount
-};
+**File**: `src/huskycat/mcp_server.py:432-440`
+
+## Starting the Server
+
+```bash
+# Via binary
+./dist/huskycat mcp-server
+
+# Via npm
+npm run mcp:server
+
+# Via Python module
+uv run python -m src.huskycat mcp-server
 ```
 
-#### Health Checks
-```yaml
-livenessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 10
-  periodSeconds: 10
+The server runs in stdio mode only - no HTTP server, no ports.
 
-readinessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
-```
+## Claude Code Configuration
 
-#### Logging Strategy
-- **Structured Logging**: JSON format with context
-- **Log Aggregation**: Fluentd/Fluent Bit to Loki
-- **Security Logs**: fail2ban events to SIEM
-- **Audit Trails**: User actions and API calls
+Add to your MCP configuration:
 
-## Validation Tools Architecture
-
-### Tool Categories & Implementation
-
-#### Python Tools
-```typescript
-const pythonTools = [
-  { name: 'python-black', command: 'black', category: 'formatter' },
-  { name: 'python-flake8', command: 'flake8', category: 'linter' },
-  { name: 'python-mypy', command: 'mypy', category: 'type-checker' },
-  { name: 'python-bandit', command: 'bandit', category: 'security' }
-];
-```
-
-#### JavaScript/TypeScript Tools
-```typescript
-const jsTools = [
-  { name: 'js-eslint', command: 'eslint', category: 'linter' },
-  { name: 'js-prettier', command: 'prettier', category: 'formatter' }
-];
-```
-
-#### Infrastructure Tools
-```typescript
-const infraTools = [
-  { name: 'shell-shellcheck', command: 'shellcheck', category: 'linter' },
-  { name: 'docker-hadolint', command: 'hadolint', category: 'linter' },
-  { name: 'yaml-yamllint', command: 'yamllint', category: 'linter' },
-  { name: 'gitlab-ci-validate', command: 'python3', category: 'validator' }
-];
-```
-
-### Tool Execution Architecture
-
-#### Containerized Execution
-```typescript
-class ToolExecutor {
-  async execute(command: string, args: string[], options: ExecutionOptions) {
-    if (this.useContainer) {
-      return this.executeInContainer(command, args, options);
+```json
+{
+  "mcpServers": {
+    "huskycat": {
+      "command": "/path/to/huskycat",
+      "args": ["mcp-server"]
     }
-    return this.executeNative(command, args, options);
-  }
-  
-  private async executeInContainer(command: string, args: string[], options: ExecutionOptions) {
-    const containerArgs = [
-      'run', '--rm',
-      '--security-opt', 'no-new-privileges:true',
-      '--cap-drop', 'ALL',
-      '--read-only',
-      '--tmpfs', '/tmp:size=100M,noexec',
-      '-v', `${options.workdir}:/workspace:ro,z`,
-      'huskycats/validator:latest',
-      command, ...args
-    ];
-    
-    return this.spawn(this.containerRuntime, containerArgs);
   }
 }
 ```
 
-## API Design
+## Logging
 
-### RESTful Endpoints
+Logs are written to stderr to avoid interfering with stdio:
 
-```typescript
-// Health and metrics
-GET  /health              -> Health status
-GET  /metrics             -> Prometheus metrics
-GET  /tools               -> Available tools list
-
-// MCP Protocol
-POST /rpc                 -> JSON-RPC 2.0 endpoint
-
-// Syncthing integration  
-POST /pairing/generate    -> Generate pairing code
-POST /pairing/process     -> Process pairing code
+```python
+logging.basicConfig(
+    level=os.getenv("HUSKYCAT_LOG_LEVEL", "INFO"),
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    stream=sys.stderr,
+)
 ```
 
-### MCP Protocol Methods
+Set `HUSKYCAT_LOG_LEVEL=DEBUG` for verbose output.
 
-```typescript
-// Core MCP methods
-"initialize"              -> Session initialization
-"tools/list"             -> List available tools
-"tools/call"             -> Execute validation tool
-"resources/list"         -> List file resources
-"resources/read"         -> Read file content
-"resources/subscribe"    -> Subscribe to file changes
-"prompts/list"           -> List workflow templates
-"prompts/get"            -> Get prompt details
-"logging/setLevel"       -> Configure logging
-```
+**File**: `src/huskycat/mcp_server.py:17-23`
 
-### Authentication Flow
+## Data Flow
 
 ```mermaid
 sequenceDiagram
-    participant C as Client
-    participant S as MCP Server
-    participant A as Auth Service
-    
-    C->>S: Request with Bearer token
-    S->>A: Validate token
-    A->>S: Token valid + user context
-    S->>S: Initialize session
-    S->>C: Session established
-    
-    Note over C,S: Subsequent requests use session
-    C->>S: MCP requests with session ID
-    S->>C: Responses with session context
+    participant CC as Claude Code
+    participant MCP as MCP Server
+    participant VE as ValidationEngine
+    participant V as Validators
+    participant C as Container/Local
+
+    CC->>MCP: JSON-RPC request (stdin)
+    MCP->>MCP: Parse request
+    MCP->>VE: validate_file(path)
+    VE->>V: validator.can_handle(path)
+    V->>VE: true/false
+    VE->>V: validator.validate(path)
+    V->>C: Execute command
+    C->>V: Command output
+    V->>VE: ValidationResult
+    VE->>MCP: Results dict
+    MCP->>CC: JSON-RPC response (stdout)
 ```
 
-## Data Models
+## Performance Characteristics
 
-### MCP Protocol Types
+- **Startup time**: < 100ms
+- **Per-file validation**: 50-500ms depending on tool
+- **Memory usage**: ~50MB base + tool overhead
+- **Concurrent requests**: Single-threaded (stdin/stdout)
 
-```typescript
-interface MCPRequest {
-  jsonrpc: '2.0';
-  id: string | number;
-  method: string;
-  params?: any;
-}
+## Security Model
 
-interface MCPResponse {
-  jsonrpc: '2.0';
-  id: string | number;
-  result?: any;
-  error?: MCPError;
-}
+1. **Process isolation**: MCP server runs as user process
+2. **Container isolation**: Validators run in containers when available
+3. **Read-only by default**: No auto-fix unless explicitly requested
+4. **Path validation**: Validates paths before execution
+5. **No network**: stdio-only, no network exposure
 
-interface MCPServerCapabilities {
-  tools: { listChanged: boolean };
-  resources: { subscribe: boolean; listChanged: boolean };
-  prompts: { listChanged: boolean };
-  logging: { level: string };
-}
-```
+## File Reference
 
-### Tool Definition Schema
-
-```typescript
-interface ValidationTool {
-  name: string;
-  description: string;
-  command: string;
-  args?: string[];
-  category: 'linter' | 'formatter' | 'type-checker' | 'security' | 'validator';
-  filePatterns?: string[];
-  supportsFix?: boolean;
-  containerImage?: string;
-}
-```
-
-### Resource Schema
-
-```typescript
-interface MCPResource {
-  uri: string;
-  name: string;
-  description?: string;
-  mimeType?: string;
-  metadata?: {
-    userId: string;
-    syncStatus: 'synced' | 'syncing' | 'error';
-    lastModified: string;
-  };
-}
-```
-
-## Deployment Strategies
-
-### Local Development
-```bash
-# Direct TypeScript execution
-npm install
-npm run dev
-
-# Container development
-podman build -f ContainerFile -t huskycats-dev .
-podman run -p 8080:8080 huskycats-dev
-```
-
-### Production Deployment
-
-#### Container Registry Strategy
-```bash
-# Multi-architecture builds
-podman build --platform linux/amd64,linux/arm64 \
-  -f ContainerFile.rocky \
-  -t ghcr.io/huskycats/mcp-server:rocky .
-
-podman push ghcr.io/huskycats/mcp-server:rocky
-```
-
-#### Kubernetes Deployment
-```bash
-# Apply manifests
-kubectl apply -f config/k8s/
-
-# Verify deployment
-kubectl get pods -l app=huskycats-mcp
-kubectl get hpa huskycats-mcp-server
-```
-
-#### Production Configuration
-```yaml
-# Environment variables
-MCP_AUTH_TOKEN: ${SECRET_AUTH_TOKEN}
-ENABLE_SYNCTHING: "true"
-NODE_ENV: "production"
-CORS_ORIGIN: "https://claude.ai"
-```
-
-## Performance Optimization
-
-### Resource Management
-- **CPU Limits**: 500m per pod
-- **Memory Limits**: 512Mi per pod
-- **Horizontal Scaling**: 2-10 pods based on load
-- **Tool Execution**: Containerized with resource limits
-
-### Caching Strategy
-- **Tool Results**: In-memory cache with TTL
-- **File Content**: Redis cache for large files  
-- **Session Data**: Memory store with persistence
-- **Container Images**: Pre-pulled on nodes
-
-### Network Optimization
-- **HTTP/2**: Multiplexed connections
-- **Compression**: gzip for API responses
-- **CDN**: Static asset delivery
-- **Connection Pooling**: Syncthing client connections
-
-## Security Considerations
-
-### Threat Model
-1. **Unauthorized Access**: Mitigated by bearer token auth
-2. **Code Injection**: Mitigated by containerized execution
-3. **Resource Exhaustion**: Mitigated by resource limits
-4. **Data Exfiltration**: Mitigated by user isolation
-5. **Network Attacks**: Mitigated by fail2ban/firewalld
-
-### Security Controls
-- **Authentication**: Bearer token with expiration
-- **Authorization**: Role-based access control
-- **Encryption**: TLS 1.3 for all communications
-- **Audit Logging**: All API calls and tool executions
-- **Vulnerability Scanning**: Container image scanning
-- **Secrets Management**: Kubernetes secrets with rotation
-
-## Disaster Recovery
-
-### Backup Strategy
-- **Configuration**: GitOps with version control
-- **User Data**: Syncthing peer redundancy
-- **Logs**: Centralized logging with retention
-- **Metrics**: Long-term storage in Prometheus
-
-### Recovery Procedures
-1. **Pod Failure**: Automatic restart by Kubernetes
-2. **Node Failure**: Automatic rescheduling
-3. **Cluster Failure**: Multi-region deployment
-4. **Data Loss**: Restore from Syncthing peers
-
-## Future Enhancements
-
-### Planned Features
-- **WebSocket Support**: Real-time bidirectional communication
-- **Plugin System**: Custom tool integrations
-- **AI Code Suggestions**: Integration with code LLMs
-- **Team Collaboration**: Shared validation workspaces
-- **Custom Rules**: User-defined validation rules
-
-### Scalability Roadmap
-- **Multi-cluster**: Federation across regions
-- **Edge Deployment**: CDN-like code validation
-- **Serverless**: Function-as-a-Service for tools
-- **Stream Processing**: Real-time code quality metrics
-
-## Conclusion
-
-The HuskyCats MCP Server v2.0.0 architecture provides a robust, secure, and scalable foundation for AI-powered code validation. The combination of modern TypeScript development, container-native deployment, and enterprise security features makes it suitable for both individual developers and large organizations.
-
-The architecture emphasizes:
-- **Developer Experience**: Zero-compilation TypeScript with tsx
-- **Security**: Multi-layer defense with hardened containers
-- **Scalability**: Kubernetes-native with horizontal autoscaling
-- **Integration**: Seamless Claude Desktop and API integration
-- **Maintainability**: Clean separation of concerns and modern patterns
-
-This design supports the full spectrum of deployment scenarios while maintaining consistent functionality and security across all environments.
+| Component | File | Lines |
+|-----------|------|-------|
+| MCP Server | `src/huskycat/mcp_server.py` | 1-485 |
+| Validation Engine | `src/huskycat/unified_validation.py` | 1-1000+ |
+| MCP Command | `src/huskycat/commands/mcp.py` | 1-50 |
+| MCP Adapter | `src/huskycat/core/adapters/mcp.py` | 1-137 |

@@ -83,16 +83,46 @@ git commit -m "test: verify hooks"  # Should run validation
 ### Setup MCP for Claude Code
 
 ```bash
-# Start MCP server for Claude Code integration
+# Start MCP server for Claude Code integration (stdio mode)
 ./path/to/huskycat mcp-server
 
-# Test MCP server
-./path/to/huskycat mcp-server --port 8080
-
-# Configure in Claude Code MCP settings:
-# Command: /path/to/huskycat
-# Args: ["mcp-server", "--port=0"]
+# Or use the bootstrap command for automatic setup
+./path/to/huskycat bootstrap
 ```
+
+### Claude Code Configuration
+
+Add to your Claude Code MCP configuration file:
+
+```json
+{
+  "mcpServers": {
+    "huskycat": {
+      "command": "/path/to/huskycat",
+      "args": ["mcp-server"]
+    }
+  }
+}
+```
+
+**Note**: HuskyCat MCP server uses stdio protocol only (stdin/stdout). No ports are needed.
+
+### Bootstrap Command
+
+The `bootstrap` command automates MCP configuration setup:
+
+```bash
+# Automatically configure Claude Code MCP integration
+./dist/huskycat bootstrap
+
+# Force overwrite existing configuration
+./dist/huskycat bootstrap --force
+```
+
+This command:
+1. Creates MCP configuration file with HuskyCat server
+2. Configures the correct binary path
+3. Sets up stdio transport
 
 ## Container-Only Execution
 

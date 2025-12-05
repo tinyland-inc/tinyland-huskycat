@@ -128,7 +128,86 @@ Command-line options:
 --all          # Validate all files
 --staged       # Validate only staged files (default)
 --verbose, -v  # Verbose output
+--mode MODE    # Override auto-detected product mode
+--json         # Force JSON output (sets pipeline mode)
 ```
+
+## Product Modes
+
+HuskyCat operates in 5 distinct product modes, each optimized for different use cases:
+
+### Mode Overview
+
+| Mode | Output Format | Interactive | Auto-Fix | Tools | Use Case |
+|------|--------------|-------------|----------|-------|----------|
+| `git_hooks` | Minimal | No | SAFE only | Fast subset | Pre-commit/pre-push |
+| `ci` | JUnit XML | No | Never | All | Pipeline integration |
+| `cli` | Human/Colored | Yes | SAFE+LIKELY | Configured | Interactive terminal |
+| `pipeline` | JSON | No | Never | All | Machine-readable |
+| `mcp` | JSON-RPC | No | Never | All | AI assistant integration |
+
+### Mode Detection
+
+HuskyCat automatically detects the appropriate mode:
+
+1. **Explicit override**: `--mode git_hooks` or `HUSKYCAT_MODE=ci`
+2. **MCP invocation**: `mcp-server` command
+3. **CI environment**: `CI=true`, `GITLAB_CI`, `GITHUB_ACTIONS`
+4. **Git hooks**: Multiple `GIT_*` environment variables
+5. **Pipeline context**: Non-interactive stdin
+6. **Default**: CLI mode (interactive terminal)
+
+### Mode-Specific Behavior
+
+#### Git Hooks Mode (`--mode git_hooks`)
+- **Output**: Minimal (errors only)
+- **Fail-fast**: Yes (stop on first error)
+- **Tools**: Fast subset (`python-black`, `ruff`, `mypy`, `flake8`)
+- **Auto-fix**: Only SAFE fixes (formatting)
+
+#### CI Mode (`--mode ci`)
+- **Output**: JUnit XML for CI artifacts
+- **Fail-fast**: No (run all validators)
+- **Tools**: All available
+- **Auto-fix**: Never (read-only)
+
+#### CLI Mode (`--mode cli`)
+- **Output**: Human-readable with colors
+- **Interactive**: Yes (prompts for uncertain fixes)
+- **Tools**: Configured via `.huskycat.yaml`
+- **Auto-fix**: SAFE and LIKELY fixes
+
+#### Pipeline Mode (`--mode pipeline` or `--json`)
+- **Output**: JSON for toolchain integration
+- **Interactive**: No
+- **Tools**: All available
+- **Auto-fix**: Never (read-only)
+
+#### MCP Mode (`--mode mcp`)
+- **Output**: JSON-RPC 2.0
+- **Transport**: stdio (stdin/stdout)
+- **Tools**: All available via MCP tools
+- **Auto-fix**: Never (Claude decides)
+
+### Auto-Fix Confidence Tiers
+
+HuskyCat uses a three-tier confidence system for auto-fix decisions:
+
+| Tier | Behavior | Example Tools |
+|------|----------|---------------|
+| **SAFE** | Always safe, formatting only | `python-black`, `js-prettier`, `yamllint` |
+| **LIKELY** | Usually safe, style fixes | `autoflake`, `ruff`, `js-eslint` |
+| **UNCERTAIN** | Needs human review | Semantic changes |
+
+**Mode-specific auto-fix behavior**:
+- **Git Hooks**: Only apply SAFE fixes automatically
+- **CLI**: Apply SAFE and LIKELY; prompt for UNCERTAIN
+- **CI/Pipeline/MCP**: Never auto-fix (report only)
+
+**File references**:
+- Mode detection: `src/huskycat/core/mode_detector.py`
+- Adapters: `src/huskycat/core/adapters/*.py`
+- FixConfidence: `src/huskycat/core/adapters/base.py:27-51`
 
 ### Git Hook Configuration
 
