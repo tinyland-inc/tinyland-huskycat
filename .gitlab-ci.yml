@@ -13,6 +13,7 @@ stages:
   - test
   - build
   - package
+  - sign
   - deploy
   - scheduled
 
@@ -266,6 +267,9 @@ package:python:
 binary:build:linux:
   stage: package
   image: python:3.11-alpine
+  needs:
+    - job: validate:complete
+      optional: true
   <<: *uv_setup
   <<: *cache_template
   before_script:
@@ -298,6 +302,9 @@ binary:build:linux-arm64:
   image: python:3.11-slim
   tags:
     - arm64  # Requires ARM64 runner
+  needs:
+    - job: validate:complete
+      optional: true
   <<: *cache_template
   before_script:
     - apt-get update && apt-get install -y git curl
@@ -335,85 +342,83 @@ binary:build:linux-arm64:
     - saas-macos-medium-m1
   image: macos-14-xcode-15
 
-# macOS ARM64 (Apple Silicon) build
-# NOTE: Code signing may fail if certificates aren't properly configured
-# The job will fall back to building unsigned if signing fails
+# macOS ARM64 (Apple Silicon) build - UNSIGNED binary only
+# Signing is handled separately in sign:darwin-arm64 job
 binary:build:darwin-arm64:
   extends: .macos_saas_runners
   stage: package
-  allow_failure: true  # macOS builds are best-effort until signing is stable
-  variables:
-    KEYCHAIN_NAME: "signing.keychain-db"
-    KEYCHAIN_PASSWORD: "ci-keychain-password-$CI_PIPELINE_ID"
+  needs:
+    - job: validate:complete
+      optional: true
   before_script:
-    # Install UV
     - curl -LsSf https://astral.sh/uv/install.sh | sh
     - export PATH="$HOME/.local/bin:$PATH"
     - uv --version
-    # Setup Python environment
     - uv sync --extra build
   script:
     - mkdir -p dist/bin
-    # Import signing certificate if provided
-    - |
-      if [ -n "$APPLE_CERTIFICATE_BASE64" ] && [ -n "$APPLE_CERTIFICATE_PASSWORD" ]; then
-        echo "🔐 Setting up code signing..."
-
-        # Create and configure keychain
-        security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
-        security default-keychain -s "$KEYCHAIN_NAME"
-        security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
-        security set-keychain-settings -lut 3600 "$KEYCHAIN_NAME"
-
-        # Import Apple CA certificates from CI variables (faster, no network dependency)
-        echo "$APPLE_DEVELOPER_ID_CA_G2" | base64 -d > DeveloperIDG2CA.cer
-        echo "$APPLE_WWDR_CA_G2" | base64 -d > AppleWWDRCAG2.cer
-        security import DeveloperIDG2CA.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign -T /usr/bin/productsign
-        security import AppleWWDRCAG2.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign -T /usr/bin/productsign
-        rm DeveloperIDG2CA.cer AppleWWDRCAG2.cer
-
-        # Import signing certificate
-        echo "$APPLE_CERTIFICATE_BASE64" | base64 -d > certificate.p12
-        security import certificate.p12 -k "$KEYCHAIN_NAME" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productsign
-        rm certificate.p12
-
-        # Set partition list (critical for CI headless signing)
-        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
-
-        echo "✅ Certificate imported successfully"
-        security find-identity -v -p codesigning "$KEYCHAIN_NAME"
-      else
-        echo "ℹ️  No certificate provided - will build unsigned"
-      fi
-    # Build binary (try signed first, fallback to unsigned)
-    - |
-      BUILD_SUCCESS=false
-      if [ -n "$APPLE_DEVELOPER_ID_APPLICATION" ]; then
-        echo "🔐 Attempting signed macOS ARM64 binary..."
-        if uv run python build_binary.py \
-          --codesign-identity "$APPLE_DEVELOPER_ID_APPLICATION" \
-          --entitlements-file entitlements.plist \
-          --skip-upx; then
-          BUILD_SUCCESS=true
-          echo "✅ Signed build succeeded"
-        else
-          echo "⚠️ Signed build failed, falling back to unsigned..."
-          rm -rf dist/huskycat build/ 2>/dev/null || true
-        fi
-      fi
-      if [ "$BUILD_SUCCESS" = "false" ]; then
-        echo "ℹ️ Building unsigned macOS ARM64 binary..."
-        uv run python build_binary.py --skip-upx
-      fi
-    # Move and rename
+    # Build unsigned binary (signing done in separate sign stage)
+    - uv run python build_binary.py --skip-upx
     - mv dist/huskycat dist/bin/huskycat-darwin-arm64
     - chmod +x dist/bin/huskycat-darwin-arm64
     # Verify
-    - file dist/bin/huskycat-darwin-arm64 || true  # file command may not be available
+    - file dist/bin/huskycat-darwin-arm64
     - dist/bin/huskycat-darwin-arm64 --version
-    - codesign -dv --verbose=4 dist/bin/huskycat-darwin-arm64 || echo "Not signed"
-    # Notarize if credentials available
+    - ls -la dist/bin/
+  artifacts:
+    paths:
+      - dist/bin/huskycat-darwin-arm64
+    expire_in: 1 month
+    name: 'huskycat-darwin-arm64-binary-$CI_COMMIT_SHORT_SHA'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+
+# macOS ARM64 Code Signing and Notarization (separate sign stage)
+sign:darwin-arm64:
+  extends: .macos_saas_runners
+  stage: sign
+  needs:
+    - job: binary:build:darwin-arm64
+      optional: true
+  variables:
+    KEYCHAIN_NAME: "signing.keychain-db"
+    KEYCHAIN_PASSWORD: "ci-keychain-password-$CI_PIPELINE_ID"
+  script:
     - |
+      # Check if binary exists
+      if [ ! -f "dist/bin/huskycat-darwin-arm64" ]; then
+        echo "⚠️ No binary to sign (darwin-arm64 build may have failed)"
+        exit 0
+      fi
+      # Check if signing credentials are configured
+      if [ -z "$APPLE_CERTIFICATE_BASE64" ] || [ -z "$APPLE_DEVELOPER_ID_APPLICATION" ]; then
+        echo "ℹ️ No signing credentials configured, skipping signing"
+        exit 0
+      fi
+      echo "🔐 Setting up code signing..."
+      security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+      security default-keychain -s "$KEYCHAIN_NAME"
+      security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+      security set-keychain-settings -lut 3600 "$KEYCHAIN_NAME"
+      # Import certificates
+      echo "$APPLE_DEVELOPER_ID_CA_G2" | base64 -d > DeveloperIDG2CA.cer
+      echo "$APPLE_WWDR_CA_G2" | base64 -d > AppleWWDRCAG2.cer
+      security import DeveloperIDG2CA.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign
+      security import AppleWWDRCAG2.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign
+      rm DeveloperIDG2CA.cer AppleWWDRCAG2.cer
+      echo "$APPLE_CERTIFICATE_BASE64" | base64 -d > certificate.p12
+      security import certificate.p12 -k "$KEYCHAIN_NAME" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+      rm certificate.p12
+      security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+      security find-identity -v -p codesigning "$KEYCHAIN_NAME"
+      # Sign the binary
+      codesign --force --options runtime \
+        --sign "$APPLE_DEVELOPER_ID_APPLICATION" \
+        --entitlements entitlements.plist \
+        dist/bin/huskycat-darwin-arm64
+      codesign --verify --verbose dist/bin/huskycat-darwin-arm64
+      # Notarize if credentials available
       if [ -n "$APPLE_ID" ] && [ -n "$APPLE_NOTARIZE_PASSWORD" ] && [ -n "$APPLE_TEAM_ID" ]; then
         echo "📤 Submitting for notarization..."
         zip -j huskycat-darwin-arm64.zip dist/bin/huskycat-darwin-arm64
@@ -424,98 +429,30 @@ binary:build:darwin-arm64:
           --wait || echo "Notarization failed or timed out"
         rm huskycat-darwin-arm64.zip
       fi
-    - ls -la dist/bin/
   after_script:
-    # Clean up keychain
     - security delete-keychain "$KEYCHAIN_NAME" 2>/dev/null || true
   artifacts:
     paths:
       - dist/bin/huskycat-darwin-arm64
     expire_in: 1 month
-    name: 'huskycat-darwin-arm64-binary-$CI_COMMIT_SHORT_SHA'
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
-    - when: manual
-      allow_failure: true
+  allow_failure: true  # Signing is optional
 
-# macOS AMD64 (Intel) build - uses GitLab SaaS macOS runners
-# NOTE: GitLab SaaS only provides ARM64 macOS runners. Cross-compilation from
-# ARM64 to x86_64 is not possible with PyInstaller. This job will fail until
-# an Intel runner is available. Kept for future use when Intel runners are added.
+# macOS AMD64 (Intel) build - DISABLED
+# GitLab SaaS only provides ARM64 macOS runners. Cross-compilation from
+# ARM64 to x86_64 is not possible with PyInstaller.
+# This job is manual-only and will fail until an Intel runner is available.
 binary:build:darwin-amd64:
   extends: .macos_saas_runners
   stage: package
-  allow_failure: true  # Cross-compilation not possible on ARM64 runners
-  variables:
-    KEYCHAIN_NAME: "signing.keychain-db"
-    KEYCHAIN_PASSWORD: "ci-keychain-password-$CI_PIPELINE_ID"
-  before_script:
-    - curl -LsSf https://astral.sh/uv/install.sh | sh
-    - export PATH="$HOME/.local/bin:$PATH"
-    - uv --version
-    - uv sync --extra build
   script:
-    - mkdir -p dist/bin
-    # Import signing certificate if provided
-    - |
-      if [ -n "$APPLE_CERTIFICATE_BASE64" ] && [ -n "$APPLE_CERTIFICATE_PASSWORD" ]; then
-        echo "🔐 Setting up code signing..."
-        security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
-        security default-keychain -s "$KEYCHAIN_NAME"
-        security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
-        security set-keychain-settings -lut 3600 "$KEYCHAIN_NAME"
-        # Import Apple CA certificates from CI variables
-        echo "$APPLE_DEVELOPER_ID_CA_G2" | base64 -d > DeveloperIDG2CA.cer
-        echo "$APPLE_WWDR_CA_G2" | base64 -d > AppleWWDRCAG2.cer
-        security import DeveloperIDG2CA.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign
-        security import AppleWWDRCAG2.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign
-        rm DeveloperIDG2CA.cer AppleWWDRCAG2.cer
-        echo "$APPLE_CERTIFICATE_BASE64" | base64 -d > certificate.p12
-        security import certificate.p12 -k "$KEYCHAIN_NAME" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
-        rm certificate.p12
-        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
-      fi
-    # Build for x86_64 architecture
-    - |
-      if [ -n "$APPLE_DEVELOPER_ID_APPLICATION" ]; then
-        echo "🔐 Building signed macOS AMD64 binary..."
-        uv run python build_binary.py \
-          --target-arch x86_64 \
-          --codesign-identity "$APPLE_DEVELOPER_ID_APPLICATION" \
-          --entitlements-file entitlements.plist \
-          --skip-upx
-      else
-        echo "ℹ️  Building unsigned macOS AMD64 binary..."
-        uv run python build_binary.py --target-arch x86_64 --skip-upx
-      fi
-    - mv dist/huskycat dist/bin/huskycat-darwin-amd64
-    - chmod +x dist/bin/huskycat-darwin-amd64
-    - file dist/bin/huskycat-darwin-amd64 || true  # file command may not be available
-    - codesign -dv dist/bin/huskycat-darwin-amd64 || echo "Not signed"
-    # Notarize if credentials available
-    - |
-      if [ -n "$APPLE_ID" ] && [ -n "$APPLE_NOTARIZE_PASSWORD" ] && [ -n "$APPLE_TEAM_ID" ]; then
-        echo "📤 Submitting for notarization..."
-        zip -j huskycat-darwin-amd64.zip dist/bin/huskycat-darwin-amd64
-        xcrun notarytool submit huskycat-darwin-amd64.zip \
-          --apple-id "$APPLE_ID" \
-          --password "$APPLE_NOTARIZE_PASSWORD" \
-          --team-id "$APPLE_TEAM_ID" \
-          --wait || echo "Notarization failed or timed out"
-        rm huskycat-darwin-amd64.zip
-      fi
-    - ls -la dist/bin/
-  after_script:
-    - security delete-keychain "$KEYCHAIN_NAME" 2>/dev/null || true
-  artifacts:
-    paths:
-      - dist/bin/huskycat-darwin-amd64
-    expire_in: 1 month
-    name: 'huskycat-darwin-amd64-binary-$CI_COMMIT_SHORT_SHA'
+    - echo "❌ macOS AMD64 builds are not supported on ARM64 runners"
+    - echo "PyInstaller cannot cross-compile between architectures"
+    - echo "This job requires an Intel macOS runner"
+    - exit 1
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_TAG
     - when: manual
       allow_failure: true
 
@@ -523,12 +460,15 @@ binary:build:darwin-amd64:
 release:create:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
-  dependencies:
-    - package:python
-    - binary:build:linux
-    - binary:build:linux-arm64
-    - binary:build:darwin-arm64
-    - binary:build:darwin-amd64
+  needs:
+    - job: package:python
+      optional: true
+    - job: binary:build:linux
+      optional: true
+    - job: binary:build:linux-arm64
+      optional: true
+    - job: sign:darwin-arm64
+      optional: true
   script:
     - |
       release-cli create \
@@ -537,8 +477,7 @@ release:create:
         --description "Release $CI_COMMIT_TAG of HuskyCat Universal Code Validation Platform" \
         --assets-link "{\"name\":\"Linux AMD64 Binary\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-linux-amd64?job=binary:build:linux\"}" \
         --assets-link "{\"name\":\"Linux ARM64 Binary\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-linux-arm64?job=binary:build:linux-arm64\"}" \
-        --assets-link "{\"name\":\"macOS ARM64 Binary (Apple Silicon)\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-darwin-arm64?job=binary:build:darwin-arm64\"}" \
-        --assets-link "{\"name\":\"macOS AMD64 Binary (Intel)\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-darwin-amd64?job=binary:build:darwin-amd64\"}" \
+        --assets-link "{\"name\":\"macOS ARM64 Binary (Apple Silicon)\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-darwin-arm64?job=sign:darwin-arm64\"}" \
         --assets-link "{\"name\":\"Python Wheel Package\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/browse/dist?job=package:python\"}" \
         --assets-link "{\"name\":\"Container Image\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/container_registry/$CI_COMMIT_TAG\"}" \
         --assets-link "{\"name\":\"Documentation\",\"url\":\"https://tinyland.gitlab.io/ai/huskycat/\"}"
