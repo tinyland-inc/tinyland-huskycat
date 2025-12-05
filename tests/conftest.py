@@ -2,13 +2,14 @@
 """Pytest configuration and shared fixtures for HuskyCats testing."""
 
 import os
+import shutil
 import sys
 import tempfile
-import shutil
 from pathlib import Path
-from typing import Iterator, Dict, Any
-import pytest
+from typing import Any, Dict, Iterator
+
 import hypothesis
+import pytest
 from hypothesis import strategies as st
 
 # Add src directory to Python path for imports

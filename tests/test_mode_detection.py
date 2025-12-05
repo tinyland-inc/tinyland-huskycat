@@ -15,25 +15,25 @@ from unittest.mock import patch
 
 import pytest
 
+from huskycat.core.adapters import (
+    TOOL_FIX_CONFIDENCE,
+    CIAdapter,
+    CLIAdapter,
+    FixConfidence,
+    GitHooksAdapter,
+    MCPAdapter,
+    OutputFormat,
+    PipelineAdapter,
+)
 from huskycat.core.mode_detector import (
     ProductMode,
-    detect_mode,
-    get_adapter,
-    get_mode_description,
     _is_ci_context,
     _is_git_hooks_context,
     _is_mcp_invocation,
     _is_pipeline_context,
-)
-from huskycat.core.adapters import (
-    GitHooksAdapter,
-    CIAdapter,
-    CLIAdapter,
-    PipelineAdapter,
-    MCPAdapter,
-    OutputFormat,
-    FixConfidence,
-    TOOL_FIX_CONFIDENCE,
+    detect_mode,
+    get_adapter,
+    get_mode_description,
 )
 
 
@@ -184,7 +184,11 @@ class TestAdapterOutputFormatting:
 
         results = {
             "test.py": [
-                MockResult(tool="ruff", errors=["E501 line too long"], warnings=["W123 warning"]),
+                MockResult(
+                    tool="ruff",
+                    errors=["E501 line too long"],
+                    warnings=["W123 warning"],
+                ),
             ]
         }
         summary = {"total_errors": 1, "total_warnings": 1}
@@ -205,6 +209,7 @@ class TestAdapterOutputFormatting:
         summary = {"total_errors": 0, "total_warnings": 0, "files_checked": 1}
 
         import json
+
         output = adapter._format_json(results, summary)
         data = json.loads(output)
 
@@ -240,7 +245,10 @@ class TestModeDescriptions:
             desc = get_mode_description(mode)
             assert desc is not None
             assert len(desc) > 0
-            assert mode.value in desc.lower() or mode.name.lower().replace("_", " ") in desc.lower()
+            assert (
+                mode.value in desc.lower()
+                or mode.name.lower().replace("_", " ") in desc.lower()
+            )
 
 
 class TestAdapterToolSelection:
@@ -296,8 +304,8 @@ class TestValidateCommandWithAdapter:
 
     def test_validate_command_receives_adapter(self):
         """ValidateCommand should receive adapter from factory."""
-        from huskycat.core.factory import HuskyCatFactory
         from huskycat.commands.validate import ValidateCommand
+        from huskycat.core.factory import HuskyCatFactory
 
         adapter = GitHooksAdapter()
         factory = HuskyCatFactory(adapter=adapter)
@@ -416,6 +424,7 @@ class TestAutoFixConfidenceTiers:
 
 
 # Mock classes for testing
+
 
 class MockResult:
     """Mock validation result for testing."""

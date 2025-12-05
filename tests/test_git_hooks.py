@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Tests for Git hook functionality and validation."""
 
-import pytest
-import subprocess
+import json
 import os
 import shutil
+import subprocess
 from pathlib import Path
-import json
+
+import pytest
 
 
 class TestGitHookValidation:
@@ -100,7 +101,11 @@ if __name__ == "__main__":
         hook_path = test_repo / ".husky" / "pre-commit"
         if hook_path.exists():
             result = subprocess.run(
-                [str(hook_path)], cwd=test_repo, capture_output=True, text=True
+                [str(hook_path)],
+                check=False,
+                cwd=test_repo,
+                capture_output=True,
+                text=True,
             )
             # Should pass (exit code 0) or at least not fail catastrophically
             assert result.returncode in [
@@ -138,7 +143,11 @@ def concatenate(a,b):  # Style issues
         hook_path = test_repo / ".husky" / "pre-commit"
         if hook_path.exists():
             result = subprocess.run(
-                [str(hook_path)], cwd=test_repo, capture_output=True, text=True
+                [str(hook_path)],
+                check=False,
+                cwd=test_repo,
+                capture_output=True,
+                text=True,
             )
             # May exit with non-zero for validation failures, but shouldn't crash
             assert result.returncode is not None, "Hook process didn't complete"
@@ -164,6 +173,7 @@ def concatenate(a,b):  # Style issues
                 commit_msg_file.write_text(msg)
                 result = subprocess.run(
                     [str(commit_msg_hook), str(commit_msg_file)],
+                    check=False,
                     cwd=test_repo,
                     capture_output=True,
                     text=True,
@@ -202,7 +212,7 @@ def concatenate(a,b):  # Style issues
         # Pre-commit hook
         pre_commit = husky_dir / "pre-commit"
         pre_commit.write_text(
-            """#!/bin/sh
+            r"""#!/bin/sh
 echo "Running pre-commit validation..."
 # Basic validation - check for Python files
 if git diff --cached --name-only | grep -q "\.py$"; then
@@ -272,7 +282,7 @@ if __name__ == "__main__":
         if hook_path.exists():
             start_time = time.time()
             result = subprocess.run(
-                [str(hook_path)], cwd=test_repo, capture_output=True
+                [str(hook_path)], check=False, cwd=test_repo, capture_output=True
             )
             end_time = time.time()
 
@@ -288,7 +298,7 @@ if __name__ == "__main__":
         # Create performance-focused minimal hook
         pre_commit = husky_dir / "pre-commit"
         pre_commit.write_text(
-            """#!/bin/sh
+            r"""#!/bin/sh
 echo "Running fast pre-commit validation..."
 # Quick syntax check only
 for file in $(git diff --cached --name-only | grep "\.py$"); do
@@ -323,6 +333,7 @@ class TestGitHookIntegration:
             # Test execution (may fail if MCP server not running, but shouldn't crash)
             result = subprocess.run(
                 [str(mcp_hook)],
+                check=False,
                 cwd=test_repo,
                 capture_output=True,
                 text=True,
@@ -461,6 +472,7 @@ if __name__ == "__main__":
         try:
             result = subprocess.run(
                 ["git", "commit", "-m", "feat: add calculate_average function"],
+                check=False,
                 cwd=test_repo,
                 capture_output=True,
                 text=True,
@@ -474,6 +486,7 @@ if __name__ == "__main__":
                 # Verify commit was created
                 log_result = subprocess.run(
                     ["git", "log", "--oneline", "-n", "1"],
+                    check=False,
                     cwd=test_repo,
                     capture_output=True,
                     text=True,
@@ -491,7 +504,7 @@ if __name__ == "__main__":
         # Pre-commit hook with comprehensive checks
         pre_commit = husky_dir / "pre-commit"
         pre_commit.write_text(
-            """#!/bin/sh
+            r"""#!/bin/sh
 echo "🔍 Running pre-commit validation..."
 
 # Check for Python files

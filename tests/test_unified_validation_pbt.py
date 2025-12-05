@@ -4,12 +4,14 @@ Property-Based Testing for Unified Validation Engine
 Using Hypothesis for comprehensive testing
 """
 
-import pytest
-from hypothesis import given, strategies as st, settings
-from pathlib import Path
-import tempfile
 import os
 import sys
+import tempfile
+from pathlib import Path
+
+import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -149,7 +151,11 @@ class TestValidationEngineProperties:
         results = {}
         for i, msg in enumerate(messages):
             mock_result = ValidationResult(
-                tool="test", filepath=f"file_{i}.py", success=False, messages=[msg], warnings=[msg]
+                tool="test",
+                filepath=f"file_{i}.py",
+                success=False,
+                messages=[msg],
+                warnings=[msg],
             )
             results[f"file_{i}.py"] = [mock_result]
 
@@ -196,7 +202,11 @@ class TestValidationEngineProperties:
         for filename, issues in file_issues.items():
             results[filename] = [
                 ValidationResult(
-                    tool="test", filepath=filename, success=False, messages=[msg], warnings=[msg]
+                    tool="test",
+                    filepath=filename,
+                    success=False,
+                    messages=[msg],
+                    warnings=[msg],
                 )
                 for i, msg in enumerate(issues)
             ]
@@ -205,12 +215,21 @@ class TestValidationEngineProperties:
 
         # Calculate expected values
         expected_total_files = len(results)
-        expected_failed_files = sum(1 for file_results in results.values() 
-                                   if any(not result.success for result in file_results))
-        expected_total_errors = sum(result.error_count for file_results in results.values() 
-                                  for result in file_results)
-        expected_total_warnings = sum(result.warning_count for file_results in results.values() 
-                                    for result in file_results)
+        expected_failed_files = sum(
+            1
+            for file_results in results.values()
+            if any(not result.success for result in file_results)
+        )
+        expected_total_errors = sum(
+            result.error_count
+            for file_results in results.values()
+            for result in file_results
+        )
+        expected_total_warnings = sum(
+            result.warning_count
+            for file_results in results.values()
+            for result in file_results
+        )
 
         # Assert consistency
         assert summary["total_files"] == expected_total_files
@@ -230,10 +249,17 @@ class TestValidationResultProperties:
         st.lists(st.text(), max_size=5),
         st.lists(st.text(), max_size=5),
     )
-    def test_validation_result_creation(self, tool, filepath, success, messages, errors, warnings):
+    def test_validation_result_creation(
+        self, tool, filepath, success, messages, errors, warnings
+    ):
         """Test that ValidationResult can be created with any valid inputs"""
         result = ValidationResult(
-            tool=tool, filepath=filepath, success=success, messages=messages, errors=errors, warnings=warnings
+            tool=tool,
+            filepath=filepath,
+            success=success,
+            messages=messages,
+            errors=errors,
+            warnings=warnings,
         )
 
         assert result.tool == tool
@@ -251,10 +277,17 @@ class TestValidationResultProperties:
         st.lists(st.text(), max_size=5),
         st.lists(st.text(), max_size=5),
     )
-    def test_validation_result_to_dict(self, tool, filepath, success, messages, errors, warnings):
+    def test_validation_result_to_dict(
+        self, tool, filepath, success, messages, errors, warnings
+    ):
         """Test that to_dict method produces consistent output"""
         result = ValidationResult(
-            tool=tool, filepath=filepath, success=success, messages=messages, errors=errors, warnings=warnings
+            tool=tool,
+            filepath=filepath,
+            success=success,
+            messages=messages,
+            errors=errors,
+            warnings=warnings,
         )
 
         result_dict = result.to_dict()

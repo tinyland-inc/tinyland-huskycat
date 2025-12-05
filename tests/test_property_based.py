@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Property-based tests using Hypothesis for core functionality."""
 
-import pytest
-from hypothesis import given, strategies as st, example
-from typing import List, Dict, Any
-import tempfile
 import os
+import tempfile
+from typing import Any, Dict, List
+
+import pytest
+from hypothesis import example, given
+from hypothesis import strategies as st
 
 
 # Import the sample code functions for testing
@@ -201,7 +203,7 @@ class TestFileOperations:
                 f.write(content)
                 f.flush()
 
-                with open(f.name, "r") as read_f:
+                with open(f.name) as read_f:
                     read_content = read_f.read()
 
                 assert read_content == content
@@ -224,7 +226,7 @@ class TestFileOperations:
 
             # Read all files and verify
             for i, temp_file in enumerate(temp_files):
-                with open(temp_file, "r") as f:
+                with open(temp_file) as f:
                     read_content = f.read()
                 assert read_content == contents[i]
 
@@ -281,7 +283,7 @@ class TestConfigurationHandling:
     def test_config_validation_structure(self, config: Dict[str, Any]):
         """Property: Configuration should maintain structure invariants."""
         # All keys should be strings
-        for key in config.keys():
+        for key in config:
             assert isinstance(key, str)
             assert len(key) > 0
 
@@ -317,7 +319,6 @@ class TestPerformanceProperties:
 
 # Integration with pytest-benchmark if available
 try:
-    pass
 
     class TestBenchmarkProperties:
         """Benchmark-based property tests."""

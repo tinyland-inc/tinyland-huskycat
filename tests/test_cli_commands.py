@@ -7,13 +7,13 @@ Tests each command's execute() method and error handling.
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch, PropertyMock
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 
+from huskycat.core.adapters import CLIAdapter, GitHooksAdapter
 from huskycat.core.base import CommandResult, CommandStatus
 from huskycat.core.factory import HuskyCatFactory
-from huskycat.core.adapters import CLIAdapter, GitHooksAdapter
 
 
 class TestHuskyCatFactory:
@@ -45,9 +45,17 @@ class TestHuskyCatFactory:
         commands = factory.list_commands()
 
         expected_commands = [
-            "validate", "auto-fix", "install", "setup-hooks",
-            "update-schemas", "ci-validate", "auto-devops",
-            "mcp-server", "bootstrap", "clean", "status"
+            "validate",
+            "auto-fix",
+            "install",
+            "setup-hooks",
+            "update-schemas",
+            "ci-validate",
+            "auto-devops",
+            "mcp-server",
+            "bootstrap",
+            "clean",
+            "status",
         ]
         for cmd in expected_commands:
             assert cmd in commands, f"Command '{cmd}' not found in factory"
@@ -377,8 +385,7 @@ class TestCommandResult:
     def test_command_result_success(self):
         """CommandResult should represent success."""
         result = CommandResult(
-            status=CommandStatus.SUCCESS,
-            message="Operation completed"
+            status=CommandStatus.SUCCESS, message="Operation completed"
         )
         assert result.status == CommandStatus.SUCCESS
         # Default values are empty lists, not None
@@ -390,7 +397,7 @@ class TestCommandResult:
         result = CommandResult(
             status=CommandStatus.FAILED,
             message="Operation failed",
-            errors=["Error 1", "Error 2"]
+            errors=["Error 1", "Error 2"],
         )
         assert result.status == CommandStatus.FAILED
         assert len(result.errors) == 2
@@ -400,7 +407,7 @@ class TestCommandResult:
         result = CommandResult(
             status=CommandStatus.WARNING,
             message="Completed with warnings",
-            warnings=["Warning 1"]
+            warnings=["Warning 1"],
         )
         assert result.status == CommandStatus.WARNING
         assert len(result.warnings) == 1
@@ -410,7 +417,7 @@ class TestCommandResult:
         result = CommandResult(
             status=CommandStatus.SUCCESS,
             message="Success",
-            data={"files_checked": 10, "errors_found": 0}
+            data={"files_checked": 10, "errors_found": 0},
         )
         assert result.data["files_checked"] == 10
 

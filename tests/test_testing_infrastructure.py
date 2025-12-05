@@ -4,12 +4,13 @@ Test the Testing Infrastructure Itself
 Meta-tests to ensure our test suite is working correctly
 """
 
-import pytest
-import subprocess
-import os
-import sys
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
+
+import pytest
 
 # Test infrastructure paths
 TESTS_DIR = Path(__file__).parent
@@ -23,6 +24,7 @@ class TestTestingInfrastructure:
         """Test that pytest is available and working."""
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "--version"],
+            check=False,
             capture_output=True,
             text=True,
         )
@@ -103,6 +105,7 @@ class TestTestingInfrastructure:
         # Try to list available markers
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "--markers"],
+            check=False,
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
@@ -131,7 +134,10 @@ class TestTestingInfrastructure:
 
         # Test help command
         result = subprocess.run(
-            [sys.executable, str(runner), "--help"], capture_output=True, text=True
+            [sys.executable, str(runner), "--help"],
+            check=False,
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0
         assert "usage:" in result.stdout.lower() or "help" in result.stdout.lower()
@@ -161,6 +167,7 @@ def test_basic_math():
             # Run the simple test
             result = subprocess.run(
                 [sys.executable, "-m", "pytest", str(simple_test_file), "-v"],
+                check=False,
                 cwd=PROJECT_ROOT,
                 capture_output=True,
                 text=True,
@@ -200,6 +207,7 @@ def test_basic_math():
                         "--tb=short",
                         "-x",  # Stop on first failure
                     ],
+                    check=False,
                     cwd=PROJECT_ROOT,
                     capture_output=True,
                     text=True,
@@ -223,6 +231,7 @@ def test_basic_math():
         # Run in quick mode with a short timeout
         result = subprocess.run(
             [sys.executable, str(runner), "--quick", "--phases", "unit"],
+            check=False,
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
@@ -245,6 +254,7 @@ def test_basic_math():
         # Test help target first to ensure make works
         result = subprocess.run(
             ["make", "help"],
+            check=False,
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
@@ -257,6 +267,7 @@ def test_basic_math():
         # Test a simple target that should work
         result = subprocess.run(
             ["make", "clean-cache"],
+            check=False,
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,

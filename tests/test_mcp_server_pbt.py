@@ -4,12 +4,14 @@ Property-Based Testing for MCP Server
 Using Hypothesis for comprehensive testing
 """
 
-import pytest
-from hypothesis import given, strategies as st, assume, settings
 import json
 import os
 import sys
 from io import StringIO
+
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -168,7 +170,7 @@ class TestMCPServerProperties:
         try:
             response = server.handle_request(request)
             print(json.dumps(response))
-            
+
             # Check response structure
             assert response["jsonrpc"] == "2.0"
             assert response["id"] == request_id

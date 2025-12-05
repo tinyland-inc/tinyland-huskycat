@@ -4,16 +4,16 @@ Comprehensive Container Testing for HuskyCat
 Tests container build, security, and functionality
 """
 
-import pytest
 import subprocess
 import tempfile
 import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import pytest
+
 # Try to import docker, but don't fail if it's not available
 try:
-    pass
 
     HAS_DOCKER = True
 except ImportError:
@@ -49,14 +49,13 @@ class ContainerTestHelper:
             tag,
             str(context_dir),
         ]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, check=False, capture_output=True, text=True)
 
         if result.returncode == 0:
             self.test_images.append(tag)
             return True
-        else:
-            print(f"Build failed: {result.stderr}")
-            return False
+        print(f"Build failed: {result.stderr}")
+        return False
 
     def run_container(
         self,
@@ -89,18 +88,24 @@ class ContainerTestHelper:
         if command:
             cmd.extend(command)
 
-        return subprocess.run(cmd, capture_output=True, text=True)
+        return subprocess.run(cmd, check=False, capture_output=True, text=True)
 
     def cleanup(self):
         """Clean up test containers and images."""
         # Stop and remove containers
         for container in self.test_containers:
-            subprocess.run([self.runtime, "stop", container], capture_output=True)
-            subprocess.run([self.runtime, "rm", container], capture_output=True)
+            subprocess.run(
+                [self.runtime, "stop", container], check=False, capture_output=True
+            )
+            subprocess.run(
+                [self.runtime, "rm", container], check=False, capture_output=True
+            )
 
         # Remove images
         for image in self.test_images:
-            subprocess.run([self.runtime, "rmi", image], capture_output=True)
+            subprocess.run(
+                [self.runtime, "rmi", image], check=False, capture_output=True
+            )
 
 
 @pytest.fixture
@@ -119,7 +124,7 @@ def built_image(container_helper: ContainerTestHelper):
         pytest.skip("ContainerFile not found")
 
     tag = "huskycat-test:latest"
-    build_success = container_helper.build_image(containerfile, tag, Path("."))
+    build_success = container_helper.build_image(containerfile, tag, Path())
 
     if not build_success:
         pytest.skip("Container build failed")
@@ -137,7 +142,7 @@ class TestContainerBuild:
             pytest.skip("ContainerFile not found")
 
         tag = "huskycat-build-test:latest"
-        assert container_helper.build_image(containerfile, tag, Path("."))
+        assert container_helper.build_image(containerfile, tag, Path())
 
     def test_container_has_required_tools(
         self, container_helper: ContainerTestHelper, built_image: str

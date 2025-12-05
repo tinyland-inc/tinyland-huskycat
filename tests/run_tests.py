@@ -8,14 +8,14 @@ This script provides intelligent test execution with different testing strategie
 - Targeted testing for specific components
 """
 
-import os
-import sys
-import subprocess
 import argparse
+import json
+import os
+import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import List
-import json
 
 
 class TestRunner:
@@ -234,8 +234,7 @@ class TestRunner:
             if not result:
                 print(f"❌ {phase_name} failed!")
                 break
-            else:
-                print(f"✅ {phase_name} passed!")
+            print(f"✅ {phase_name} passed!")
 
         # Generate CI summary
         self._generate_ci_summary(results)
@@ -291,6 +290,7 @@ class TestRunner:
         try:
             result = subprocess.run(
                 cmd,
+                check=False,
                 cwd=self.project_root,
                 capture_output=False,  # Show output in real-time
                 text=True,
@@ -310,7 +310,7 @@ class TestRunner:
             return success
 
         except KeyboardInterrupt:
-            print(f"\n⚠️  Tests interrupted by user")
+            print("\n⚠️  Tests interrupted by user")
             return False
         except Exception as e:
             print(f"\n❌ Error running {test_type} tests: {e}")

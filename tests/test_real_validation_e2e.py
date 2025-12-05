@@ -4,14 +4,15 @@ Comprehensive End-to-End Tests for Real Validation Flow
 Tests that the actual validation pipeline works as expected
 """
 
-import pytest
-import subprocess
-import os
 import json
+import os
+import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Optional
-import sys
+
+import pytest
 
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -301,6 +302,7 @@ def broken_function(:
         # Try to commit - should fail
         result = subprocess.run(
             ["git", "commit", "-m", "test: add broken code"],
+            check=False,
             cwd=git_project,
             capture_output=True,
             text=True,
@@ -334,6 +336,7 @@ if __name__ == "__main__":
         # Try to commit - should succeed
         result = subprocess.run(
             ["git", "commit", "-m", "feat: add hello world function"],
+            check=False,
             cwd=git_project,
             capture_output=True,
             text=True,
@@ -351,7 +354,7 @@ if __name__ == "__main__":
         # Create commit-msg hook
         commit_msg_hook = git_project / ".husky" / "commit-msg"
         commit_msg_hook.write_text(
-            """#!/usr/bin/env sh
+            r"""#!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 commit_msg_file="$1"
@@ -392,6 +395,7 @@ echo "✅ Commit message validation passed"
         # Test bad commit message
         result = subprocess.run(
             ["git", "commit", "-m", "bad"],
+            check=False,
             cwd=git_project,
             capture_output=True,
             text=True,
@@ -402,6 +406,7 @@ echo "✅ Commit message validation passed"
         # Test good commit message
         result = subprocess.run(
             ["git", "commit", "-m", "feat: add test file for validation"],
+            check=False,
             cwd=git_project,
             capture_output=True,
             text=True,
@@ -528,6 +533,7 @@ class TestValidationScriptIntegration:
         # Run the lint script
         result = subprocess.run(
             [str(lint_script), "--all"],
+            check=False,
             cwd=temp_project,
             capture_output=True,
             text=True,
@@ -561,7 +567,10 @@ class TestValidationScriptIntegration:
 
         # Test script syntax
         result = subprocess.run(
-            ["bash", "-n", str(install_script)], capture_output=True, text=True
+            ["bash", "-n", str(install_script)],
+            check=False,
+            capture_output=True,
+            text=True,
         )
 
         assert (

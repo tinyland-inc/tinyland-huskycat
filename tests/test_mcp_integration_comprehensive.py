@@ -4,15 +4,16 @@ Comprehensive MCP Server Integration Tests
 Tests MCP server functionality, protocol compliance, and real-world usage
 """
 
-import pytest
-import subprocess
-import os
 import json
-import time
+import os
+import subprocess
 import sys
+import time
+from io import StringIO
 from pathlib import Path
 from typing import Dict, Optional
-from io import StringIO
+
+import pytest
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -28,7 +29,6 @@ except ImportError:
     MCPServer = type("MCPServer", (), {})  # type: ignore
 
 try:
-    pass
 
     HAS_VALIDATION = True
 except ImportError:

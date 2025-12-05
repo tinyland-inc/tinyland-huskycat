@@ -180,8 +180,6 @@ select = ["E", "F", "I", "N", "W", "UP", "YTT", "ANN", "S", "BLE", "B", "A", "CO
 
 # Reasonable ignores for this codebase
 ignore = [
-    "ANN101",   # Missing type annotation for self (deprecated)
-    "ANN102",   # Missing type annotation for cls (deprecated)
     "ANN401",   # Dynamically typed expressions (Any) - needed for **kwargs
     "S101",     # Assert usage - needed for tests
     "S607",     # Starting process with partial path - needed for git/uv subprocess calls
@@ -230,7 +228,56 @@ exclude = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"test_*.py" = ["S101", "PLR2004"]  # Allow assert and magic values in tests
+# Comprehensive test file ignores - tests have different requirements than production code
+"tests/**/*.py" = [
+    "S101",     # Assert usage - required for pytest
+    "S103",     # chmod permissive mask - acceptable in tests
+    "S108",     # Probable insecure temp file - acceptable in tests
+    "S603",     # subprocess call - tests legitimately use subprocess
+    "S605",     # os.system shell - acceptable in test fixtures
+    "PLR2004",  # Magic values - common in test assertions
+    "PLR0913",  # Too many arguments - test parametrization often needs many
+    "PLC0415",  # Import not at top - tests often import mid-function
+    "PLW2901",  # Loop variable overwritten - acceptable in tests
+    "ANN",      # All annotation rules - tests don't need strict typing
+    "INP001",   # Implicit namespace package (tests don't need __init__.py)
+    "SLF001",   # Private member access - needed for testing internals
+    "E501",     # Line too long - some test lines are naturally long
+    "E712",     # Equality comparison to False - common in assertions
+    "E722",     # Bare except - acceptable for test validation helpers
+    "C401",     # Unnecessary generator - not important in tests
+    "ERA001",   # Commented out code - common in tests
+    "F401",     # Unused imports - test helpers
+    "F841",     # Unused variable - test scaffolding
+    "PTH",      # pathlib vs os.path - not enforced in tests
+    "ARG001",   # Unused function argument - pytest fixtures
+    "EXE001",   # Shebang without executable - cosmetic
+    "W293",     # Blank line whitespace - minor style issue
+    "T201",     # print found - test runners use print for output
+    "PT003",    # pytest.fixture implied scope - cosmetic
+    "B007",     # Unused loop variable - acceptable in tests
+    "BLE001",   # Blind exception - tests often catch general exceptions
+    "TRY",      # tryceratops - stylistic try/except patterns
+    "SIM",      # simplify - tests may be more explicit
+    "RUF",      # ruff-specific - allow test flexibility
+    "EM",       # exception messages - tests have inline messages
+    "PGH003",   # type ignore specificity - tests use general ignores
+]
+"test_*.py" = [
+    "S101", "S103", "S108", "S603", "S605",  # Security - tests use subprocess/temp files
+    "PLR2004", "PLR0913", "PLC0415", "PLW2901",  # Pylint relaxations
+    "ANN",      # All annotation rules
+    "INP001", "SLF001", "E501", "E712", "E722", "C401", "ERA001", "F401", "F841",
+    "PTH", "ARG001", "EXE001", "W293", "T201", "PT003", "B007",
+    "BLE001", "TRY", "SIM", "RUF", "EM", "PGH003",
+]
+"conftest.py" = [
+    "S101", "S103", "S108", "S603", "S605",
+    "PLR2004", "PLR0913", "PLC0415", "PLW2901",
+    "ANN", "INP001", "SLF001", "E501", "E712", "E722", "C401", "ERA001", "F401", "F841",
+    "PTH", "ARG001", "EXE001", "W293", "T201", "PT003", "B007",
+    "BLE001", "TRY", "SIM", "RUF", "EM", "PGH003",
+]
 
 [dependency-groups]
 dev = [

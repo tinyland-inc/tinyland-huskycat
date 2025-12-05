@@ -4,15 +4,15 @@ Comprehensive Test Runner for HuskyCat
 Orchestrates all testing phases: unit, integration, E2E, and performance
 """
 
-import sys
-import subprocess
-import time
-import json
 import argparse
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-from dataclasses import dataclass, asdict
+import json
+import subprocess
+import sys
+import time
+from dataclasses import asdict, dataclass
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 
 class TestPhase(Enum):
@@ -75,6 +75,7 @@ class TestRunner:
         try:
             result = subprocess.run(
                 command,
+                check=False,
                 cwd=cwd or self.project_root,
                 capture_output=True,
                 text=True,
@@ -85,7 +86,7 @@ class TestRunner:
             duration = time.time() - start_time
             return result.returncode, result.stdout, result.stderr, duration
 
-        except subprocess.TimeoutExpired as e:
+        except subprocess.TimeoutExpired:
             duration = time.time() - start_time
             return -1, "", f"Command timed out after {timeout}s", duration
 
@@ -487,7 +488,7 @@ class TestRunner:
         print("🧪 HUSKYCATS COMPREHENSIVE TEST REPORT")
         print("=" * 70)
 
-        print(f"📊 SUMMARY:")
+        print("📊 SUMMARY:")
         print(f"   Total Tests: {summary['total_tests']}")
         print(f"   ✅ Passed: {summary['passed']}")
         print(f"   ❌ Failed: {summary['failed']}")
@@ -495,7 +496,7 @@ class TestRunner:
         print(f"   🎯 Success Rate: {summary['success_rate']:.1f}%")
         print(f"   ⏱️  Total Duration: {summary['total_duration']:.2f}s")
 
-        print(f"\n📋 BY PHASE:")
+        print("\n📋 BY PHASE:")
         for phase, stats in report["by_phase"].items():
             print(f"   {phase.upper()}:")
             print(
@@ -558,8 +559,7 @@ class TestRunner:
             except SystemExit:
                 if self.fail_fast:
                     break
-                else:
-                    raise
+                raise
 
         # Generate and print report
         self.print_report()

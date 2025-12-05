@@ -3,12 +3,14 @@ Property-Based Testing for HuskyCat Validation Engine
 Using Hypothesis for comprehensive testing
 """
 
-import pytest
-from hypothesis import given, strategies as st, assume, settings
-from pathlib import Path
-import tempfile
 import os
 import sys
+import tempfile
+from pathlib import Path
+
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -144,7 +146,7 @@ class TestValidationEngineProperties:
                 assert isinstance(result, ValidationResult)
                 assert result.tool in [
                     "black",
-                    "flake8", 
+                    "flake8",
                     "mypy",
                     "bandit",
                     "ruff",
@@ -404,7 +406,9 @@ class TestEngineInvariants:
         engine2 = ValidationEngine()
 
         # Same validators should be discovered
-        assert set(v.name for v in engine1.validators) == set(v.name for v in engine2.validators)
+        assert set(v.name for v in engine1.validators) == set(
+            v.name for v in engine2.validators
+        )
 
         # Extension map should be the same
         assert engine1._extension_map.keys() == engine2._extension_map.keys()
