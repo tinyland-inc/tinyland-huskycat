@@ -1,0 +1,107 @@
+# HuskyCat GitHub Action
+# Use in your workflow:
+#
+#   - uses: tinyland/huskycat@v2
+#     with:
+#       paths: 'src/'
+#       tools: 'black,ruff,mypy'
+#       fix: 'false'
+
+name: 'HuskyCat Validation'
+description: 'Run HuskyCat code validation on your repository'
+author: 'Tinyland AI'
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  paths:
+    description: 'Paths to validate (space-separated)'
+    required: false
+    default: '.'
+  tools:
+    description: 'Comma-separated list of tools to run (or "all")'
+    required: false
+    default: 'all'
+  fix:
+    description: 'Auto-fix issues where possible'
+    required: false
+    default: 'false'
+  allow-warnings:
+    description: 'Allow warnings to pass (exit 0 on warnings)'
+    required: false
+    default: 'false'
+  staged-only:
+    description: 'Only validate staged files (for pre-commit)'
+    required: false
+    default: 'false'
+  fail-on-error:
+    description: 'Fail the action if validation errors found'
+    required: false
+    default: 'true'
+  output-format:
+    description: 'Output format: human, json, junit'
+    required: false
+    default: 'human'
+  report-path:
+    description: 'Path to write validation report'
+    required: false
+    default: ''
+
+outputs:
+  result:
+    description: 'Validation result: passed, failed, or warnings'
+  errors:
+    description: 'Number of errors found'
+  warnings:
+    description: 'Number of warnings found'
+  files-checked:
+    description: 'Number of files checked'
+
+runs:
+  using: 'docker'
+  image: 'docker://registry.gitlab.com/tinyland/ai/huskycat:latest'
+  entrypoint: '/bin/sh'
+  args:
+    - '-c'
+    - |
+      set -e
+
+      # Build command arguments
+      ARGS="validate ${{ inputs.paths }}"
+
+      if [ "${{ inputs.tools }}" != "all" ]; then
+        ARGS="$ARGS --tools=${{ inputs.tools }}"
+      fi
+
+      if [ "${{ inputs.fix }}" = "true" ]; then
+        ARGS="$ARGS --fix"
+      fi
+
+      if [ "${{ inputs.allow-warnings }}" = "true" ]; then
+        ARGS="$ARGS --allow-warnings"
+      fi
+
+      if [ "${{ inputs.staged-only }}" = "true" ]; then
+        ARGS="$ARGS --staged"
+      fi
+
+      if [ "${{ inputs.output-format }}" = "json" ]; then
+        ARGS="$ARGS --output=json"
+      elif [ "${{ inputs.output-format }}" = "junit" ]; then
+        ARGS="$ARGS --output=junit"
+      fi
+
+      if [ -n "${{ inputs.report-path }}" ]; then
+        ARGS="$ARGS --report=${{ inputs.report-path }}"
+      fi
+
+      echo "Running: huskycat $ARGS"
+
+      # Run validation
+      if [ "${{ inputs.fail-on-error }}" = "true" ]; then
+        huskycat $ARGS
+      else
+        huskycat $ARGS || true
+      fi

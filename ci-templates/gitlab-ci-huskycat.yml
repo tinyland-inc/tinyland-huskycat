@@ -1,0 +1,158 @@
+# HuskyCat GitLab CI Template
+# Include in your .gitlab-ci.yml:
+#
+#   include:
+#     - remote: 'https://gitlab.com/tinyland/ai/huskycat/-/raw/main/ci-templates/gitlab-ci-huskycat.yml'
+#
+# Or for specific version:
+#   include:
+#     - remote: 'https://gitlab.com/tinyland/ai/huskycat/-/raw/v2.0.0/ci-templates/gitlab-ci-huskycat.yml'
+
+variables:
+  HUSKYCAT_IMAGE: registry.gitlab.com/tinyland/ai/huskycat:latest
+  HUSKYCAT_PATHS: "."
+  HUSKYCAT_TOOLS: "all"
+  HUSKYCAT_ALLOW_WARNINGS: "false"
+
+# Base template for HuskyCat validation jobs
+.huskycat:base:
+  image:
+    name: $HUSKYCAT_IMAGE
+    entrypoint: [""]
+  before_script:
+    - huskycat --version || echo "Using container validation tools"
+
+# Validate all files in specified paths
+.huskycat:validate:
+  extends: .huskycat:base
+  script:
+    - |
+      if [ "$HUSKYCAT_ALLOW_WARNINGS" = "true" ]; then
+        huskycat validate $HUSKYCAT_PATHS --allow-warnings
+      else
+        huskycat validate $HUSKYCAT_PATHS
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Validate only changed files in merge requests
+.huskycat:validate-changed:
+  extends: .huskycat:base
+  script:
+    - |
+      if [ "$CI_MERGE_REQUEST_IID" ]; then
+        git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+        CHANGED_FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...HEAD)
+        if [ -n "$CHANGED_FILES" ]; then
+          echo "Validating changed files:"
+          echo "$CHANGED_FILES"
+          echo "$CHANGED_FILES" | xargs huskycat validate
+        else
+          echo "No files changed"
+        fi
+      else
+        huskycat validate $HUSKYCAT_PATHS
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Python-specific validation
+.huskycat:python:
+  extends: .huskycat:base
+  variables:
+    HUSKYCAT_TOOLS: "black,flake8,mypy,ruff,bandit"
+  script:
+    - find $HUSKYCAT_PATHS -name "*.py" -not -path "*/venv/*" -not -path "*/.venv/*" | xargs huskycat validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/*.py"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - "**/*.py"
+
+# JavaScript/TypeScript validation
+.huskycat:javascript:
+  extends: .huskycat:base
+  variables:
+    HUSKYCAT_TOOLS: "eslint,prettier"
+  script:
+    - find $HUSKYCAT_PATHS -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | grep -v node_modules | xargs huskycat validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/*.js"
+        - "**/*.ts"
+        - "**/*.jsx"
+        - "**/*.tsx"
+
+# YAML validation (CI configs, k8s manifests, etc.)
+.huskycat:yaml:
+  extends: .huskycat:base
+  variables:
+    HUSKYCAT_TOOLS: "yamllint"
+  script:
+    - find $HUSKYCAT_PATHS -name "*.yml" -o -name "*.yaml" | xargs huskycat validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/*.yml"
+        - "**/*.yaml"
+
+# Docker/Container validation
+.huskycat:docker:
+  extends: .huskycat:base
+  variables:
+    HUSKYCAT_TOOLS: "hadolint"
+  script:
+    - find $HUSKYCAT_PATHS -name "Dockerfile*" -o -name "ContainerFile*" | xargs huskycat validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/Dockerfile*"
+        - "**/ContainerFile*"
+
+# Shell script validation
+.huskycat:shell:
+  extends: .huskycat:base
+  variables:
+    HUSKYCAT_TOOLS: "shellcheck"
+  script:
+    - find $HUSKYCAT_PATHS -name "*.sh" | xargs huskycat validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/*.sh"
+
+# Security scanning
+.huskycat:security:
+  extends: .huskycat:base
+  variables:
+    HUSKYCAT_TOOLS: "bandit,gitleaks"
+  script:
+    - huskycat validate $HUSKYCAT_PATHS --tools=$HUSKYCAT_TOOLS
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ============================================
+# Ready-to-use jobs (extend in your pipeline)
+# ============================================
+
+# Example usage in your .gitlab-ci.yml:
+#
+# stages:
+#   - validate
+#
+# include:
+#   - remote: 'https://gitlab.com/tinyland/ai/huskycat/-/raw/main/ci-templates/gitlab-ci-huskycat.yml'
+#
+# lint:
+#   extends: .huskycat:validate
+#   stage: validate
+#
+# security:
+#   extends: .huskycat:security
+#   stage: validate

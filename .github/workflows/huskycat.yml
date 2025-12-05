@@ -1,0 +1,116 @@
+# HuskyCat GitHub Actions Workflow Template
+# Copy this file to your repository's .github/workflows/ directory
+#
+# Or use the reusable workflow:
+#   jobs:
+#     validate:
+#       uses: tinyland/huskycat/.github/workflows/huskycat.yml@main
+
+name: HuskyCat Validation
+
+on:
+  push:
+    branches: [main, develop, master]
+  pull_request:
+    branches: [main, develop, master]
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: 'Paths to validate'
+        required: false
+        default: '.'
+      fix:
+        description: 'Auto-fix issues'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  HUSKYCAT_IMAGE: registry.gitlab.com/tinyland/ai/huskycat:latest
+
+jobs:
+  validate:
+    name: Validate Code
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/tinyland/ai/huskycat:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run HuskyCat validation
+        run: |
+          huskycat validate ${{ github.event.inputs.paths || '.' }}
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: huskycat-report
+          path: |
+            huskycat-report.json
+            huskycat-report.xml
+          if-no-files-found: ignore
+
+  # Validate only changed files on PRs
+  validate-changed:
+    name: Validate Changed Files
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    container:
+      image: registry.gitlab.com/tinyland/ai/huskycat:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | tr '\n' ' ')
+          echo "files=$CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Validate changed files
+        if: steps.changed.outputs.files != ''
+        run: |
+          echo "Validating: ${{ steps.changed.outputs.files }}"
+          huskycat validate ${{ steps.changed.outputs.files }}
+
+  # Python-specific validation
+  python:
+    name: Python Validation
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/tinyland/ai/huskycat:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Python files
+        run: |
+          find . -name "*.py" -not -path "*/venv/*" -not -path "*/.venv/*" -not -path "*/node_modules/*" | xargs huskycat validate || true
+
+  # Security scanning
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/tinyland/ai/huskycat:latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run security validators
+        run: |
+          huskycat validate . --tools=bandit,gitleaks || true
+
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.json
+          if-no-files-found: ignore
