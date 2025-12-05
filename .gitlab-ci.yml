@@ -281,7 +281,7 @@ binary:build:linux:
     - chmod +x dist/bin/huskycat-linux-amd64
     - upx --best --lzma dist/bin/huskycat-linux-amd64 || echo "UPX compression failed, continuing without compression"
     - ls -la dist/bin/
-    - file dist/bin/huskycat-linux-amd64
+    - file dist/bin/huskycat-linux-amd64 || true  # file command may not be available
     - dist/bin/huskycat-linux-amd64 --version || echo "Binary test failed, but continuing"
   artifacts:
     paths:
@@ -311,7 +311,7 @@ binary:build:linux-arm64:
     - mv dist/huskycat-linux-arm64 dist/bin/
     - chmod +x dist/bin/huskycat-linux-arm64
     - ls -la dist/bin/
-    - file dist/bin/huskycat-linux-arm64
+    - file dist/bin/huskycat-linux-arm64 || true  # file command may not be available
     - dist/bin/huskycat-linux-arm64 --version || echo "Binary test failed, but continuing"
   artifacts:
     paths:
@@ -397,7 +397,7 @@ binary:build:darwin-arm64:
     - mv dist/huskycat dist/bin/huskycat-darwin-arm64
     - chmod +x dist/bin/huskycat-darwin-arm64
     # Verify
-    - file dist/bin/huskycat-darwin-arm64
+    - file dist/bin/huskycat-darwin-arm64 || true  # file command may not be available
     - dist/bin/huskycat-darwin-arm64 --version
     - codesign -dv --verbose=4 dist/bin/huskycat-darwin-arm64 || echo "Not signed"
     # Notarize if credentials available
@@ -475,7 +475,7 @@ binary:build:darwin-amd64:
       fi
     - mv dist/huskycat dist/bin/huskycat-darwin-amd64
     - chmod +x dist/bin/huskycat-darwin-amd64
-    - file dist/bin/huskycat-darwin-amd64
+    - file dist/bin/huskycat-darwin-amd64 || true  # file command may not be available
     - codesign -dv dist/bin/huskycat-darwin-amd64 || echo "Not signed"
     # Notarize if credentials available
     - |
