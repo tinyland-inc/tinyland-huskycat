@@ -495,9 +495,13 @@ sign:darwin-arm64:
         echo "Setting partition list for headless CI access..."
         security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
 
+        # Verify signing identities are available
+        echo "=== Signing identities ==="
+        security find-identity -v "$KEYCHAIN_NAME"
+
         # Sign the binary
         echo "Signing HuskyCat binary..."
-        codesign --force --options runtime --sign "$APPLE_DEVELOPER_ID_APPLICATION" dist/bin/huskycat-darwin-arm64
+        codesign --force --options runtime --sign "$APPLE_DEVELOPER_ID_APPLICATION" --keychain "$KEYCHAIN_NAME" dist/bin/huskycat-darwin-arm64
         codesign --verify --verbose dist/bin/huskycat-darwin-arm64
         echo "Binary signed with Developer ID"
 
