@@ -145,7 +145,7 @@ class TestValidationEngineProperties:
             for result in results:
                 assert isinstance(result, ValidationResult)
                 assert result.tool in [
-                    "black",
+                    "python-black",
                     "flake8",
                     "mypy",
                     "bandit",
