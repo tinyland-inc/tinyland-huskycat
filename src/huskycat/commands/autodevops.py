@@ -97,7 +97,9 @@ class AutoDevOpsCommand(BaseCommand):
 
         # Validate Helm charts (skip slow helm template in fast mode)
         if validate_helm:
-            helm_result = self._validate_helm_charts(project_path_obj, fast_mode=fast_mode)
+            helm_result = self._validate_helm_charts(
+                project_path_obj, fast_mode=fast_mode
+            )
             results["helm_validation"] = helm_result
             if not helm_result["valid"]:
                 all_errors.extend(helm_result["errors"])
@@ -105,7 +107,9 @@ class AutoDevOpsCommand(BaseCommand):
 
         # Validate Kubernetes manifests (skip slow kubectl in fast mode)
         if validate_k8s:
-            k8s_result = self._validate_k8s_manifests(project_path_obj, fast_mode=fast_mode)
+            k8s_result = self._validate_k8s_manifests(
+                project_path_obj, fast_mode=fast_mode
+            )
             results["k8s_validation"] = k8s_result
             if not k8s_result["valid"]:
                 all_errors.extend(k8s_result["errors"])
@@ -397,7 +401,9 @@ class AutoDevOpsCommand(BaseCommand):
 
         return result
 
-    def _validate_helm_charts(self, project_path_obj: Path, fast_mode: bool = False) -> Dict:
+    def _validate_helm_charts(
+        self, project_path_obj: Path, fast_mode: bool = False
+    ) -> Dict:
         """
         Validate Helm charts and values files.
 
@@ -464,11 +470,15 @@ class AutoDevOpsCommand(BaseCommand):
                 result["errors"].extend(template_result["errors"])
             result["warnings"].extend(template_result["warnings"])
         elif result["charts_found"] and fast_mode:
-            self.log("Skipping 'helm template' in fast mode (using schema validation only)")
+            self.log(
+                "Skipping 'helm template' in fast mode (using schema validation only)"
+            )
 
         return result
 
-    def _validate_k8s_manifests(self, project_path_obj: Path, fast_mode: bool = False) -> Dict:
+    def _validate_k8s_manifests(
+        self, project_path_obj: Path, fast_mode: bool = False
+    ) -> Dict:
         """
         Validate Kubernetes manifests.
 
@@ -523,7 +533,9 @@ class AutoDevOpsCommand(BaseCommand):
                     kubectl_result["warnings"]
                 )  # kubectl issues are warnings, not errors
         elif manifest_files and fast_mode:
-            self.log("Skipping 'kubectl --dry-run' in fast mode (using YAML validation only)")
+            self.log(
+                "Skipping 'kubectl --dry-run' in fast mode (using YAML validation only)"
+            )
 
         return result
 

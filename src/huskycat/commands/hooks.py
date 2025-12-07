@@ -256,7 +256,9 @@ class SetupHooksCommand(BaseCommand):
             warnings=warnings if warnings else None,
             data={
                 "hooks_installed": count,
-                "binary_path": str(generator.binary_path) if generator.binary_path else None,
+                "binary_path": (
+                    str(generator.binary_path) if generator.binary_path else None
+                ),
                 "version": generator.version,
                 "gitops_enabled": is_gitops,
                 "features_detected": features,

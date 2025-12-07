@@ -52,9 +52,8 @@ class BootstrapCommand(BaseCommand):
             return self._bootstrap_mcp_integration(force)
         else:
             return self._bootstrap_gitops_hooks(force, skip_install)
-    def _bootstrap_gitops_hooks(
-        self, force: bool, skip_install: bool
-    ) -> CommandResult:
+
+    def _bootstrap_gitops_hooks(self, force: bool, skip_install: bool) -> CommandResult:
         """Bootstrap git hooks and GitOps validation.
 
         Args:
@@ -165,7 +164,9 @@ class BootstrapCommand(BaseCommand):
             warnings=warnings if warnings else None,
             data={
                 "hooks_installed": count,
-                "binary_path": str(generator.binary_path) if generator.binary_path else None,
+                "binary_path": (
+                    str(generator.binary_path) if generator.binary_path else None
+                ),
                 "gitops_enabled": is_gitops,
                 "features_detected": features,
             },

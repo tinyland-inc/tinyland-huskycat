@@ -151,6 +151,7 @@ class TestValidationEngineProperties:
                     "bandit",
                     "ruff",
                     "autoflake",
+                    "isort",
                 ]
                 assert isinstance(result.success, bool)
                 assert isinstance(result.messages, list)

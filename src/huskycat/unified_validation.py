@@ -595,7 +595,11 @@ class IsortValidator(Validator):
                         filepath=str(filepath),
                         success=False,
                         errors=["Imports are not properly sorted"],
-                        messages=diff_lines[:10] if diff_lines else ["Run with --fix to sort imports"],
+                        messages=(
+                            diff_lines[:10]
+                            if diff_lines
+                            else ["Run with --fix to sort imports"]
+                        ),
                         duration_ms=duration_ms,
                     )
         except Exception as e:
@@ -672,8 +676,20 @@ class TaploValidator(Validator):
                         )
                     else:
                         # Formatting failed
-                        error_output = fix_result.stderr if fix_result.stderr else fix_result.stdout
-                        errors = [line.strip() for line in error_output.splitlines() if line.strip()] if error_output else ["Failed to format TOML file"]
+                        error_output = (
+                            fix_result.stderr
+                            if fix_result.stderr
+                            else fix_result.stdout
+                        )
+                        errors = (
+                            [
+                                line.strip()
+                                for line in error_output.splitlines()
+                                if line.strip()
+                            ]
+                            if error_output
+                            else ["Failed to format TOML file"]
+                        )
                         return ValidationResult(
                             tool=self.name,
                             filepath=str(filepath),
@@ -688,10 +704,14 @@ class TaploValidator(Validator):
                     messages = []
                     if output:
                         # taplo --check shows which files need formatting
-                        messages = [line.strip() for line in output.splitlines() if line.strip()][:5]
+                        messages = [
+                            line.strip() for line in output.splitlines() if line.strip()
+                        ][:5]
 
                     if not messages:
-                        messages = ["TOML file needs formatting. Run with --fix to format."]
+                        messages = [
+                            "TOML file needs formatting. Run with --fix to format."
+                        ]
 
                     return ValidationResult(
                         tool=self.name,
@@ -776,8 +796,20 @@ class TerraformValidator(Validator):
                         )
                     else:
                         # Formatting failed
-                        error_output = fix_result.stderr if fix_result.stderr else fix_result.stdout
-                        errors = [line.strip() for line in error_output.splitlines() if line.strip()] if error_output else ["Failed to format Terraform file"]
+                        error_output = (
+                            fix_result.stderr
+                            if fix_result.stderr
+                            else fix_result.stdout
+                        )
+                        errors = (
+                            [
+                                line.strip()
+                                for line in error_output.splitlines()
+                                if line.strip()
+                            ]
+                            if error_output
+                            else ["Failed to format Terraform file"]
+                        )
                         return ValidationResult(
                             tool=self.name,
                             filepath=str(filepath),
@@ -792,10 +824,14 @@ class TerraformValidator(Validator):
                     output = result.stdout if result.stdout else result.stderr
                     messages = []
                     if output:
-                        messages = [line.strip() for line in output.splitlines() if line.strip()][:5]
+                        messages = [
+                            line.strip() for line in output.splitlines() if line.strip()
+                        ][:5]
 
                     if not messages:
-                        messages = ["Terraform file needs formatting. Run with --fix to format."]
+                        messages = [
+                            "Terraform file needs formatting. Run with --fix to format."
+                        ]
 
                     return ValidationResult(
                         tool=self.name,
@@ -1206,7 +1242,11 @@ class AnsibleLintValidator(Validator):
                     else:
                         # Some issues couldn't be fixed
                         remaining_issues = []
-                        fix_output = fix_result.stderr if fix_result.stderr else fix_result.stdout
+                        fix_output = (
+                            fix_result.stderr
+                            if fix_result.stderr
+                            else fix_result.stdout
+                        )
                         if fix_output:
                             # Filter to only the actual lint violations
                             remaining_issues = [
@@ -1236,7 +1276,9 @@ class AnsibleLintValidator(Validator):
                         filepath=str(filepath),
                         success=False,
                         errors=issues[:20],  # Limit to first 20 issues
-                        messages=[f"Found {len(issues)} Ansible lint issues. Run with --fix to auto-fix."],
+                        messages=[
+                            f"Found {len(issues)} Ansible lint issues. Run with --fix to auto-fix."
+                        ],
                         duration_ms=duration_ms,
                     )
 
@@ -1804,7 +1846,18 @@ class ValidationEngine:
 
     def _count_fixable_issues(self, results: Dict[str, List[ValidationResult]]) -> int:
         """Count how many issues could potentially be auto-fixed"""
-        fixable_tools = {"black", "autoflake", "ruff", "isort", "taplo", "terraform", "yamllint", "eslint", "js-prettier", "chapel"}
+        fixable_tools = {
+            "black",
+            "autoflake",
+            "ruff",
+            "isort",
+            "taplo",
+            "terraform",
+            "yamllint",
+            "eslint",
+            "js-prettier",
+            "chapel",
+        }
         count = 0
 
         for filepath, file_results in results.items():

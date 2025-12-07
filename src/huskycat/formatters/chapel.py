@@ -41,18 +41,14 @@ class ChapelFormatter:
             # Fix spacing around = (but not ==, !=, <=, >=)
             "assignment": re.compile(r"(\w+)\s*=\s*([^=\s])"),
             "assignment_pre": re.compile(r"(\w+)\s*="),
-
             # Fix spacing around + (but not ++)
             "plus": re.compile(r"(\w+)\s*\+\s*(\w+)"),
-
             # Fix spacing around - (but not --)
             "minus": re.compile(r"(\w+)\s*-\s*(\w+)"),
-
             # Fix spacing around * / %
             "multiply": re.compile(r"(\w+)\s*\*\s*(\w+)"),
             "divide": re.compile(r"(\w+)\s*/\s*(\w+)"),
             "modulo": re.compile(r"(\w+)\s*%\s*(\w+)"),
-
             # Fix spacing around comparisons
             "equal": re.compile(r"(\w+)\s*==\s*(\w+)"),
             "not_equal": re.compile(r"(\w+)\s*!=\s*(\w+)"),
@@ -60,11 +56,9 @@ class ChapelFormatter:
             "greater_equal": re.compile(r"(\w+)\s*>=\s*(\w+)"),
             "less": re.compile(r"(\w+)\s*<\s*([^\s=])"),
             "greater": re.compile(r"(\w+)\s*>\s*([^\s=])"),
-
             # Fix spacing around logical operators
             "and": re.compile(r"(\w+)\s*&&\s*(\w+)"),
             "or": re.compile(r"(\w+)\s*\|\|\s*(\w+)"),
-
             # Fix keyword spacing
             "if_keyword": re.compile(r"\bif\s*\("),
             "else_keyword": re.compile(r"\belse\s+"),
@@ -72,20 +66,15 @@ class ChapelFormatter:
             "while_keyword": re.compile(r"\bwhile\s*\("),
             "proc_keyword": re.compile(r"\b(inline\s+)?proc\s+"),
             "return_keyword": re.compile(r"\breturn\s+"),
-
             # Fix brace spacing
             "open_brace_paren": re.compile(r"\)\s*\{"),
             "open_brace_word": re.compile(r"(\w)\s*\{"),
-
             # Fix comma spacing
             "comma": re.compile(r",\s*([^\s])"),
-
             # Fix semicolon spacing
             "semicolon": re.compile(r";\s*([^\s\n])"),
-
             # Fix colon spacing in type annotations (keep no space)
             "type_colon": re.compile(r"(\w+)\s*:\s*(\w+)"),
-
             # Comment spacing
             "single_comment": re.compile(r"//\s*"),
         }

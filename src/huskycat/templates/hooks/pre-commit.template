@@ -19,7 +19,7 @@ elif command -v huskycat &> /dev/null; then
     EXEC_CMD="huskycat"
 elif command -v uv &> /dev/null && [[ -d ".venv" ]]; then
     # UV development mode (fallback)
-    EXEC_CMD="uv run python -m src.huskycat"
+    EXEC_CMD="uv run python -m huskycat"
 else
     echo "❌ Error: No HuskyCat installation found"
     echo "   Install with: huskycat install"
