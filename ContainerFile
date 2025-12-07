@@ -82,11 +82,11 @@ RUN ARCH=$(uname -m) && \
 # Install Rust tools (TOML formatter) - use pre-built binaries instead of cargo install
 # This avoids 60+ minute Rust compilation on ARM64
 RUN ARCH=$(uname -m) && \
-    TAPLO_VERSION="0.9.3" && \
-    if [ "$ARCH" = "x86_64" ]; then TAPLO_ARCH="x86_64-unknown-linux-musl"; \
-    elif [ "$ARCH" = "aarch64" ]; then TAPLO_ARCH="aarch64-unknown-linux-musl"; \
+    TAPLO_VERSION="0.10.0" && \
+    if [ "$ARCH" = "x86_64" ]; then TAPLO_ARCH="linux-x86_64"; \
+    elif [ "$ARCH" = "aarch64" ]; then TAPLO_ARCH="linux-aarch64"; \
     else echo "Unsupported architecture for taplo: $ARCH, skipping..."; exit 0; fi && \
-    echo "Downloading taplo ${TAPLO_VERSION} for architecture: $TAPLO_ARCH" && \
+    echo "Downloading taplo ${TAPLO_VERSION} for architecture: ${TAPLO_ARCH}" && \
     curl -L "https://github.com/tamasfe/taplo/releases/download/${TAPLO_VERSION}/taplo-${TAPLO_ARCH}.gz" -o taplo.gz && \
     gunzip taplo.gz && \
     chmod +x taplo && \
