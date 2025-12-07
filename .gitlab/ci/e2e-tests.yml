@@ -1,7 +1,9 @@
 # E2E Tests for HuskyCat Bootstrap and Git Hooks
 # Tests the complete binary + git hooks workflow for GitOps repositories
 
-.e2e_setup: &e2e_setup
+# E2E: Test bootstrap on full GitOps repository
+test:e2e:bootstrap:gitops:
+  stage: test
   image: python:3.11-alpine
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev
@@ -10,18 +12,13 @@
     - uv --version
     - git config --global user.name "CI Test"
     - git config --global user.email "ci@test.com"
-
-# E2E: Test bootstrap on full GitOps repository
-test:e2e:bootstrap:gitops:
-  stage: test
-  <<: *e2e_setup
   needs:
     - job: container:build:amd64
       optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - 'echo "=== E2E Test: Bootstrap on GitOps Repository ==="'
+    - echo "=== E2E Test - Bootstrap on GitOps Repository ==="
     - uv sync --dev
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapGitOps::test_bootstrap_full_gitops_repo -v -s
   artifacts:
@@ -36,14 +33,21 @@ test:e2e:bootstrap:gitops:
 # E2E: Test bootstrap on different repository types
 test:e2e:bootstrap:types:
   stage: test
-  <<: *e2e_setup
+  image: python:3.11-alpine
+  before_script:
+    - apk add --no-cache git curl bash gcc musl-dev
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+    - git config --global user.name "CI Test"
+    - git config --global user.email "ci@test.com"
   needs:
     - job: container:build:amd64
       optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - 'echo "=== E2E Test: Bootstrap on Different Repository Types ==="'
+    - echo "=== E2E Test - Bootstrap on Different Repository Types ==="
     - uv sync --dev
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapGitOps::test_bootstrap_helm_only_repo -v -s
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapGitOps::test_bootstrap_k8s_only_repo -v -s
@@ -60,14 +64,21 @@ test:e2e:bootstrap:types:
 # E2E: Test hook execution (pre-commit, pre-push, commit-msg)
 test:e2e:hooks:execution:
   stage: test
-  <<: *e2e_setup
+  image: python:3.11-alpine
+  before_script:
+    - apk add --no-cache git curl bash gcc musl-dev
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+    - git config --global user.name "CI Test"
+    - git config --global user.email "ci@test.com"
   needs:
     - job: container:build:amd64
       optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - 'echo "=== E2E Test: Hook Execution ==="'
+    - echo "=== E2E Test - Hook Execution ==="
     - uv sync --dev
     # Test valid cases
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapGitOps::test_hook_execution_pre_commit_valid -v -s
@@ -87,14 +98,21 @@ test:e2e:hooks:execution:
 # E2E: Test fast mode integration in hooks
 test:e2e:fast:mode:
   stage: test
-  <<: *e2e_setup
+  image: python:3.11-alpine
+  before_script:
+    - apk add --no-cache git curl bash gcc musl-dev
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+    - git config --global user.name "CI Test"
+    - git config --global user.email "ci@test.com"
   needs:
     - job: container:build:amd64
       optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - 'echo "=== E2E Test: Fast Mode in Hooks ==="'
+    - echo "=== E2E Test - Fast Mode in Hooks ==="
     - uv sync --dev
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapGitOps::test_gitops_fast_mode_in_hooks -v -s
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapGitOps::test_gitlab_ci_validation_in_hooks -v -s
@@ -110,14 +128,21 @@ test:e2e:fast:mode:
 # E2E: Test edge cases and error handling
 test:e2e:edge:cases:
   stage: test
-  <<: *e2e_setup
+  image: python:3.11-alpine
+  before_script:
+    - apk add --no-cache git curl bash gcc musl-dev
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+    - git config --global user.name "CI Test"
+    - git config --global user.email "ci@test.com"
   needs:
     - job: container:build:amd64
       optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - 'echo "=== E2E Test: Edge Cases ==="'
+    - echo "=== E2E Test - Edge Cases ==="
     - uv sync --dev
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapEdgeCases::test_bootstrap_non_git_directory -v -s
     - uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapEdgeCases::test_bootstrap_empty_git_repo -v -s
@@ -132,60 +157,63 @@ test:e2e:edge:cases:
     - if: $CI_COMMIT_BRANCH == "main"
 
 # E2E: Test with actual built binary (requires binary build job)
-test:e2e:binary:integration:
-  stage: test
-  image: alpine:latest
-  needs:
-    - job: binary:build:linux
-      artifacts: true
-  before_script:
-    - apk add --no-cache git bash python3 py3-pip
-    - git config --global user.name "CI Test"
-    - git config --global user.email "ci@test.com"
-  script:
-    - 'echo "=== E2E Test: Binary Integration ==="'
-    # Install binary
-    - mkdir -p ~/.local/bin
-    - cp dist/bin/huskycat-linux-amd64 ~/.local/bin/huskycat
-    - chmod +x ~/.local/bin/huskycat
-    - export PATH="$HOME/.local/bin:$PATH"
-    # Test binary works
-    - huskycat --version
-    # Create test GitOps repo
-    - mkdir -p /tmp/test-gitops
-    - cd /tmp/test-gitops
-    - git init
-    - git config user.name "Test"
-    - git config user.email "test@test.com"
-    # Create GitOps files
-    - mkdir -p chart k8s/deployments
-    - echo 'apiVersion:v2\nname:test\nversion:0.1.0' > chart/Chart.yaml
-    - echo 'apiVersion:v1\nkind:Deployment\nmetadata:\n  name:test' > k8s/deployments/app.yaml
-    - git add .
-    - git commit -m "Initial commit"
-    # Run bootstrap with binary
-    - huskycat bootstrap --force
-    # Verify hooks installed
-    - test -f .git/hooks/pre-commit || exit 1
-    - test -f .git/hooks/pre-push || exit 1
-    - test -f .git/hooks/commit-msg || exit 1
-    - test -x .git/hooks/pre-commit || exit 1
-    - 'echo "✅ Binary bootstrap test passed!"'
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_TAG
+# Disabled temporarily - binary build stages need to be reorganized
+# test:e2e:binary:integration:
+#   stage: deploy
+#   image: alpine:latest
+#   needs:
+#     - job: binary:build:linux
+#       artifacts: true
+#       optional: true
+#   before_script:
+#     - apk add --no-cache git bash python3 py3-pip
+#     - git config --global user.name "CI Test"
+#     - git config --global user.email "ci@test.com"
+#   script:
+#     - echo "=== E2E Test - Binary Integration ==="
+#     - mkdir -p ~/.local/bin
+#     - cp dist/bin/huskycat-linux-amd64 ~/.local/bin/huskycat
+#     - chmod +x ~/.local/bin/huskycat
+#     - export PATH="$HOME/.local/bin:$PATH"
+#     - huskycat --version
+#     - mkdir -p /tmp/test-gitops
+#     - cd /tmp/test-gitops
+#     - git init
+#     - git config user.name "Test"
+#     - git config user.email "test@test.com"
+#     - mkdir -p chart k8s/deployments
+#     - echo 'apiVersion:v2\nname:test\nversion:0.1.0' > chart/Chart.yaml
+#     - echo 'apiVersion:v1\nkind:Deployment\nmetadata:\n  name:test' > k8s/deployments/app.yaml
+#     - git add .
+#     - git commit -m "Initial commit"
+#     - huskycat bootstrap --force
+#     - test -f .git/hooks/pre-commit || exit 1
+#     - test -f .git/hooks/pre-push || exit 1
+#     - test -f .git/hooks/commit-msg || exit 1
+#     - test -x .git/hooks/pre-commit || exit 1
+#     - echo "Binary bootstrap test passed"
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
+#     - if: $CI_COMMIT_TAG
 
 # E2E: Comprehensive test suite (runs all E2E tests together)
 test:e2e:comprehensive:
   stage: test
-  <<: *e2e_setup
+  image: python:3.11-alpine
+  before_script:
+    - apk add --no-cache git curl bash gcc musl-dev
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+    - git config --global user.name "CI Test"
+    - git config --global user.email "ci@test.com"
   needs:
     - job: container:build:amd64
       optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - 'echo "=== E2E Test: Comprehensive Test Suite ==="'
+    - echo "=== E2E Test - Comprehensive Test Suite ==="
     - uv sync --dev
     - uv run pytest tests/e2e/ -v -s --tb=short
   coverage: '/TOTAL.*\s+(\d+)%/'
