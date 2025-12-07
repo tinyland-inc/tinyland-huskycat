@@ -378,17 +378,14 @@ validate:artifacts:
     # Check container registry
     - |
       echo "Verifying container images..."
-      IMAGES=(
-        "registry.gitlab.com/tinyland/ai/huskycat:latest"
-        "registry.gitlab.com/tinyland/ai/huskycat:latest-amd64"
-        "registry.gitlab.com/tinyland/ai/huskycat:latest-arm64"
-      )
+      IMAGES="latest latest-amd64 latest-arm64"
 
-      for image in "${IMAGES[@]}"; do
+      for tag in $IMAGES; do
+        image="registry.gitlab.com/tinyland/ai/huskycat:${tag}"
         echo "Checking $image..."
         # Note: This would need proper auth in production
         curl -s -o /dev/null -w "%{http_code}" \
-          "https://registry.gitlab.com/v2/tinyland/ai/huskycat/manifests/latest" || true
+          "https://registry.gitlab.com/v2/tinyland/ai/huskycat/manifests/${tag}" || true
       done
 
     # Check GitLab Pages artifacts
