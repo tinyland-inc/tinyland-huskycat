@@ -102,7 +102,7 @@ class ToolExtractor:
         return bundle_version != cached_version or not self.cache_dir.exists()
 
     def extract_tools(self) -> bool:
-        """Extract embedded tools to cache directory.
+        """Extract embedded tools to cache directory with progress feedback.
 
         Returns:
             True if successful
@@ -117,10 +117,22 @@ class ToolExtractor:
             # Create cache directory
             self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-            # Copy each tool
-            for tool_file in self.bundle_tools_dir.glob("*"):
+            # Count tools for progress display
+            tools = [f for f in self.bundle_tools_dir.glob("*") if f.is_file()]
+            tool_count = len([t for t in tools if t.name != "versions.txt"])
+
+            print(f"Extracting {tool_count} validation tools to {self.cache_dir}...")
+
+            # Copy each tool with progress display
+            for tool_file in tools:
                 if tool_file.is_file():
                     dest = self.cache_dir / tool_file.name
+
+                    # Show progress for actual tools (not versions.txt)
+                    if tool_file.name != "versions.txt":
+                        size_mb = tool_file.stat().st_size / (1024 * 1024)
+                        print(f"  • {tool_file.name} ({size_mb:.1f} MB)")
+
                     shutil.copy2(tool_file, dest)
 
                     # Ensure executable (Unix)
@@ -132,10 +144,11 @@ class ToolExtractor:
             with open(self.version_file, "w") as f:
                 f.write(bundle_version or "unknown")
 
+            print(f"✓ Tools extracted successfully")
             return True
 
         except Exception as e:
-            print(f"Warning: Failed to extract tools: {e}", file=sys.stderr)
+            print(f"✗ Failed to extract tools: {e}", file=sys.stderr)
             return False
 
     def setup_path(self) -> None:

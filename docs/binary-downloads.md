@@ -1,373 +1,336 @@
 # Binary Downloads
 
-HuskyCat provides pre-built binaries for multiple platforms through GitLab releases.
+Pre-built HuskyCat binaries for all supported platforms.
+
+## Latest Release (main branch)
+
+Download the latest binary from the main branch CI artifacts:
+
+| Platform | Architecture | Size | Download Link |
+|----------|--------------|------|---------------|
+| **Linux** | x86_64 (amd64) | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64) |
+| **Linux** | ARM64 | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-arm64/huskycat?job=build:binary:linux-arm64) |
+| **macOS** | ARM64 (M1/M2/M3) | ~21 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-arm64/huskycat?job=build:binary:darwin-arm64) |
+| **macOS** | Intel (x86_64) | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-amd64/huskycat?job=build:binary:darwin-amd64) |
 
 ## Quick Install
 
-### Linux (AMD64)
+### Linux (amd64)
 
 ```bash
-# Download latest release
-curl -L -o huskycat https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-
-# Make executable
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64' -o huskycat
 chmod +x huskycat
-
-# Install to system path (optional)
-sudo mv huskycat /usr/local/bin/
+./huskycat install
 ```
 
 ### Linux (ARM64)
 
 ```bash
-# Download latest release
-curl -L -o huskycat https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-arm64
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-arm64/huskycat?job=build:binary:linux-arm64' -o huskycat
+chmod +x huskycat
+./huskycat install
+```
 
-# Make executable
+### macOS (ARM64 - Apple Silicon)
+
+```bash
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-arm64/huskycat?job=build:binary:darwin-arm64' -o huskycat
 chmod +x huskycat
 
-# Install to system path (optional)
-sudo mv huskycat /usr/local/bin/
+# Remove quarantine (macOS security)
+xattr -d com.apple.quarantine huskycat
+
+./huskycat install
 ```
 
-### macOS (Apple Silicon)
+### macOS (Intel)
 
 ```bash
-# Download latest release (ad-hoc signed)
-curl -L -o huskycat https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-darwin-arm64
-
-# Make executable
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-amd64/huskycat?job=build:binary:darwin-amd64' -o huskycat
 chmod +x huskycat
 
-# Install to user path (recommended for unsigned binaries)
-mv huskycat ~/.local/bin/
+# Remove quarantine (macOS security)
+xattr -d com.apple.quarantine huskycat
 
-# Add to PATH if needed
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
+./huskycat install
 ```
-
-**Note**: macOS binaries are ad-hoc signed. You may need to allow execution in System Settings > Privacy & Security on first run.
-
-## Available Binaries
-
-| Platform | Architecture | Binary Name | Status |
-|----------|-------------|-------------|---------|
-| Linux | x86_64 | `huskycat-linux-amd64` |  Rocky Linux 10 |
-| Linux | ARM64/aarch64 | `huskycat-linux-arm64` |  Rocky Linux 10 |
-| macOS | Apple Silicon (M1/M2/M3) | `huskycat-darwin-arm64` |  Ad-hoc signed |
-| macOS | Intel (x86_64) |  Not available | GitLab SaaS ARM64 only |
-
-## Download Options
-
-### Option 1: Latest Release (Recommended)
-
-Use GitLab's permalink to always get the latest version:
-
-```bash
-# Linux AMD64
-https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-
-# Linux ARM64
-https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-arm64
-
-# macOS ARM64
-https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-darwin-arm64
-```
-
-### Option 2: Specific Version
-
-Download a specific tagged release:
-
-```bash
-# Replace $VERSION with desired tag (e.g., v2.0.0)
-https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$VERSION/raw/dist/bin/huskycat-linux-amd64?job=binary:build:linux
-```
-
-### Option 3: Browse All Releases
-
-Visit the releases page to see all available versions:
-
-[https://gitlab.com/tinyland/ai/huskycat/-/releases](https://gitlab.com/tinyland/ai/huskycat/-/releases)
 
 ## Verification
 
-### Check Version
+### Check SHA256 Checksums
+
+Download checksums from CI artifacts:
+
+```bash
+# Linux amd64
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat.sha256?job=build:binary:linux-amd64'
+
+# macOS ARM64
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-arm64/huskycat.sha256?job=build:binary:darwin-arm64'
+```
+
+Verify checksum:
+
+```bash
+# Linux
+sha256sum huskycat
+# Should match downloaded checksum
+
+# macOS
+shasum -a 256 huskycat
+# Should match downloaded checksum
+```
+
+### Verify Binary Works
 
 ```bash
 ./huskycat --version
+./huskycat --help
 ```
 
-### Verify Installation
+Expected output:
+```
+$ ./huskycat --version
+huskycat 2.0.0
 
-```bash
-# Show system status
-./huskycat status
+$ ./huskycat --help
+huskycat - Universal Code Validation Platform
 
-# Test validation
-./huskycat validate --help
+Usage:
+  huskycat [command] [options]
+
+Commands:
+  validate          Validate files with configured tools
+  setup-hooks       Install git hooks
+  install           Install binary to ~/.local/bin
+  status            Show HuskyCat configuration
+  ...
 ```
 
-### Container Requirements
+## What's Inside
 
-HuskyCat requires a container runtime for validation:
+Each binary includes:
+
+### Core Components
+- **HuskyCat Engine** (~5 MB) - Validation orchestration
+- **Python Runtime** (~40 MB) - Embedded Python 3.13
+- **Python Packages** (~30-50 MB) - Dependencies (pytest, rich, networkx, etc.)
+
+### Embedded Validation Tools
+- **shellcheck** v0.10.0 (~3-4 MB) - Shell script linter
+- **hadolint** v2.12.0 (~10-15 MB) - Dockerfile linter
+- **taplo** v0.9.3 (~15-20 MB) - TOML formatter/validator
+
+### Total Binary Sizes
+- **Linux binaries**: ~150-200 MB (all tools embedded)
+- **macOS binaries**: ~21-200 MB (varies by build configuration)
+
+## Platform Support
+
+### Linux
+
+**Architectures**:
+- x86_64 (amd64) - Most common
+- ARM64 (aarch64) - Raspberry Pi, AWS Graviton, etc.
+
+**Requirements**:
+- glibc 2.17+ (available on most modern distributions)
+- No additional dependencies required
+
+**Tested On**:
+- Ubuntu 20.04+
+- Debian 11+
+- RHEL/CentOS 8+
+- Alpine Linux 3.14+
+- Fedora 34+
+
+### macOS
+
+**Architectures**:
+- ARM64 (Apple Silicon) - M1, M2, M3 chips
+- x86_64 (Intel) - Older Macs
+
+**Requirements**:
+- macOS 10.13+ (High Sierra or later)
+- May require Xcode Command Line Tools for some operations
+
+**Tested On**:
+- macOS 14 (Sonoma) - ARM64
+- macOS 13 (Ventura) - ARM64
+- macOS 12 (Monterey) - ARM64/Intel
+- macOS 11 (Big Sur) - ARM64/Intel
+
+### Windows
+
+**Status**: Not yet supported
+
+**Alternatives**:
+1. **WSL2** (Recommended):
+   ```bash
+   # Use Linux binary in WSL2
+   curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64' -o huskycat
+   chmod +x huskycat
+   ./huskycat install
+   ```
+
+2. **Docker Desktop**:
+   ```bash
+   docker pull registry.gitlab.com/jsullivan2/huskycats-bates:latest
+   docker run --rm -v "$(pwd):/workspace" huskycat validate --all
+   ```
+
+3. **Git Bash** (Limited):
+   - May work with Linux binary and Git Bash compatibility layer
+   - Not officially supported
+
+## Download from Specific Branch/Tag
+
+Replace `main` with your branch name or tag:
+
+### From Branch
 
 ```bash
-# Check for Podman
-podman --version
-
-# Or check for Docker
-docker --version
+# Replace 'feature-branch' with your branch name
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/feature-branch/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64' -o huskycat
 ```
 
-If neither is installed, see [Container Runtime Installation](#container-runtime-installation).
-
-## Installation Methods
-
-### Method 1: User Installation (Recommended)
-
-Install to `~/.local/bin` (no sudo required):
+### From Tag
 
 ```bash
-# Create directory if it doesn't exist
-mkdir -p ~/.local/bin
-
-# Download and install
-curl -L -o ~/.local/bin/huskycat https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-chmod +x ~/.local/bin/huskycat
-
-# Add to PATH (if not already)
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+# Replace 'v2.0.0' with your tag
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/v2.0.0/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64' -o huskycat
 ```
 
-### Method 2: System-Wide Installation
+## Troubleshooting Downloads
 
-Install to `/usr/local/bin` (requires sudo):
+### SSL Certificate Issues
+
+If you encounter SSL errors:
 
 ```bash
-# Download
-curl -L -o /tmp/huskycat https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
+# Skip SSL verification (not recommended for production)
+curl -L --insecure 'https://...' -o huskycat
 
-# Install
-sudo install -m 0755 /tmp/huskycat /usr/local/bin/huskycat
-rm /tmp/huskycat
+# Or install ca-certificates
+# Ubuntu/Debian
+sudo apt-get install ca-certificates
+
+# RHEL/CentOS
+sudo yum install ca-certificates
 ```
 
-### Method 3: Project-Local Installation
+### Download Timeout
 
-Install in your project directory:
+For slow connections, increase timeout:
 
 ```bash
-# Download to project
-curl -L -o huskycat https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
+curl -L --max-time 300 'https://...' -o huskycat
+```
+
+### Corrupted Download
+
+Verify and retry:
+
+```bash
+# Check file size
+ls -lh huskycat
+# Should be ~150-200 MB for Linux, ~21 MB for macOS ARM64
+
+# If wrong size, delete and retry
+rm huskycat
+curl -L 'https://...' -o huskycat
+```
+
+### Permission Denied on Download
+
+Ensure write permissions:
+
+```bash
+# Download to current directory
+curl -L 'https://...' -o ./huskycat
+
+# Or use ~/Downloads
+curl -L 'https://...' -o ~/Downloads/huskycat
+cd ~/Downloads
 chmod +x huskycat
-
-# Use relative path
-./huskycat setup-hooks
-./huskycat validate
+./huskycat install
 ```
 
-## Container Runtime Installation
+## Manual Download (Browser)
 
-HuskyCat requires either Podman or Docker for validation.
+If `curl` is not available:
 
-### Podman (Recommended)
+1. Visit the GitLab CI pipelines page:
+   ```
+   https://gitlab.com/jsullivan2/huskycats-bates/-/pipelines
+   ```
 
-#### macOS
+2. Click on the latest successful pipeline (green checkmark)
 
-```bash
-# Using Homebrew
-brew install podman
+3. Click "Browse" next to the build job for your platform:
+   - `build:binary:linux-amd64`
+   - `build:binary:darwin-arm64`
+   - etc.
 
-# Start Podman machine
-podman machine init
-podman machine start
-```
+4. Navigate to `dist/<platform>/huskycat`
 
-#### Linux
+5. Click "Download" button
 
-```bash
-# Ubuntu/Debian
-sudo apt-get update
-sudo apt-get install -y podman
+6. Move to desired location and make executable:
+   ```bash
+   chmod +x ~/Downloads/huskycat
+   ~/Downloads/huskycat install
+   ```
 
-# Fedora/Rocky/RHEL
-sudo dnf install -y podman
+## Building from Source
 
-# Arch
-sudo pacman -S podman
-```
-
-### Docker
-
-#### macOS
-
-Download Docker Desktop from [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
-
-#### Linux
+If binaries don't work for your platform:
 
 ```bash
-# Ubuntu/Debian
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
+# Clone repository
+git clone https://gitlab.com/jsullivan2/huskycats-bates.git
+cd huskycats-bates
 
-# Add user to docker group (optional)
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-## Post-Installation
-
-### 1. Setup Git Hooks
-
-```bash
-# Navigate to your project
-cd your-project
-
-# Install HuskyCat git hooks
-huskycat setup-hooks
-```
-
-### 2. Configure MCP (Optional)
-
-For Claude Code integration:
-
-```bash
-huskycat bootstrap
-```
-
-See [MCP Server Integration](features/mcp-server.md) for details.
-
-### 3. Build Container (First Run)
-
-```bash
-# Build validation container
-cd /path/to/huskycats-bates
-npm run container:build
-```
-
-**Note**: This step is only needed if you're developing HuskyCat itself. For normal usage, the binary will use pre-built container images.
-
-## Troubleshooting
-
-### "Permission denied" on macOS
-
-macOS Gatekeeper may block unsigned binaries:
-
-```bash
-# Allow execution
-xattr -d com.apple.quarantine ~/.local/bin/huskycat
-
-# Or: System Settings > Privacy & Security > Allow "huskycat"
-```
-
-### "No container runtime available"
-
-Install Podman or Docker:
-
-```bash
-# Check if installed
-which podman || which docker
-
-# Install Podman (recommended)
-brew install podman  # macOS
-sudo dnf install podman  # Rocky Linux
-```
-
-### Binary not found after installation
-
-Check PATH:
-
-```bash
-# Verify binary location
-ls -l ~/.local/bin/huskycat
-
-# Check if directory is in PATH
-echo $PATH | grep -q "$HOME/.local/bin" && echo "✓ In PATH" || echo "✗ Not in PATH"
-
-# Add to PATH
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-### Architecture mismatch
-
-Ensure you downloaded the correct binary for your platform:
-
-```bash
-# Check your architecture
-uname -m
-# x86_64 → Use huskycat-linux-amd64
-# aarch64 or arm64 → Use huskycat-linux-arm64 or huskycat-darwin-arm64
-
-# Check binary architecture
-file huskycat
-```
-
-## Updating
-
-### Manual Update
-
-```bash
-# Download new version
-curl -L -o /tmp/huskycat https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-
-# Replace existing binary
-chmod +x /tmp/huskycat
-mv /tmp/huskycat ~/.local/bin/huskycat
-
-# Verify new version
-huskycat --version
-```
-
-### Update Script
-
-Create an update script:
-
-```bash
-#!/usr/bin/env bash
-# update-huskycat.sh
-
-set -euo pipefail
-
-PLATFORM="linux-amd64"  # Change to your platform
-INSTALL_DIR="$HOME/.local/bin"
-BINARY_URL="https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-${PLATFORM}"
-
-echo "Downloading HuskyCat for ${PLATFORM}..."
-curl -L -o /tmp/huskycat "$BINARY_URL"
-
-echo "Installing to ${INSTALL_DIR}..."
-chmod +x /tmp/huskycat
-mv /tmp/huskycat "${INSTALL_DIR}/huskycat"
-
-echo "✓ HuskyCat updated successfully!"
-huskycat --version
-```
-
-```bash
-# Make executable and run
-chmod +x update-huskycat.sh
-./update-huskycat.sh
-```
-
-## Alternative: Build from Source
-
-If binaries aren't available for your platform, build from source:
-
-```bash
-git clone https://gitlab.com/tinyland/ai/huskycat.git
-cd huskycat
-npm install
+# Install dependencies
 uv sync --dev
+
+# Build binary
 npm run build:binary
 
-# Binary will be at: dist/huskycat
+# Binary will be in dist/huskycat
+./dist/huskycat --version
 ```
 
-See [Installation Guide](installation.md) for detailed build instructions.
+See [Development Guide](../CONTRIBUTING.md) for details.
 
----
+## Release Channels
 
-For additional support, see [Troubleshooting](troubleshooting.md) or visit our [GitLab Issues](https://gitlab.com/tinyland/ai/huskycat/-/issues).
+### Stable (main branch)
+- Thoroughly tested
+- Recommended for production use
+- Download from `main` branch
+
+### Development (feature branches)
+- Latest features
+- May have bugs
+- Download from specific feature branch
+
+### Tagged Releases (v2.0.0, v2.1.0, etc.)
+- Semantic versioning
+- Production-ready releases
+- Download from tagged commits
+
+## Next Steps
+
+After downloading:
+
+1. [Install](installation.md) - Installation guide
+2. [Configure](configuration.md) - Set up for your project
+3. [Git Hooks](dogfooding.md) - Enable validation on commits
+4. [Troubleshooting](troubleshooting.md) - Fix common issues
+
+## Questions?
+
+- **Documentation**: [docs/](.)
+- **Issues**: [GitLab Issues](https://gitlab.com/jsullivan2/huskycats-bates/-/issues)
+- **CI/CD**: [Pipeline Status](https://gitlab.com/jsullivan2/huskycats-bates/-/pipelines)

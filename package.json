@@ -31,6 +31,7 @@
     "tools:download:all": "uv run python scripts/download_tools.py --all",
     "tools:clean": "uv run python scripts/download_tools.py --clean",
     "build:all": "npm run container:build && npm run build:binary",
+    "verify:binary": "bash scripts/verify_binary.sh dist/huskycat",
     "test:unit": "uv run pytest tests/ -v -m unit",
     "test:integration": "uv run pytest tests/ -v -m integration",
     "test:all": "uv run pytest tests/ -v -m 'not e2e'",
