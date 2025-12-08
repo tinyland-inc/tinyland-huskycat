@@ -64,6 +64,149 @@ graph TB
 - **GitLab CI**: Schema validation and pipeline testing
 - **Auto-Fix**: Interactive prompts for automatic issue resolution
 
+## Differentiating Features
+
+HuskyCat provides unique capabilities not found in standard linting platforms:
+
+### GitLab CI Schema Validation (`gitlab_ci_validator.py:20-230`)
+**Industry-leading GitLab CI/CD validation with official schema support**
+
+- **Dynamic Schema Fetching**: Auto-downloads official GitLab CI schema from upstream
+- **Smart Caching**: 7-day cache with automatic refresh (`gitlab_ci_validator.py:43-80`)
+- **Multi-Source Fallback**: Primary + 2 fallback schema sources for reliability
+- **Draft-07 Validation**: Full JSON Schema Draft-07 compliance with format checking
+- **Detailed Error Reporting**: Line-by-line error messages with context
+
+```python
+# unified_validation.py:1524-1625
+class GitLabCIValidator(Validator):
+    """Validates .gitlab-ci.yml against official GitLab schema"""
+
+    def can_handle(self, filepath: Path) -> bool:
+        """Detects GitLab CI files (.gitlab-ci.yml, .gitlab/ci/*.yml)"""
+        # Handles main CI file and modular includes
+```
+
+**Usage**:
+```bash
+huskycat ci-validate .gitlab-ci.yml           # Validate main CI file
+huskycat ci-validate .gitlab/ci/deploy.yml    # Validate CI includes
+huskycat --mode git_hooks validate            # Auto-validates in pre-push
+```
+
+**Implementation**: `commands/ci.py:1-200`, `gitlab_ci_validator.py:1-230`
+
+### GitLab Auto-DevOps Validation (`commands/autodevops.py:16-500`)
+**Complete Auto-DevOps pipeline validation for Helm and Kubernetes**
+
+- **Helm Chart Validation**: Values schema validation, template rendering checks
+- **Kubernetes Manifest Validation**: API version compatibility, resource quotas
+- **Security Template Verification**: SAST, Secret Detection, Container Scanning
+- **Deployment Simulation**: Dry-run validation with `helm template` and `kubectl --dry-run`
+- **Project Structure Analysis**: Auto-detects chart directories and manifests
+- **Fast Mode**: Optimized validation for git hooks (skips slow operations)
+
+```python
+# commands/autodevops.py:38-76
+def execute(
+    self,
+    project_path: str = ".",
+    validate_helm: bool = True,
+    validate_k8s: bool = True,
+    simulate_deployment: bool = False,
+    strict_mode: bool = False,
+    fast_mode: bool = False,  # Git hooks mode: skip slow ops
+) -> CommandResult:
+    """Validate Auto-DevOps Helm charts and K8s manifests"""
+```
+
+**Validation Stages**:
+1. **Project Structure**: Detects Helm charts, K8s manifests, GitLab CI
+2. **GitLab CI**: Validates Auto-DevOps stages (build, test, security, deploy)
+3. **Helm Charts**: Schema validation, `helm lint`, template rendering
+4. **Kubernetes**: API validation, resource checks, namespace isolation
+5. **Security**: Verifies SAST/Secret-Detection/Dependency-Scanning templates
+
+**Usage**:
+```bash
+huskycat auto-devops                          # Full validation
+huskycat auto-devops --no-helm                # Skip Helm validation
+huskycat auto-devops --simulate               # Test deployment dry-run
+huskycat auto-devops --strict                 # Enable strict mode
+```
+
+**Implementation**: `commands/autodevops.py:1-500`, `gitlab_ci_validator.py`
+
+### Chapel Language Support (`formatters/chapel.py:21-444`)
+**First-class Chapel code formatting without compiler dependency**
+
+HuskyCat is the **ONLY** validation platform with built-in Chapel language support.
+
+**Features**:
+- **Compiler-Free**: Pure Python implementation, no Chapel compiler required
+- **Three-Layer Formatting**: Whitespace → Syntax → Indentation
+- **Safe Transformations**: Preserves string literals and comments
+- **Auto-Fix Support**: Integrated with HuskyCat's auto-fix framework
+
+**Formatting Layers**:
+
+1. **Layer 1: Whitespace Normalization** (`chapel.py:104-137`)
+   ```python
+   def normalize_whitespace(self, code: str) -> str:
+       """Always-safe transformations:
+       - Remove trailing whitespace
+       - Convert tabs to spaces (2-space indent)
+       - Ensure final newline
+       - Normalize line endings to LF
+       """
+   ```
+
+2. **Layer 2: Syntax Formatting** (`chapel.py:141-299`)
+   ```python
+   def format_syntax(self, code: str) -> str:
+       """Regex-based operator/keyword spacing:
+       - Operators: =, +, -, *, /, %, ==, !=, <=, >=, <, >
+       - Logical: &&, ||
+       - Keywords: if, for, while, proc, return
+       - Braces: { } spacing
+       - Commas, semicolons, type annotations
+       """
+   ```
+
+3. **Layer 3: Indentation Correction** (`chapel.py:303-350`)
+   ```python
+   def fix_indentation(self, code: str) -> str:
+       """Brace-depth based indentation:
+       - Tracks { } nesting depth
+       - Applies 2-space indentation
+       - Handles closing brace dedentation
+       """
+   ```
+
+**Validator Integration** (`unified_validation.py:1073-1143`):
+```python
+class ChapelValidator(Validator):
+    """Chapel code formatter (custom implementation)"""
+
+    @property
+    def extensions(self) -> Set[str]:
+        return {".chpl"}  # Handles .chpl files
+
+    def validate(self, filepath: Path) -> ValidationResult:
+        """Format Chapel code with auto-fix support"""
+```
+
+**Usage**:
+```bash
+huskycat validate src/*.chpl                  # Check Chapel formatting
+huskycat validate --fix src/*.chpl            # Auto-format Chapel code
+python -m huskycat.formatters.chapel file.chpl --check  # Standalone CLI
+```
+
+**Implementation**: `formatters/chapel.py:1-444`, `unified_validation.py:1073-1143`
+
+**Why This Matters**: Chapel is a high-performance computing language with minimal tooling ecosystem. HuskyCat fills this critical gap with production-ready formatting.
+
 ## Quick Start
 
 ### 1. Prerequisites & Setup
