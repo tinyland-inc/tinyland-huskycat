@@ -24,7 +24,7 @@ variables:
   UV_CACHE_DIR: $CI_PROJECT_DIR/.cache/uv
   PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
   UV_VERSION: '0.5.8'
-  PAGES_URL: https://tinyland.gitlab.io/ai/huskycat
+  PAGES_URL: https://huskycat-570fbd.gitlab.io
   BUILDAH_FORMAT: docker
   BUILDAH_ISOLATION: chroot
   # Security scanning variables

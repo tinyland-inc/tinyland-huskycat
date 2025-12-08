@@ -53,7 +53,7 @@ class Page:
         return {
             "title": self.title,
             "path": self.path,
-            "url": f"https://tinyland.gitlab.io/ai/huskycat{self.path}",
+            "url": f"https://huskycat-570fbd.gitlab.io{self.path}",
             "source_file": self.source_file,
             "content": self.content,
             "word_count": self.word_count,

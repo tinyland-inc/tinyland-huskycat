@@ -123,4 +123,4 @@ pages:
 
   environment:
     name: production
-    url: https://tinyland.gitlab.io/ai/huskycat
+    url: https://huskycat-570fbd.gitlab.io
