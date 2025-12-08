@@ -8,6 +8,7 @@ Supports both CLI and MCP server modes
 import json
 import logging
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -81,10 +82,26 @@ class Validator(ABC):
         return self.name
 
     def is_available(self) -> bool:
-        """Check if validator is available in current execution context"""
-        # Detect if we're running inside a container
-        if self._is_running_in_container():
-            # Direct tool availability check when inside container
+        """Check if validator is available in current execution context
+
+        Priority order:
+        1. Bundled tools (from fat binary)
+        2. Local tools (in PATH)
+        3. Container runtime (fallback only)
+        """
+        mode = self._get_execution_mode()
+
+        if mode == "bundled":
+            # Check extracted tools directory
+            tool_path = self._get_bundled_tool_path()
+            return tool_path is not None and tool_path.exists() and os.access(tool_path, os.X_OK)
+
+        if mode == "local":
+            # Check PATH for local tools
+            return shutil.which(self.command) is not None
+
+        if mode == "container":
+            # Already in container - check tool in PATH
             try:
                 result = subprocess.run(
                     ["which", self.command], capture_output=True, text=True, timeout=5
@@ -92,26 +109,34 @@ class Validator(ABC):
                 return result.returncode == 0
             except (subprocess.SubprocessError, FileNotFoundError):
                 return False
-        else:
-            # Host mode: check if container runtime is available
-            for runtime in ["podman", "docker"]:
-                try:
-                    result = subprocess.run(
-                        [runtime, "--version"],
-                        capture_output=True,
-                        text=True,
-                        timeout=5,
-                    )
-                    if result.returncode == 0:
-                        return True
-                except (subprocess.SubprocessError, FileNotFoundError):
-                    continue
-            return False
+
+        # Fallback: check for container runtime (legacy behavior)
+        return self._container_runtime_exists()
+
+    def _get_execution_mode(self) -> str:
+        """Detect execution mode
+
+        Returns:
+            - "bundled": Running from PyInstaller bundle with embedded tools
+            - "local": Running from source with tools in PATH
+            - "container": Running inside container
+        """
+        # Check if running inside container first
+        if self._is_running_in_container():
+            return "container"
+
+        # Check if running from PyInstaller bundle
+        if getattr(sys, 'frozen', False):
+            # PyInstaller bundle - check if tools were extracted
+            bundled_path = Path.home() / ".huskycat" / "tools"
+            if bundled_path.exists():
+                return "bundled"
+
+        # Default to local mode (running from source or no bundled tools)
+        return "local"
 
     def _is_running_in_container(self) -> bool:
         """Detect if we're running inside a container"""
-        import os
-
         # Check for container-specific environment indicators
         return (
             os.path.exists("/.dockerenv")  # Docker
@@ -119,17 +144,119 @@ class Validator(ABC):
             or os.path.exists("/run/.containerenv")  # Podman
         )
 
+    def _get_bundled_tool_path(self) -> Optional[Path]:
+        """Get path to bundled tool if available
+
+        Returns:
+            Path to tool, or None if not bundled
+        """
+        bundled_dir = Path.home() / ".huskycat" / "tools"
+        if not bundled_dir.exists():
+            return None
+
+        tool_path = bundled_dir / self.command
+        if tool_path.exists():
+            return tool_path
+
+        return None
+
+    def _container_runtime_exists(self) -> bool:
+        """Check if a container runtime is available
+
+        Returns:
+            True if podman or docker is available
+        """
+        for runtime in ["podman", "docker"]:
+            try:
+                result = subprocess.run(
+                    [runtime, "--version"],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                )
+                if result.returncode == 0:
+                    return True
+            except (subprocess.SubprocessError, FileNotFoundError):
+                continue
+        return False
+
     def _execute_command(
         self, cmd: List[str], **kwargs: Any
     ) -> subprocess.CompletedProcess:
-        """Execute command - directly if in container, via container if on host"""
-        if self._is_running_in_container():
-            # Direct execution when inside container
+        """Execute command with mode-aware execution
+
+        Priority order:
+        1. Bundled tools (direct execution)
+        2. Local tools (direct execution)
+        3. Container tools (already in container)
+        4. Container runtime (fallback delegation)
+        """
+        mode = self._get_execution_mode()
+
+        if mode == "bundled":
+            # Use bundled tools directly
+            self._log_execution_mode(mode)
+            return self._execute_bundled(cmd, **kwargs)
+
+        if mode == "local":
+            # Use local tools directly
+            self._log_execution_mode(mode)
+            return self._execute_local(cmd, **kwargs)
+
+        if mode == "container":
+            # Already in container - direct execution
+            self._log_execution_mode(mode)
             return subprocess.run(cmd, **kwargs)
-        else:
-            # Container execution when on host
-            container_cmd = self._build_container_command(cmd)
-            return subprocess.run(container_cmd, **kwargs)
+
+        # Fallback: delegate to container (legacy behavior)
+        logger.warning(f"Falling back to container execution for {self.command}")
+        container_cmd = self._build_container_command(cmd)
+        return subprocess.run(container_cmd, **kwargs)
+
+    def _execute_bundled(self, cmd: List[str], **kwargs: Any) -> subprocess.CompletedProcess:
+        """Execute using bundled tools
+
+        Args:
+            cmd: Command list where first element is tool name
+            **kwargs: Additional subprocess arguments
+
+        Returns:
+            CompletedProcess result
+        """
+        tool_path = self._get_bundled_tool_path()
+
+        if not tool_path:
+            raise RuntimeError(f"Bundled tool {self.command} not found")
+
+        # Replace tool name with full path
+        bundled_cmd = [str(tool_path)] + cmd[1:]
+
+        return subprocess.run(bundled_cmd, **kwargs)
+
+    def _execute_local(self, cmd: List[str], **kwargs: Any) -> subprocess.CompletedProcess:
+        """Execute using local tools in PATH
+
+        Args:
+            cmd: Command list
+            **kwargs: Additional subprocess arguments
+
+        Returns:
+            CompletedProcess result
+        """
+        # Direct execution using PATH lookup
+        return subprocess.run(cmd, **kwargs)
+
+    def _log_execution_mode(self, mode: str) -> None:
+        """Log which execution mode is being used
+
+        Args:
+            mode: Execution mode (bundled/local/container)
+        """
+        logger.debug(f"Tool execution mode: {mode} (tool={self.command})")
+
+        if mode == "bundled":
+            tools_dir = Path.home() / ".huskycat" / "tools"
+            logger.debug(f"Using bundled tools from: {tools_dir}")
 
     def _build_container_command(self, cmd: List[str]) -> List[str]:
         """Build container command for tool execution"""
@@ -152,7 +279,14 @@ class Validator(ABC):
         return container_cmd
 
     def _get_available_container_runtime(self) -> str:
-        """Get available container runtime (podman or docker)"""
+        """Get available container runtime (podman or docker)
+
+        Returns:
+            Name of available runtime
+
+        Raises:
+            RuntimeError: If no container runtime is available
+        """
         for runtime in ["podman", "docker"]:
             try:
                 result = subprocess.run(
@@ -162,11 +296,16 @@ class Validator(ABC):
                     return runtime
             except (subprocess.SubprocessError, FileNotFoundError):
                 continue
+
+        # No container runtime available
         raise RuntimeError(
-            "No container runtime available. Please install Podman or Docker.\n"
-            "Installation instructions:\n"
-            "- Podman: https://podman.io/getting-started/installation\n"
-            "- Docker: https://docs.docker.com/get-docker/"
+            f"No container runtime available for tool {self.command}.\n"
+            "Options:\n"
+            "1. Install tools locally (recommended)\n"
+            "2. Use fat binary with embedded tools\n"
+            "3. Install container runtime:\n"
+            "   - Podman: https://podman.io/getting-started/installation\n"
+            "   - Docker: https://docs.docker.com/get-docker/"
         )
 
     @abstractmethod
@@ -467,7 +606,9 @@ class RuffValidator(Validator):
             cmd.insert(2, "--fix")
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            result = self._execute_command(
+                cmd, capture_output=True, text=True, timeout=30
+            )
 
             duration_ms = int((time.time() - start_time) * 1000)
 
@@ -868,7 +1009,9 @@ class BanditValidator(Validator):
         cmd = [self.command, "-f", "json", str(filepath)]
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            result = self._execute_command(
+                cmd, capture_output=True, text=True, timeout=30
+            )
 
             duration_ms = int((time.time() - start_time) * 1000)
 
@@ -1024,7 +1167,9 @@ class PrettierValidator(Validator):
             cmd = [self.command, "--check", str(filepath)]
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            result = self._execute_command(
+                cmd, capture_output=True, text=True, timeout=30
+            )
 
             duration_ms = int((time.time() - start_time) * 1000)
 

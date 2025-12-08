@@ -2,6 +2,334 @@
 
 Common issues and solutions for HuskyCat.
 
+## Sprint 10 Issues
+
+### Non-Blocking Hooks Issues
+
+#### Commit Still Blocks
+
+**Problem:** Git commit waits for validation instead of returning immediately
+
+**Diagnosis:**
+```bash
+# Check feature flag
+grep nonblocking_hooks .huskycat.yaml
+
+# Check hook implementation
+cat .git/hooks/pre-commit | grep -A5 fork
+
+# Check version
+huskycat --version  # Should be >= 2.0.0
+```
+
+**Solutions:**
+```bash
+# Enable non-blocking mode
+echo "feature_flags:" >> .huskycat.yaml
+echo "  nonblocking_hooks: true" >> .huskycat.yaml
+
+# Reinstall hooks
+huskycat setup-hooks --force
+
+# Verify environment variable not overriding
+unset HUSKYCAT_FEATURE_NONBLOCKING_HOOKS
+```
+
+#### No TUI Progress Display
+
+**Problem:** Expected real-time TUI but only seeing log file
+
+**Diagnosis:**
+```bash
+# Check TUI enabled
+grep tui_progress .huskycat.yaml
+
+# Check TTY available
+tty
+
+# Check Rich library
+python -c "import rich; print(rich.__version__)"
+```
+
+**Solutions:**
+```bash
+# Enable TUI progress
+echo "  tui_progress: true" >> .huskycat.yaml
+
+# Install Rich library
+pip install rich
+
+# Use log file as fallback (non-TTY environments)
+tail -f .huskycat/runs/latest.log
+```
+
+#### Previous Failure Not Detected
+
+**Problem:** Able to commit even though previous validation failed
+
+**Diagnosis:**
+```bash
+# Check last run status
+cat .huskycat/runs/last_run.json
+
+# Check cache directory
+ls -la .huskycat/runs/
+```
+
+**Solutions:**
+```bash
+# Manually clear failure flag
+rm .huskycat/runs/last_run.json
+
+# Enable result caching
+echo "  cache_results: true" >> .huskycat.yaml
+
+# Fix permissions
+chmod 755 ~/.huskycat/runs/
+chmod 644 ~/.huskycat/runs/*.json
+```
+
+#### Validation Not Running in Background
+
+**Problem:** Commit succeeds but no validation occurs
+
+**Diagnosis:**
+```bash
+# Check for background processes
+ps aux | grep huskycat
+
+# Check PID files
+ls -la .huskycat/runs/pids/
+
+# Check fork succeeded
+cat .huskycat/runs/latest.log
+```
+
+**Solutions:**
+```bash
+# Check fork support (Windows may not support)
+python -c "import os; os.fork()" 2>&1 | grep -q AttributeError && echo "Fork not supported" || echo "Fork supported"
+
+# Verify write permissions
+ls -ld ~/.huskycat/
+mkdir -p ~/.huskycat/runs/pids/
+
+# Check logs for errors
+cat .huskycat/runs/latest.log
+
+# Fallback to blocking mode (Windows)
+export HUSKYCAT_FEATURE_NONBLOCKING_HOOKS=false
+```
+
+#### Zombie Processes
+
+**Problem:** Multiple orphaned huskycat processes consuming resources
+
+**Diagnosis:**
+```bash
+# Check for zombies
+ps aux | grep huskycat | grep defunct
+
+# Check PID files
+ls -la .huskycat/runs/pids/
+```
+
+**Solutions:**
+```bash
+# Clean up zombies
+huskycat clean --zombies
+
+# Manual cleanup
+ps aux | grep huskycat | grep defunct | awk '{print $2}' | xargs kill -9
+
+# Clean old PID files
+find ~/.huskycat/runs/pids/ -mtime +1 -delete
+```
+
+### Embedded Tools Issues
+
+#### Tool Extraction Failed
+
+**Problem:** "Bundled tool not found" error
+
+**Diagnosis:**
+```bash
+# Check extracted tools
+ls -la ~/.huskycat/tools/
+
+# Check bundle version
+cat ~/.huskycat/tools/.version
+
+# Check disk space
+df -h ~/.huskycat/
+```
+
+**Solutions:**
+```bash
+# Re-extract tools
+rm -rf ~/.huskycat/tools/
+huskycat validate --staged  # Triggers extraction
+
+# Check extraction permissions
+chmod 755 ~/.huskycat/
+chmod 755 ~/.huskycat/tools/
+chmod +x ~/.huskycat/tools/*
+
+# Verify binary built with tools
+unzip -l dist/huskycat | grep tools/
+```
+
+#### Container Fallback Warning
+
+**Problem:** "Falling back to container execution" messages
+
+**Diagnosis:**
+```bash
+# Check execution mode
+export HUSKYCAT_LOG_LEVEL=DEBUG
+huskycat validate file.py | grep "execution mode"
+
+# Check tool availability
+which shellcheck hadolint taplo
+```
+
+**Solutions:**
+```bash
+# Install tools locally
+brew install shellcheck hadolint taplo  # macOS
+apt install shellcheck  # Ubuntu
+
+# Use fat binary instead
+curl -L -o huskycat https://huskycat.pages.io/huskycat-darwin-arm64
+chmod +x huskycat
+./huskycat validate file.py
+
+# Build fat binary from source
+npm run build:fat
+```
+
+#### Slow Tool Execution
+
+**Problem:** Validation takes >2s per tool (expected <0.5s)
+
+**Diagnosis:**
+```bash
+# Check execution mode
+export HUSKYCAT_LOG_LEVEL=DEBUG
+time huskycat validate file.py
+
+# Check for container usage
+ps aux | grep -E 'podman|docker'
+```
+
+**Solutions:**
+```bash
+# Verify using embedded tools
+ls ~/.huskycat/tools/
+
+# Force bundled mode
+export HUSKYCAT_TOOL_MODE=bundled
+
+# Check tool extraction complete
+cat ~/.huskycat/tools/.version
+
+# Rebuild fat binary if needed
+npm run build:fat
+```
+
+### Parallel Execution Issues
+
+#### Poor Parallelism
+
+**Problem:** Speedup <3x (expected 7.5x)
+
+**Diagnosis:**
+```bash
+# Check worker count
+grep max_workers .huskycat.yaml
+
+# Check CPU cores
+nproc  # Linux
+sysctl -n hw.ncpu  # macOS
+
+# Monitor CPU usage during validation
+top -pid $(pgrep huskycat)
+```
+
+**Solutions:**
+```bash
+# Increase worker count
+echo "  max_workers: 8" >> .huskycat.yaml
+
+# Enable parallel execution
+echo "  parallel_execution: true" >> .huskycat.yaml
+
+# Check dependencies not creating bottleneck
+huskycat validate --dry-run --show-plan
+
+# Reduce timeout to prevent hanging tools
+echo "  timeout_per_tool: 30.0" >> .huskycat.yaml
+```
+
+#### Tools Timing Out
+
+**Problem:** "Tool timed out after Xs" messages
+
+**Diagnosis:**
+```bash
+# Check timeout configuration
+grep timeout_per_tool .huskycat.yaml
+
+# Check which tools timing out
+grep "timed out" .huskycat/runs/latest.log
+```
+
+**Solutions:**
+```bash
+# Increase timeout
+echo "  timeout_per_tool: 120.0" >> .huskycat.yaml
+
+# Optimize slow tools (mypy incremental mode)
+echo "[mypy]" >> mypy.ini
+echo "incremental = true" >> mypy.ini
+
+# Reduce files per validation
+huskycat validate src/module.py  # Instead of src/
+
+# Disable slow tools temporarily
+# Edit .huskycat.yaml and remove slow tools
+```
+
+#### High Resource Usage
+
+**Problem:** Validation consuming excessive CPU/memory
+
+**Diagnosis:**
+```bash
+# Monitor resource usage
+top -pid $(pgrep huskycat)
+
+# Check worker count
+grep max_workers .huskycat.yaml
+```
+
+**Solutions:**
+```bash
+# Reduce worker count
+echo "  max_workers: 4" >> .huskycat.yaml
+
+# Disable parallel execution
+echo "  parallel_execution: false" >> .huskycat.yaml
+
+# Increase per-tool timeout
+echo "  timeout_per_tool: 120.0" >> .huskycat.yaml
+
+# Use sequential validation
+huskycat validate --no-parallel src/
+```
+
+---
+
 ## Installation Issues
 
 ### Binary Download Fails

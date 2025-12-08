@@ -1,0 +1,304 @@
+# Build stage configuration - Fat binary builds with embedded toolchains
+# This file defines jobs for building platform-specific HuskyCat binaries
+# with embedded validation tool binaries (shellcheck, hadolint, taplo).
+
+# Fat binary build - Linux AMD64
+build:binary:linux-amd64:
+  stage: package
+  image: rockylinux/rockylinux:10
+  needs:
+    - job: download:tools:linux-amd64
+      artifacts: true
+    - job: validate:complete
+      optional: true
+  dependencies:
+    - download:tools:linux-amd64
+  before_script:
+    - dnf install -y epel-release
+    - dnf install -y git curl gcc python3 python3-pip zlib-devel
+    - dnf install -y upx || echo "UPX not available, skipping compression"
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+  script:
+    - echo "Building fat binary for linux-amd64 with embedded tools"
+    - ls -lah dist/tools/linux-amd64/
+    - cat dist/tools/linux-amd64/versions.txt
+    # Sync dependencies
+    - uv sync --extra build
+    - mkdir -p dist/bin
+    # Build binary with PyInstaller
+    - |
+      uv run pyinstaller --onefile \
+        --name huskycat-linux-amd64 \
+        --add-binary "dist/tools/linux-amd64/shellcheck:tools/" \
+        --add-binary "dist/tools/linux-amd64/hadolint:tools/" \
+        --add-binary "dist/tools/linux-amd64/taplo:tools/" \
+        huskycat_main.py
+    - mv dist/huskycat-linux-amd64 dist/bin/
+    - chmod +x dist/bin/huskycat-linux-amd64
+    # Optional UPX compression
+    - upx --best --lzma dist/bin/huskycat-linux-amd64 || echo "UPX compression failed, continuing without compression"
+    # Verify binary
+    - ls -lah dist/bin/
+    - file dist/bin/huskycat-linux-amd64 || true
+    - dist/bin/huskycat-linux-amd64 --version || echo "Binary test failed, but continuing"
+    # Check binary size
+    - |
+      SIZE_MB=$(du -m dist/bin/huskycat-linux-amd64 | cut -f1)
+      echo "Binary size: ${SIZE_MB}MB"
+      if [ $SIZE_MB -gt 250 ]; then
+        echo "WARNING: Binary size (${SIZE_MB}MB) exceeds 250MB target"
+      else
+        echo "Binary size acceptable (${SIZE_MB}MB <= 250MB)"
+      fi
+  artifacts:
+    paths:
+      - dist/bin/huskycat-linux-amd64
+    expire_in: 1 month
+    name: 'huskycat-linux-amd64-binary-$CI_COMMIT_SHORT_SHA'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Fat binary build - Linux ARM64
+build:binary:linux-arm64:
+  stage: package
+  image: rockylinux/rockylinux:10
+  tags:
+    - saas-linux-medium-arm64
+  needs:
+    - job: download:tools:linux-arm64
+      artifacts: true
+    - job: validate:complete
+      optional: true
+  dependencies:
+    - download:tools:linux-arm64
+  before_script:
+    - dnf install -y epel-release
+    - dnf install -y git curl gcc python3 python3-pip zlib-devel
+    - dnf install -y upx || echo "UPX not available, skipping compression"
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+  script:
+    - echo "Building fat binary for linux-arm64 with embedded tools"
+    - ls -lah dist/tools/linux-arm64/
+    - cat dist/tools/linux-arm64/versions.txt
+    # Sync dependencies
+    - uv sync --extra build
+    - mkdir -p dist/bin
+    # Build binary with PyInstaller
+    - |
+      uv run pyinstaller --onefile \
+        --name huskycat-linux-arm64 \
+        --add-binary "dist/tools/linux-arm64/shellcheck:tools/" \
+        --add-binary "dist/tools/linux-arm64/hadolint:tools/" \
+        --add-binary "dist/tools/linux-arm64/taplo:tools/" \
+        huskycat_main.py
+    - mv dist/huskycat-linux-arm64 dist/bin/
+    - chmod +x dist/bin/huskycat-linux-arm64
+    # Optional UPX compression
+    - upx --best --lzma dist/bin/huskycat-linux-arm64 || echo "UPX compression failed, continuing without compression"
+    # Verify binary
+    - ls -lah dist/bin/
+    - file dist/bin/huskycat-linux-arm64 || true
+    - dist/bin/huskycat-linux-arm64 --version || echo "Binary test failed, but continuing"
+    # Check binary size
+    - |
+      SIZE_MB=$(du -m dist/bin/huskycat-linux-arm64 | cut -f1)
+      echo "Binary size: ${SIZE_MB}MB"
+      if [ $SIZE_MB -gt 250 ]; then
+        echo "WARNING: Binary size (${SIZE_MB}MB) exceeds 250MB target"
+      else
+        echo "Binary size acceptable (${SIZE_MB}MB <= 250MB)"
+      fi
+  artifacts:
+    paths:
+      - dist/bin/huskycat-linux-arm64
+    expire_in: 1 month
+    name: 'huskycat-linux-arm64-binary-$CI_COMMIT_SHORT_SHA'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Fat binary build - macOS Apple Silicon (ARM64)
+build:binary:darwin-arm64:
+  extends: .macos_saas_runners
+  stage: package
+  needs:
+    - job: download:tools:darwin-arm64
+      artifacts: true
+    - job: validate:complete
+      optional: true
+  dependencies:
+    - download:tools:darwin-arm64
+  before_script:
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - uv --version
+    - uv sync --extra build
+  script:
+    - echo "Building fat binary for darwin-arm64 with embedded tools"
+    - ls -lah dist/tools/darwin-arm64/
+    - cat dist/tools/darwin-arm64/versions.txt
+    - mkdir -p dist/bin
+    # Build unsigned binary with embedded tools
+    - |
+      uv run pyinstaller --onefile \
+        --name huskycat-darwin-arm64 \
+        --add-binary "dist/tools/darwin-arm64/shellcheck:tools/" \
+        --add-binary "dist/tools/darwin-arm64/hadolint:tools/" \
+        --add-binary "dist/tools/darwin-arm64/taplo:tools/" \
+        huskycat_main.py
+    - mv dist/huskycat-darwin-arm64 dist/bin/
+    - chmod +x dist/bin/huskycat-darwin-arm64
+    # Verify binary
+    - file dist/bin/huskycat-darwin-arm64
+    - dist/bin/huskycat-darwin-arm64 --version
+    - ls -lah dist/bin/
+    # Check binary size
+    - |
+      SIZE_MB=$(du -m dist/bin/huskycat-darwin-arm64 | cut -f1)
+      echo "Binary size: ${SIZE_MB}MB"
+      if [ $SIZE_MB -gt 250 ]; then
+        echo "WARNING: Binary size (${SIZE_MB}MB) exceeds 250MB target"
+      else
+        echo "Binary size acceptable (${SIZE_MB}MB <= 250MB)"
+      fi
+  artifacts:
+    paths:
+      - dist/bin/huskycat-darwin-arm64
+    expire_in: 1 month
+    name: 'huskycat-darwin-arm64-binary-$CI_COMMIT_SHORT_SHA'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Fat binary build - macOS Intel (AMD64) - Optional/future
+# Note: GitLab SaaS only provides ARM64 macOS runners
+# This job is kept for reference but commented out
+# build:binary:darwin-amd64:
+#   stage: package
+#   # Would require custom runners with Intel macOS
+#   tags:
+#     - macos-amd64  # Custom runner tag
+#   needs:
+#     - job: download:tools:darwin-amd64
+#       artifacts: true
+#   dependencies:
+#     - download:tools:darwin-amd64
+#   script:
+#     - echo "Building fat binary for darwin-amd64 with embedded tools"
+#     - # Similar to darwin-arm64 build above
+
+# Binary size verification job
+verify:binary-size:
+  stage: test
+  image: alpine:latest
+  needs:
+    - job: build:binary:linux-amd64
+      artifacts: true
+    - job: build:binary:linux-arm64
+      artifacts: true
+    - job: build:binary:darwin-arm64
+      artifacts: true
+  dependencies:
+    - build:binary:linux-amd64
+    - build:binary:linux-arm64
+    - build:binary:darwin-arm64
+  before_script:
+    - apk add --no-cache bash coreutils file
+  script:
+    - echo "Verifying binary sizes and properties..."
+    - |
+      FAIL=0
+      for binary in dist/bin/huskycat-*; do
+        if [ ! -f "$binary" ]; then
+          echo "ERROR: Binary not found: $binary"
+          FAIL=1
+          continue
+        fi
+
+        echo ""
+        echo "Binary: $binary"
+        echo "----------------------------------------"
+
+        # Check size
+        SIZE_MB=$(du -m "$binary" | cut -f1)
+        echo "  Size: ${SIZE_MB}MB"
+
+        if [ $SIZE_MB -gt 250 ]; then
+          echo "  ERROR: Binary too large (${SIZE_MB}MB > 250MB target)"
+          FAIL=1
+        else
+          echo "  OK: Size acceptable"
+        fi
+
+        # Check if executable
+        if [ ! -x "$binary" ]; then
+          echo "  ERROR: Not executable"
+          FAIL=1
+        else
+          echo "  OK: Executable bit set"
+        fi
+
+        # Show file type
+        file "$binary" || true
+
+        # Check if ELF/Mach-O binary
+        if file "$binary" | grep -qE "(ELF|Mach-O)"; then
+          echo "  OK: Valid binary format"
+        else
+          echo "  WARNING: Unexpected file format"
+        fi
+      done
+
+      if [ $FAIL -eq 1 ]; then
+        echo ""
+        echo "Binary verification FAILED"
+        exit 1
+      fi
+
+      echo ""
+      echo "All binaries verified successfully"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: false
+
+# Generate SHA256 checksums for release artifacts
+checksums:generate:
+  stage: package
+  image: alpine:latest
+  needs:
+    - job: build:binary:linux-amd64
+      artifacts: true
+    - job: build:binary:linux-arm64
+      artifacts: true
+    - job: build:binary:darwin-arm64
+      artifacts: true
+  dependencies:
+    - build:binary:linux-amd64
+    - build:binary:linux-arm64
+    - build:binary:darwin-arm64
+  before_script:
+    - apk add --no-cache coreutils
+  script:
+    - echo "Generating SHA256 checksums for binaries..."
+    - cd dist/bin
+    - sha256sum huskycat-* > SHA256SUMS.txt
+    - cat SHA256SUMS.txt
+    - cd ../..
+  artifacts:
+    paths:
+      - dist/bin/SHA256SUMS.txt
+    expire_in: 1 month
+    name: 'huskycat-checksums-$CI_COMMIT_SHORT_SHA'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG

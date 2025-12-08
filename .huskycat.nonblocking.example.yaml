@@ -1,0 +1,127 @@
+{
+  "version": "1.0",
+  "feature_flags": {
+    "nonblocking_hooks": true,
+    "parallel_execution": true,
+    "tui_progress": true,
+    "cache_results": true
+  },
+  "validation": {
+    "enabled": true,
+    "staged_only": true,
+    "auto_fix": false,
+    "strict": false,
+    "max_errors": 50
+  },
+  "tools": {
+    "python": {
+      "enabled": true,
+      "tools": [
+        "black",
+        "ruff",
+        "mypy",
+        "flake8",
+        "isort",
+        "bandit"
+      ],
+      "file_patterns": [
+        "*.py",
+        "*.pyi"
+      ],
+      "exclude": [
+        "__pycache__",
+        ".venv",
+        "venv"
+      ]
+    },
+    "javascript": {
+      "enabled": true,
+      "tools": [
+        "eslint",
+        "prettier"
+      ],
+      "file_patterns": [
+        "*.js",
+        "*.jsx",
+        "*.ts",
+        "*.tsx"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build"
+      ]
+    },
+    "shell": {
+      "enabled": true,
+      "tools": [
+        "shellcheck"
+      ],
+      "file_patterns": [
+        "*.sh",
+        "*.bash"
+      ]
+    },
+    "yaml": {
+      "enabled": true,
+      "tools": [
+        "yamllint",
+        "gitlab-ci"
+      ],
+      "file_patterns": [
+        "*.yml",
+        "*.yaml"
+      ]
+    },
+    "docker": {
+      "enabled": true,
+      "tools": [
+        "hadolint"
+      ],
+      "file_patterns": [
+        "Dockerfile",
+        "*.dockerfile"
+      ]
+    },
+    "toml": {
+      "enabled": true,
+      "tools": [
+        "taplo"
+      ],
+      "file_patterns": [
+        "*.toml"
+      ]
+    }
+  },
+  "hooks": {
+    "pre_commit": {
+      "enabled": true,
+      "commands": [
+        "huskycat validate --staged"
+      ]
+    },
+    "commit_msg": {
+      "enabled": true,
+      "conventional_commits": true,
+      "allowed_types": [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "build",
+        "ci",
+        "chore",
+        "revert"
+      ]
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "directory": ".huskycat/runs",
+    "max_age_days": 7,
+    "cleanup_on_startup": true
+  }
+}

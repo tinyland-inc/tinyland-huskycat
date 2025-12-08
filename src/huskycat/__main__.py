@@ -209,6 +209,10 @@ def create_parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     """Main entry point for HuskyCat CLI."""
+    # Ensure embedded tools are available (for fat binary)
+    from .core.tool_extractor import ensure_tools
+    ensure_tools()
+
     parser = create_parser()
     args = parser.parse_args()
 
