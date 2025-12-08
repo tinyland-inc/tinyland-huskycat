@@ -20,7 +20,7 @@ from unittest import mock
 
 import pytest
 
-from src.huskycat.unified_validation import BlackValidator, Validator, ValidationResult
+from src.huskycat.unified_validation import BlackValidator, ValidationResult, Validator
 
 
 class TestBundledToolExecution:
@@ -29,8 +29,6 @@ class TestBundledToolExecution:
     def test_bundled_tool_path_resolution_success(self):
         """Test correct bundled tool path is resolved."""
         validator = BlackValidator()
-        bundled_dir = Path.home() / ".huskycat" / "tools"
-        tool_path = bundled_dir / "python-black"
 
         with mock.patch.object(Path, "exists", return_value=True):
             result = validator._get_bundled_tool_path()
@@ -52,14 +50,15 @@ class TestBundledToolExecution:
         """Test bundled tool path when tool file doesn't exist."""
         validator = BlackValidator()
 
+        # Use a counter object to track call count
+        call_counter = {"count": 0}
+
         def exists_side_effect():
             # First call for directory, second for tool file
-            if not hasattr(exists_side_effect, "calls"):
-                exists_side_effect.calls = 0
-            exists_side_effect.calls += 1
+            call_counter["count"] += 1
 
             # Directory exists but tool doesn't
-            if exists_side_effect.calls == 1:
+            if call_counter["count"] == 1:
                 return True
             return False
 
@@ -205,12 +204,12 @@ class TestContainerFallback:
             result = mock.Mock()
 
             if "podman" in cmd[0]:
-                raise FileNotFoundError()
-            elif "docker" in cmd[0]:
+                raise FileNotFoundError
+            if "docker" in cmd[0]:
                 result.returncode = 0
                 return result
 
-            raise FileNotFoundError()
+            raise FileNotFoundError
 
         with mock.patch("subprocess.run", side_effect=run_side_effect):
             runtime = validator._get_available_container_runtime()
@@ -312,7 +311,7 @@ class TestExecutionModeDetection:
 
         with mock.patch.object(validator, "_is_running_in_container", return_value=False):
             with mock.patch.object(sys, "frozen", True, create=True):
-                bundled_dir = Path.home() / ".huskycat" / "tools"
+                Path.home() / ".huskycat" / "tools"
 
                 with mock.patch.object(Path, "exists", return_value=True):
                     mode = validator._get_execution_mode()
@@ -442,12 +441,12 @@ class TestContainerRuntimeDetection:
             result = mock.Mock()
 
             if "podman" in cmd[0]:
-                raise FileNotFoundError()
-            elif "docker" in cmd[0]:
+                raise FileNotFoundError
+            if "docker" in cmd[0]:
                 result.returncode = 0
                 return result
 
-            raise FileNotFoundError()
+            raise FileNotFoundError
 
         with mock.patch("subprocess.run", side_effect=run_side_effect):
             result = validator._container_runtime_exists()

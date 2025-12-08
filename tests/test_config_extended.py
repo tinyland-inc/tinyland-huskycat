@@ -503,8 +503,7 @@ class TestGlobalConfigInstance:
         config_file.write_text(yaml.dump({"singleton": True}))
 
         # Import fresh to reset global state
-        import importlib
-        import src.huskycat.core.config as config_module
+        import src.huskycat.core.config as config_module  # noqa: F401, E402
 
         # Reset global
         config_module._global_config = None
@@ -517,8 +516,7 @@ class TestGlobalConfigInstance:
 
     def test_reload_config_creates_new_instance(self, tmp_path):
         """Test that reload_config creates new instance."""
-        import importlib
-        import src.huskycat.core.config as config_module
+        import src.huskycat.core.config as config_module  # noqa: F401, E402
 
         config_file = tmp_path / ".huskycat.yaml"
         config_file.write_text(yaml.dump({"version": 1}))
