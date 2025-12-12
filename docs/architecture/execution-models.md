@@ -969,6 +969,10 @@ feature_flags:
 
 ---
 
-**Last Updated**: 2025-12-07 (Sprint 10)
-**Verification Status**: ✅ Code-verified against `main` branch (Sprint 10)
+**Last Updated**: 2025-12-12 (Sprint 11 Documentation Cleanup)
+**Verification Status**: ⚠️ NEEDS DETAILED VERIFICATION - Line references outdated
+**Known Issues**:
+- Line references to `unified_validation.py:85-170` are outdated (file is 2,146 lines)
+- Mermaid diagrams need verification against actual code flow
+- Non-blocking and embedded tools modes (Sprint 10) added but need integration verification
 **Reviewed Files**: 20+ source files, 5+ configuration files, 10+ CI jobs
