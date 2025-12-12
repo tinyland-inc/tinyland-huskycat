@@ -8,17 +8,18 @@ Download the latest binary from the main branch CI artifacts:
 
 | Platform | Architecture | Size | Download Link |
 |----------|--------------|------|---------------|
-| **Linux** | x86_64 (amd64) | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64) |
-| **Linux** | ARM64 | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-arm64/huskycat?job=build:binary:linux-arm64) |
-| **macOS** | ARM64 (M1/M2/M3) | ~21 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-arm64/huskycat?job=build:binary:darwin-arm64) |
-| **macOS** | Intel (x86_64) | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-amd64/huskycat?job=build:binary:darwin-amd64) |
+| **Linux** | x86_64 (amd64) | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64) |
+| **Linux** | ARM64 | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64) |
+| **macOS** | ARM64 (M1/M2/M3/M4) | ~150-200 MB | [Download](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64) |
+
+> **Note**: macOS Intel (x86_64) binary not currently available due to GitLab SaaS runner limitations. Intel Mac users can use Rosetta 2 or container execution.
 
 ## Quick Install
 
 ### Linux (amd64)
 
 ```bash
-curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64' -o huskycat
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
@@ -26,7 +27,7 @@ chmod +x huskycat
 ### Linux (ARM64)
 
 ```bash
-curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-arm64/huskycat?job=build:binary:linux-arm64' -o huskycat
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
@@ -34,7 +35,7 @@ chmod +x huskycat
 ### macOS (ARM64 - Apple Silicon)
 
 ```bash
-curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-arm64/huskycat?job=build:binary:darwin-arm64' -o huskycat
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64' -o huskycat
 chmod +x huskycat
 
 # Remove quarantine (macOS security)
@@ -43,16 +44,18 @@ xattr -d com.apple.quarantine huskycat
 ./huskycat install
 ```
 
-### macOS (Intel)
+### macOS (Intel) - Rosetta 2
+
+Intel Mac users can run the ARM64 binary using Rosetta 2:
 
 ```bash
-curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-amd64/huskycat?job=build:binary:darwin-amd64' -o huskycat
+# Download ARM64 binary
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64' -o huskycat
 chmod +x huskycat
-
-# Remove quarantine (macOS security)
 xattr -d com.apple.quarantine huskycat
 
-./huskycat install
+# Run with Rosetta 2
+arch -x86_64 ./huskycat install
 ```
 
 ## Verification

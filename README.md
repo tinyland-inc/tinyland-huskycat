@@ -230,21 +230,36 @@ python -m huskycat.formatters.chapel file.chpl --check  # Standalone CLI
 ### 1. Prerequisites & Setup
 
 #### Option A: Fat Binary (Recommended - No Dependencies)
-```bash
-# Download platform-specific binary
-curl -L https://huskycat.pages.io/downloads/huskycat-darwin-arm64 -o huskycat
-chmod +x huskycat
 
-# Optional: Move to PATH
-sudo mv huskycat /usr/local/bin/
+**One-Line Install:**
+```bash
+curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+```
+
+**Manual Install:**
+```bash
+# Linux (amd64)
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64' -o huskycat
+chmod +x huskycat
+./huskycat install
+
+# macOS (ARM64 - M1/M2/M3/M4)
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64' -o huskycat
+chmod +x huskycat
+xattr -d com.apple.quarantine huskycat  # Remove macOS security quarantine
+./huskycat install
 
 # Verify installation
 huskycat --version
 huskycat status
 
-# Install git hooks with non-blocking mode
+# Setup git hooks in your repo
+cd your-repo
 huskycat setup-hooks
+git config --local huskycat.nonblocking true  # Enable fast non-blocking mode
 ```
+
+See [Beta Testing Guide](docs/BETA_TESTING.md) for detailed testing instructions.
 
 #### Option B: From Source (Development)
 ```bash

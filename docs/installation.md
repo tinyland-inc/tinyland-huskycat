@@ -7,7 +7,7 @@ Download the pre-built binary for your platform and install with a single comman
 ### Linux (amd64)
 
 ```bash
-curl -L https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64 -o huskycat
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
@@ -15,26 +15,22 @@ chmod +x huskycat
 ### Linux (ARM64)
 
 ```bash
-curl -L https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-arm64/huskycat?job=build:binary:linux-arm64 -o huskycat
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
 
-### macOS (ARM64 - M1/M2/M3)
+### macOS (ARM64 - M1/M2/M3/M4)
 
 ```bash
-curl -L https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-arm64/huskycat?job=build:binary:darwin-arm64 -o huskycat
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
 
-### macOS (Intel)
-
-```bash
-curl -L https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-amd64/huskycat?job=build:binary:darwin-amd64 -o huskycat
-chmod +x huskycat
-./huskycat install
-```
+> **Note for Intel Mac users**: The Intel (x86_64) binary is not currently built due to GitLab SaaS runner limitations. Intel Mac users can:
+> - Use Rosetta 2 to run the ARM64 binary: `arch -x86_64 ./huskycat install`
+> - Use container execution: `podman run -v $(pwd):/workspace tinyland/huskycat validate`
 
 ## Verify Installation
 
