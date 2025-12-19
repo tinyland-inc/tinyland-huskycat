@@ -1,499 +1,367 @@
 # HuskyCat - Universal Code Validation Platform
 
-A multi-modal validation platform designed for consistent toolchains, flexible execution models, and AI integration through MCP server protocol.
+Fast, flexible, and AI-integrated validation for modern development workflows.
 
-See [Architecture Documentation](docs/architecture/) for complete technical details with code references.
+[![Pipeline](https://gitlab.com/jsullivan2/huskycats-bates/badges/main/pipeline.svg)](https://gitlab.com/jsullivan2/huskycats-bates/-/pipelines)
+
+## Quick Install
+
+**One-line install** (macOS & Linux):
+```bash
+curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+```
+
+**Manual downloads**: [Binary Downloads →](https://tinyland.gitlab.io/ai/huskycat/downloads/)
+
+**Documentation**: [docs/ →](docs/)
+
+## What is HuskyCat?
+
+HuskyCat is a universal code validation platform with:
+
+- ⚡ **Non-Blocking Git Hooks** - Commits complete in <100ms while validation runs in background
+- 📦 **Fat Binary Distribution** - Standalone binaries with embedded tools (no dependencies)
+- 🔧 **15+ Validation Tools** - Black, MyPy, Ruff, shellcheck, hadolint, yamllint, and more
+- 🤖 **AI Integration** - MCP server for Claude Code
+- 🎯 **Multi-Modal Execution** - Binary, Container, or UV development modes
+- 🔄 **Auto-Fix Support** - Interactive prompts to automatically fix issues
 
 ## Architecture Overview
 
-HuskyCat supports **three execution models** (see [docs/architecture/execution-models.md](docs/architecture/execution-models.md)):
+### Five Product Modes
+
+HuskyCat operates in 5 distinct modes with different performance and output requirements:
 
 ```mermaid
 graph TB
-    A["User Entry Points"] --> B["Binary Execution"]
-    A --> C["Container Execution"]
-    A --> D["UV Development"]
+    subgraph "HuskyCat Product Modes"
+        A[Git Hooks Mode<br/>Fast subset, <100ms commits]
+        B[CI Mode<br/>Comprehensive, JUnit XML]
+        C[CLI Mode<br/>Interactive, colored output]
+        D[Pipeline Mode<br/>JSON output, scriptable]
+        E[MCP Server Mode<br/>AI integration, JSON-RPC]
+    end
 
-    B --> E["PyInstaller Single-File"]
-    B --> F["Optional Container Delegation"]
+    A --> F[Unified Validation Engine]
+    B --> F
+    C --> F
+    D --> F
+    E --> F
 
-    C --> G["Alpine Multi-Arch Container"]
-    C --> H["Complete Toolchain"]
-
-    D --> I["npm Scripts + UV"]
-    D --> J["Development Mode"]
-
-    style B fill:#e8f5e8
-    style C fill:#f3e5f5
-    style D fill:#fff3e0
+    style A fill:#e8f5e8
+    style B fill:#e1f5fe
+    style C fill:#fff3e0
+    style D fill:#f3e5f5
+    style E fill:#ede7f6
+    style F fill:#fff9c4
 ```
 
-**Execution Models**:
-- **Binary**: PyInstaller single-file, optional container delegation (`unified_validation.py:85-170`)
-- **Container**: Alpine-based multi-arch images with complete toolchain
-- **UV Development**: npm scripts for local development
+**Mode Details**: [docs/architecture/product-modes.md](docs/architecture/product-modes.md)
 
-**Product Modes** (see [docs/architecture/product-modes.md](docs/architecture/product-modes.md)):
-- **Git Hooks**: Fast subset validation (<5s), fail-fast behavior
-- **CI**: Comprehensive validation, JUnit XML output
-- **CLI**: Interactive, colored output, auto-fix prompts
-- **Pipeline**: JSON output for machine processing
-- **MCP Server**: JSON-RPC 2.0 for AI integration
+### Three Execution Models
+
+```mermaid
+graph LR
+    subgraph "Execution Models"
+        A[Binary Execution<br/>PyInstaller, embedded tools]
+        B[Container Execution<br/>Alpine multi-arch]
+        C[UV Development<br/>npm scripts + uv]
+    end
+
+    A --> D[Unified Validation]
+    B --> D
+    C --> D
+
+    D --> E{Tool Available?}
+    E -->|Bundled| F[~/.huskycat/tools/]
+    E -->|Local| G[System PATH]
+    E -->|Container| H[Podman/Docker]
+
+    style A fill:#e8f5e8
+    style B fill:#e1f5fe
+    style C fill:#fff3e0
+    style F fill:#c8e6c9
+    style G fill:#bbdefb
+    style H fill:#fff9c4
+```
+
+**Execution Details**: [docs/architecture/execution-models.md](docs/architecture/execution-models.md)
+
+### Non-Blocking Git Hooks
+
+Commits proceed immediately while validation runs in background:
+
+```mermaid
+graph LR
+    A[Git Commit] --> B[Parent Process<br/><100ms]
+    B --> C[Check Previous Run]
+    C -->|Failed| D[Prompt User]
+    C -->|OK| E[Fork Child]
+    D -->|Continue| E
+    E --> F[Save PID]
+    F --> G[Return to Git]
+    G --> H[Commit Proceeds ✓]
+
+    E -.-> I[Child Process<br/>Background]
+    I --> J[Initialize TUI]
+    J --> K[Run 15+ Tools<br/>in Parallel]
+    K --> L[Save Results]
+
+    style H fill:#c8e6c9
+    style K fill:#fff3e0
+```
+
+**Non-Blocking Details**: [docs/nonblocking-hooks.md](docs/nonblocking-hooks.md)
 
 ## Key Features
 
-### Multi-Modal Execution
-- Three execution models: Binary, Container, UV Development
-- Flexible container delegation when runtime available
-- No hard container dependency for basic operations
+### ⚡ Non-Blocking Git Hooks (Sprint 10)
+- **300x faster** commits: <100ms vs 30s blocking
+- Validation runs in background with real-time TUI progress
+- All 15+ tools run automatically (not just fast subset)
+- Previous failure detection prevents committing with errors
+- **7.5x speedup** with parallel tool execution
 
-### Repository Safety & Isolation
-- Binary configs stored separately from repository (`~/.huskycat/`)
-- Optional container isolation for maximum security
-- Read-only repository mounting when using containers
-
-### AI Integration via MCP
-- stdio-based MCP server for Claude Code
-- Validation tools exposed as AI-callable functions
-- Real-time code quality feedback
-
-### Universal Validation with Auto-Fix
-- **Core Tools**: Black, Flake8, MyPy, Ruff
-- **Extended Tools**: yamllint, shellcheck, hadolint, eslint
-- **Security**: bandit, safety, dependency scanning
-- **GitLab CI**: Schema validation and pipeline testing
-- **Auto-Fix**: Interactive prompts for automatic issue resolution
-
-## Differentiating Features
-
-HuskyCat provides unique capabilities not found in standard linting platforms:
-
-### GitLab CI Schema Validation (`gitlab_ci_validator.py:20-230`)
-**Industry-leading GitLab CI/CD validation with official schema support**
-
-- **Dynamic Schema Fetching**: Auto-downloads official GitLab CI schema from upstream
-- **Smart Caching**: 7-day cache with automatic refresh (`gitlab_ci_validator.py:43-80`)
-- **Multi-Source Fallback**: Primary + 2 fallback schema sources for reliability
-- **Draft-07 Validation**: Full JSON Schema Draft-07 compliance with format checking
-- **Detailed Error Reporting**: Line-by-line error messages with context
-
-```python
-# unified_validation.py:1524-1625
-class GitLabCIValidator(Validator):
-    """Validates .gitlab-ci.yml against official GitLab schema"""
-
-    def can_handle(self, filepath: Path) -> bool:
-        """Detects GitLab CI files (.gitlab-ci.yml, .gitlab/ci/*.yml)"""
-        # Handles main CI file and modular includes
-```
-
-**Usage**:
+**Enable non-blocking mode:**
 ```bash
-huskycat ci-validate .gitlab-ci.yml           # Validate main CI file
-huskycat ci-validate .gitlab/ci/deploy.yml    # Validate CI includes
-huskycat --mode git_hooks validate            # Auto-validates in pre-push
+git config --local huskycat.nonblocking true
 ```
 
-**Implementation**: `commands/ci.py:1-200`, `gitlab_ci_validator.py:1-230`
+### 📦 Fat Binary Distribution (Sprint 10)
+- Standalone 150-200MB binaries with embedded tools
+- No container runtime dependency
+- **4.5x faster** than container mode
+- Cross-platform: macOS (ARM64), Linux (AMD64/ARM64)
+- One-time tool extraction to `~/.huskycat/tools/`
 
-### GitLab Auto-DevOps Validation (`commands/autodevops.py:16-500`)
-**Complete Auto-DevOps pipeline validation for Helm and Kubernetes**
+**Supported platforms:**
+- Linux AMD64 (x86_64)
+- Linux ARM64 (aarch64)
+- macOS ARM64 (M1/M2/M3/M4)
+- macOS Intel (via Rosetta 2)
 
-- **Helm Chart Validation**: Values schema validation, template rendering checks
-- **Kubernetes Manifest Validation**: API version compatibility, resource quotas
-- **Security Template Verification**: SAST, Secret Detection, Container Scanning
-- **Deployment Simulation**: Dry-run validation with `helm template` and `kubectl --dry-run`
-- **Project Structure Analysis**: Auto-detects chart directories and manifests
-- **Fast Mode**: Optimized validation for git hooks (skips slow operations)
+### 🔧 Universal Validation
+- **Python**: black, flake8, mypy, ruff, pylint, bandit, isort
+- **Shell**: shellcheck
+- **Docker**: hadolint
+- **YAML**: yamllint, ansible-lint
+- **TOML**: taplo
+- **GitLab CI**: Schema validation
+- **Chapel**: First-class Chapel language support
 
-```python
-# commands/autodevops.py:38-76
-def execute(
-    self,
-    project_path: str = ".",
-    validate_helm: bool = True,
-    validate_k8s: bool = True,
-    simulate_deployment: bool = False,
-    strict_mode: bool = False,
-    fast_mode: bool = False,  # Git hooks mode: skip slow ops
-) -> CommandResult:
-    """Validate Auto-DevOps Helm charts and K8s manifests"""
-```
-
-**Validation Stages**:
-1. **Project Structure**: Detects Helm charts, K8s manifests, GitLab CI
-2. **GitLab CI**: Validates Auto-DevOps stages (build, test, security, deploy)
-3. **Helm Charts**: Schema validation, `helm lint`, template rendering
-4. **Kubernetes**: API validation, resource checks, namespace isolation
-5. **Security**: Verifies SAST/Secret-Detection/Dependency-Scanning templates
-
-**Usage**:
+### 🤖 AI Integration (MCP Server)
 ```bash
-huskycat auto-devops                          # Full validation
-huskycat auto-devops --no-helm                # Skip Helm validation
-huskycat auto-devops --simulate               # Test deployment dry-run
-huskycat auto-devops --strict                 # Enable strict mode
+# Start MCP server for Claude Code
+huskycat mcp-server
+
+# Add to Claude Code
+claude mcp add huskycat -- huskycat mcp-server
 ```
 
-**Implementation**: `commands/autodevops.py:1-500`, `gitlab_ci_validator.py`
-
-### Chapel Language Support (`formatters/chapel.py:21-444`)
-**First-class Chapel code formatting without compiler dependency**
-
-HuskyCat is the **ONLY** validation platform with built-in Chapel language support.
-
-**Features**:
-- **Compiler-Free**: Pure Python implementation, no Chapel compiler required
-- **Three-Layer Formatting**: Whitespace → Syntax → Indentation
-- **Safe Transformations**: Preserves string literals and comments
-- **Auto-Fix Support**: Integrated with HuskyCat's auto-fix framework
-
-**Formatting Layers**:
-
-1. **Layer 1: Whitespace Normalization** (`chapel.py:104-137`)
-   ```python
-   def normalize_whitespace(self, code: str) -> str:
-       """Always-safe transformations:
-       - Remove trailing whitespace
-       - Convert tabs to spaces (2-space indent)
-       - Ensure final newline
-       - Normalize line endings to LF
-       """
-   ```
-
-2. **Layer 2: Syntax Formatting** (`chapel.py:141-299`)
-   ```python
-   def format_syntax(self, code: str) -> str:
-       """Regex-based operator/keyword spacing:
-       - Operators: =, +, -, *, /, %, ==, !=, <=, >=, <, >
-       - Logical: &&, ||
-       - Keywords: if, for, while, proc, return
-       - Braces: { } spacing
-       - Commas, semicolons, type annotations
-       """
-   ```
-
-3. **Layer 3: Indentation Correction** (`chapel.py:303-350`)
-   ```python
-   def fix_indentation(self, code: str) -> str:
-       """Brace-depth based indentation:
-       - Tracks { } nesting depth
-       - Applies 2-space indentation
-       - Handles closing brace dedentation
-       """
-   ```
-
-**Validator Integration** (`unified_validation.py:1073-1143`):
-```python
-class ChapelValidator(Validator):
-    """Chapel code formatter (custom implementation)"""
-
-    @property
-    def extensions(self) -> Set[str]:
-        return {".chpl"}  # Handles .chpl files
-
-    def validate(self, filepath: Path) -> ValidationResult:
-        """Format Chapel code with auto-fix support"""
-```
-
-**Usage**:
-```bash
-huskycat validate src/*.chpl                  # Check Chapel formatting
-huskycat validate --fix src/*.chpl            # Auto-format Chapel code
-python -m huskycat.formatters.chapel file.chpl --check  # Standalone CLI
-```
-
-**Implementation**: `formatters/chapel.py:1-444`, `unified_validation.py:1073-1143`
-
-**Why This Matters**: Chapel is a high-performance computing language with minimal tooling ecosystem. HuskyCat fills this critical gap with production-ready formatting.
+Exposes validation tools as AI-callable functions for real-time code quality feedback.
 
 ## Quick Start
 
-### 1. Prerequisites & Setup
+### 1. Install HuskyCat
+
+**One-line install:**
 ```bash
-# Optional: Container runtime (podman or docker) for container execution
-# Install podman: brew install podman (macOS) or apt install podman (Ubuntu)
-
-# Install dependencies
-npm install
-uv sync --dev
-
-# Optional: Build container for container-based execution
-npm run container:build
-
-# Build binary entry point
-npm run build:binary
-
-# Verify installation
-./dist/huskycat --version
-./dist/huskycat status
+curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
 ```
 
-### 2. Core Operations
+**Manual download:**
+
+See [docs/binary-downloads.md](docs/binary-downloads.md) for platform-specific download links.
+
+**macOS note**: Remove quarantine after download:
 ```bash
-# Binary execution (recommended for git hooks)
-./dist/huskycat validate --staged    # Validate staged files
-./dist/huskycat setup-hooks          # Install git hooks
-./dist/huskycat ci-validate .gitlab-ci.yml
-
-# Auto-fix validation
-./dist/huskycat validate --fix       # Auto-fix validation issues
-git addf <files>                     # Interactive auto-fix before staging
-git addf .                           # Validate and auto-fix all files
-
-# Development mode (NPM scripts + UV)
-npm run validate                     # Quick validation
-npm run validate:ci                  # CI configuration
-npm run mcp:server                   # Start MCP server
-
-# Container mode (when runtime available)
-npm run container:validate           # Container-based validation
+xattr -d com.apple.quarantine huskycat
 ```
 
-### 3. Claude Code Integration
+**Verify installation:**
 ```bash
-# Start MCP server (stdio protocol)
-./dist/huskycat mcp-server
-
-# Test connection
-echo '{"jsonrpc": "2.0", "method": "tools/list", "id": 1}' | npm run mcp:server
+huskycat --version  # Should show: huskycat 2.0.0
+huskycat status     # Show installation details
 ```
 
-## Execution Models
+### 2. Setup Git Hooks
 
-See [docs/architecture/execution-models.md](docs/architecture/execution-models.md) for complete details with code references.
-
-### Binary Execution (Recommended)
 ```bash
-./dist/huskycat [command]            # PyInstaller single-file
-```
-**Implementation**: `huskycat_main.py:1-27` → `__main__.py:1-50`
-**Best for**: Git hooks, CI/CD, production deployments
-**Container**: Optional delegation when runtime available (`unified_validation.py:85-109`)
+cd /path/to/your/repo
+huskycat setup-hooks
 
-### Container Execution
+# Enable fast non-blocking mode (recommended)
+git config --local huskycat.nonblocking true
+```
+
+### 3. Validate Code
+
 ```bash
-npm run container:validate           # Alpine-based multi-arch
-```
-**Implementation**: `ContainerFile:1-153`, `.gitlab-ci.yml:158-218`
-**Best for**: Maximum isolation, consistent toolchain
-**Architectures**: amd64, arm64 multi-arch support
+# Validate staged files
+huskycat validate --staged
 
-### UV Development Mode
+# Validate all files
+huskycat validate --all
+
+# Auto-fix issues
+huskycat validate --fix
+
+# Validate GitLab CI
+huskycat ci-validate .gitlab-ci.yml
+```
+
+### 4. Test Non-Blocking Hooks
+
 ```bash
-npm run dev -- [command]             # UV + npm scripts
-```
-**Implementation**: `package.json:8-38`
-**Best for**: Development, testing, convenience
-**Requirement**: UV package manager, Python 3.8+
+echo "# test" >> README.md
+git add README.md
+git commit -m "test: verify huskycat works"
 
-## Product Modes
-
-See [docs/architecture/product-modes.md](docs/architecture/product-modes.md) for complete comparison matrix.
-
-| Mode | Output | Tools | Interactive | Use Case |
-|------|--------|-------|-------------|----------|
-| **Git Hooks** | Minimal | Fast subset (4) | Auto-detect TTY | Pre-commit validation |
-| **CI** | JUnit XML | All (15+) | Never | Pipeline integration |
-| **CLI** | Rich colored | Configurable | Yes | Manual validation |
-| **Pipeline** | JSON | All | Never | Script integration |
-| **MCP Server** | JSON-RPC 2.0 | All | Never | AI integration |
-
-**Mode Detection**: `mode_detector.py:30-82` (priority: flag → env → command → git → CI → TTY → default)
-
-## Available Commands
-
-| Command | Description | Options |
-|---------|-------------|---------|
-| `validate` | Run validation on files | `--staged`, `--all`, `--fix`, `[files...]` |
-| `install` | Install HuskyCat and dependencies | `--dev`, `--global` |
-| `setup-hooks` | Setup git hooks for automatic validation | `--force` |
-| `update-schemas` | Update validation schemas from official sources | `--force` |
-| `ci-validate` | Validate CI configuration files | `[files...]` |
-| `auto-devops` | Validate Auto-DevOps Helm charts and Kubernetes | `--no-helm`, `--no-k8s`, `--simulate`, `--strict` |
-| `mcp-server` | Start MCP server for AI integration | `--port PORT` |
-| `clean` | Clean cache and temporary files | `--all` |
-| `status` | Show HuskyCat status and configuration | |
-
-## Requirements
-
-### Core Requirements
-- **Python 3.8+**: For UV development mode and binary build
-- **UV package manager**: `pip install uv`
-- **Node.js and npm**: Build system
-
-### Optional Requirements
-- **Container Runtime**: Podman or Docker (for container execution mode)
-- **PyInstaller + UPX**: Binary compression
-- **Git**: For hooks and staged file validation
-
-### Execution Model Requirements
-| Model | Python | UV | Container Runtime | Build Tools |
-|-------|--------|-----|-------------------|-------------|
-| **Binary** | Build only | No | Optional | PyInstaller |
-| **Container** | No | No | Required | Podman/Docker |
-| **UV Development** | Yes | Yes | Optional | npm |
-
-See [docs/installation.md](docs/installation.md) for detailed installation instructions.
-
-## Installation
-
-1. **Clone and build**:
-   ```bash
-   git clone <repository>
-   cd huskycats-bates
-   npm install
-   npm run build:binary
-   ```
-
-2. **Install Python dependencies** (for UV development mode):
-   ```bash
-   uv sync --dev
-   ```
-
-3. **Optional: Build container** (for container execution):
-   ```bash
-   npm run container:build
-   ```
-
-4. **Verify installation**:
-   ```bash
-   ./dist/huskycat --version
-   ./dist/huskycat status
-   ```
-
-## Architecture Deep Dive
-
-See [docs/architecture/](docs/architecture/) for comprehensive documentation with code references.
-
-### Execution Flow
-HuskyCat uses flexible execution routing based on available runtime:
-
-```python
-# unified_validation.py:85-170
-def is_available(self) -> bool:
-    """Check validator availability in current context"""
-    if self._is_running_in_container():
-        return tool_exists_locally()
-    else:
-        return container_runtime_exists()
-
-def _execute_command(self, cmd: List[str], **kwargs):
-    """Route execution: direct or container-delegated"""
-    if self._is_running_in_container():
-        return subprocess.run(cmd, **kwargs)
-    else:
-        container_cmd = self._build_container_command(cmd)
-        return subprocess.run(container_cmd, **kwargs)
+# Expected output:
+# ⚡ Non-blocking validation mode enabled
+# 🚀 Launching background validation... (PID 12345)
+# [main abc1234] test: verify huskycat works
+#  1 file changed, 1 insertion(+)
 ```
 
-### Mode Detection Priority
-```python
-# mode_detector.py:30-82
-def detect_mode() -> ProductMode:
-    """Priority: flag → env → command → git → CI → TTY → default"""
-    if "--mode" in sys.argv:
-        return ProductMode(parse_flag())
-    if env_mode := os.getenv("HUSKYCAT_MODE"):
-        return ProductMode(env_mode)
-    if "mcp-server" in sys.argv:
-        return ProductMode.MCP
-    # ... continues through priority list
-```
+Commit completes immediately while validation runs in background!
 
-### Adapter Pattern
-Five mode-specific adapters in `src/huskycat/core/adapters/`:
-- `git_hooks.py` - Fast subset, minimal output
-- `ci.py` - JUnit XML, comprehensive tools
-- `cli.py` - Interactive, colored output
-- `pipeline.py` - JSON output, machine-readable
-- `mcp.py` - JSON-RPC 2.0, AI integration
+## Mode Comparison
 
-Factory pattern routes commands: `factory.py:1-200` → adapter selection
+| Mode | Speed | Tools | Output | Use Case |
+|------|-------|-------|--------|----------|
+| **Git Hooks (Non-Blocking)** | <100ms | All (15+) | TUI progress | Fast commits with comprehensive validation |
+| **Git Hooks (Blocking)** | 5-30s | Fast (4) | Minimal | Legacy mode, immediate feedback |
+| **CI Mode** | Variable | All (15+) | JUnit XML | Pipeline integration |
+| **CLI Mode** | Variable | Configured | Colored | Interactive development |
+| **Pipeline Mode** | Variable | All (15+) | JSON | Scriptable automation |
+| **MCP Server** | Sub-second | All (15+) | JSON-RPC | AI integration |
 
-### MCP Server Protocol
-Uses stdio-based JSON-RPC 2.0 for Claude Code integration:
-```json
-{"jsonrpc": "2.0", "method": "tools/call", "params": {
-  "name": "validate",
-  "arguments": {"path": "src/", "fix": false}
-}}
-```
+## Performance
 
-**Implementation**: `mcp_server.py:1-150` - stdio transport with validation backend
-
-### Performance Characteristics
-- **Binary Entry Point**: ~100ms startup
-- **NPM Scripts**: ~200ms startup (Python import overhead)
-- **Container Execution**: ~1-3s per validation (comprehensive tooling)
-- **MCP Server**: Persistent process, sub-second responses
-
-## Implementation Details
-
-### Critical Files:
-- **Entry Points**:
-  - `huskycat_main.py:1-27` - Binary wrapper
-  - `src/huskycat/__main__.py:1-50` - CLI interface
-- **Core Architecture**:
-  - `src/huskycat/core/mode_detector.py:30-82` - Mode detection
-  - `src/huskycat/core/factory.py:1-200` - Command factory
-  - `src/huskycat/core/adapters/*.py` - Mode-specific adapters (5 files)
-- **Validation Engine**:
-  - `src/huskycat/unified_validation.py:85-170` - Execution routing
-- **Integration**:
-  - `src/huskycat/mcp_server.py:1-150` - MCP stdio server
-- **Distribution**:
-  - `ContainerFile:1-153` - Alpine multi-arch container
-  - `.gitlab-ci.yml:158-218` - Container builds
-  - `.gitlab-ci.yml:268-298` - Binary builds
-
-### Current Status:
-- **Execution Models**: Binary, Container, UV Development all operational
-- **Product Modes**: All 5 modes implemented with adapters (Sprint 0 complete)
-- **Multi-Arch Support**: amd64 and arm64 container builds passing
-- **Test Suite**: Unit tests passing, E2E tests operational
-- **CI Pipeline**: 22/22 jobs passing
+| Metric | Blocking Hooks | Non-Blocking Hooks | Improvement |
+|--------|----------------|-------------------|-------------|
+| **Time to commit** | 30s | <0.1s | **300x faster** |
+| **Full validation** | 30s | 10s | **3x faster** |
+| **Tools run** | 4 | 15+ | **3.75x more** |
+| **Parallel speedup** | - | 7.5x | **vs sequential** |
+| **Embedded tools** | 1.87s/tool | 0.42s/tool | **4.5x faster** |
 
 ## Documentation
 
-Visit [docs/](docs/) for complete documentation:
-- [Architecture Overview](docs/architecture/)
-  - [Execution Models](docs/architecture/execution-models.md) - Binary, Container, UV modes
-  - [Product Modes](docs/architecture/product-modes.md) - 5 modes with code references
-- [Installation Guide](docs/installation.md)
-- [User Guide](docs/user-guide/)
-- [Development Guide](docs/development/)
+### User Guides
+- [Installation Guide](docs/installation.md) - Detailed installation for all platforms
+- [Beta Testing Guide](docs/BETA_TESTING.md) - Beta testing instructions
+- [Binary Downloads](docs/binary-downloads.md) - Download links for all platforms
+- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
+- [CLI Reference](docs/cli-reference.md) - Command-line usage
 
-**For Developers**: See `CLAUDE.md` for Claude Code instructions and `docs/SPRINT_PLAN.md` for development roadmap.
+### Architecture
+- [Product Modes](docs/architecture/product-modes.md) - 5 modes (6 adapters)
+- [Execution Models](docs/architecture/execution-models.md) - Binary, Container, UV
+- [Fat Binaries](docs/architecture/fat-binaries.md) - Embedded tools architecture
+- [TUI Framework](docs/architecture/tui.md) - Real-time progress display
 
-## Quick Architecture Reference
+### Features
+- [Non-Blocking Hooks](docs/nonblocking-hooks.md) - Fast commit workflow
+- [MCP Server](docs/features/mcp-server.md) - AI integration
+- [Parallel Executor](docs/parallel_executor.md) - Concurrent tool execution
 
-```mermaid
-sequenceDiagram
-    participant U as User/Git Hook
-    participant B as Binary
-    participant D as ModeDetector
-    participant F as Factory
-    participant A as Adapter
-    participant V as ValidationEngine
-    participant E as Executor (Direct or Container)
+### CI/CD
+- [GitLab CI Documentation](docs/ci-cd/gitlab.md) - Complete pipeline reference
+- [CI/CD Migration Notes](docs/ci-cd/MIGRATION_NOTES.md) - CI updates
 
-    U->>B: ./dist/huskycat validate --staged
-    B->>D: detect_mode()
-    D->>D: Priority: flag → env → git → TTY
-    D->>B: ProductMode.GIT_HOOKS
-    B->>F: HuskyCatFactory.execute_command()
-    F->>A: GitHooksAdapter.validate()
-    A->>V: ValidationEngine.validate_staged_files()
-    V->>V: Check execution context
-    V->>E: Direct OR Container-delegated
-    E->>E: Run black, ruff, mypy (fast subset)
-    E->>V: Return validation results
-    V->>A: ValidationResult
-    A->>F: Format output (minimal, fail-fast)
-    F->>B: CommandResult
-    B->>U: Exit code + messages
+### Development
+- [Dogfooding](docs/dogfooding.md) - Using HuskyCat to validate itself
+- [Claude Instructions](CLAUDE.md) - AI assistant integration
 
-    Note over D,A: Mode-specific adapter selected
-    Note over V,E: Execution routing based on context
+## Downloads
+
+**Latest Release** (main branch):
+
+| Platform | Architecture | Download |
+|----------|-------------|----------|
+| Linux | x86_64 (amd64) | [Download →](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64) |
+| Linux | ARM64 (aarch64) | [Download →](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64) |
+| macOS | ARM64 (M1/M2/M3/M4) | [Download →](https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64) |
+
+**Binary sizes**: 150-200MB (includes all validation tools)
+
+**See also**: [Binary Downloads Guide](docs/binary-downloads.md) for checksums and verification.
+
+## Differentiating Features
+
+### GitLab CI Schema Validation
+Industry-leading GitLab CI/CD validation with official schema support:
+- Dynamic schema fetching from GitLab upstream
+- Smart caching with automatic refresh
+- Multi-source fallback for reliability
+- Line-by-line error reporting
+
+```bash
+huskycat ci-validate .gitlab-ci.yml
 ```
+
+### Chapel Language Support
+**First and only** validation platform with built-in Chapel language support:
+- Compiler-free formatting (pure Python implementation)
+- Three-layer formatting (whitespace → syntax → indentation)
+- Auto-fix integration
+
+```bash
+huskycat validate --fix src/*.chpl
+```
+
+### Auto-DevOps Validation
+Complete Auto-DevOps pipeline validation:
+- Helm chart validation
+- Kubernetes manifest validation
+- Security template verification
+- Deployment simulation
+
+```bash
+huskycat auto-devops
+```
+
+## Contributing
+
+HuskyCat dogfoods its own validation using tracked git hooks:
+
+```bash
+git clone https://gitlab.com/jsullivan2/huskycats-bates.git
+cd huskycats-bates
+uv sync --dev
+
+# Hooks are already configured via core.hooksPath = .githooks
+git config --local --get core.hooksPath  # Should show: .githooks
+
+# Enable non-blocking mode
+git config --local huskycat.nonblocking true
+
+# Test with a commit
+echo "# test" >> README.md
+git add README.md
+git commit -m "test: verify hooks"
+```
+
+See [docs/dogfooding.md](docs/dogfooding.md) for details.
+
+## License
+
+[License details here]
+
+## Links
+
+- **GitLab**: https://gitlab.com/jsullivan2/huskycats-bates
+- **Documentation**: [docs/](docs/)
+- **Downloads**: https://tinyland.gitlab.io/ai/huskycat/downloads/
+- **CI/CD Pipeline**: https://gitlab.com/jsullivan2/huskycats-bates/-/pipelines
+- **Issues**: https://gitlab.com/jsullivan2/huskycats-bates/-/issues
+
+---
+
+**Status**: Sprint 11 Complete - Beta Testing Ready
+
+**Current Version**: 2.0.0 (Sprint 11 - Fat Binary Bootstrap)
+
+🤖 Built with [Claude Code](https://claude.com/claude-code)

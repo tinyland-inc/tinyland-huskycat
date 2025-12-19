@@ -38,6 +38,14 @@ main() {
         exit 1
     fi
 
+    # Check for non-blocking mode configuration
+    local nonblocking_mode
+    nonblocking_mode=$(git config --get huskycat.nonblocking 2>/dev/null || echo "false")
+    if [[ "$nonblocking_mode" == "true" ]]; then
+        export HUSKYCAT_NONBLOCKING=1
+        log_info "⚡ Non-blocking validation mode enabled"
+    fi
+
     # Get staged Python files (just to check if any exist)
     local staged_py
     staged_py=$(staged_files "py")
@@ -66,28 +74,39 @@ main() {
 
     log_step "Running: uv run python -m src.huskycat validate $huskycat_args"
 
-    # Run validation and capture exit code properly
-    set +e
-    uv run python -m src.huskycat validate $huskycat_args
-    local exit_code=$?
-    set -e
+    # Check for non-blocking mode
+    if [[ "$HUSKYCAT_NONBLOCKING" == "1" ]]; then
+        # Non-blocking mode: fork and return immediately
+        log_info "🚀 Launching background validation..."
+        uv run python -m src.huskycat validate $huskycat_args &
+        local validate_pid=$!
+        log_info "   Validation running in background (PID $validate_pid)"
+        log_info "   Check results with: uv run python -m src.huskycat status"
+        exit 0
+    else
+        # Blocking mode: wait for validation
+        set +e
+        uv run python -m src.huskycat validate $huskycat_args
+        local exit_code=$?
+        set -e
 
-    if [[ $exit_code -ne 0 ]]; then
-        log_error "HuskyCat validation failed (exit code: $exit_code)"
+        if [[ $exit_code -ne 0 ]]; then
+            log_error "HuskyCat validation failed (exit code: $exit_code)"
 
-        # Check if files were modified (auto-fixed) and need to be re-staged
-        local modified_staged
-        modified_staged=$(git diff --name-only 2>/dev/null || true)
+            # Check if files were modified (auto-fixed) and need to be re-staged
+            local modified_staged
+            modified_staged=$(git diff --name-only 2>/dev/null || true)
 
-        if [[ -n "$modified_staged" ]]; then
-            log_info "Re-staging fixed files..."
-            echo "$modified_staged" | xargs -r git add
+            if [[ -n "$modified_staged" ]]; then
+                log_info "Re-staging fixed files..."
+                echo "$modified_staged" | xargs -r git add
+            fi
+
+            echo ""
+            echo "  To fix manually: uv run python -m src.huskycat validate --staged --fix"
+            echo "  To skip hooks:   SKIP_HOOKS=1 git commit"
+            echo ""
         fi
-
-        echo ""
-        echo "  To fix manually: uv run python -m src.huskycat validate --staged --fix"
-        echo "  To skip hooks:   SKIP_HOOKS=1 git commit"
-        echo ""
     fi
 
     # ------------------------------------------------------------------------

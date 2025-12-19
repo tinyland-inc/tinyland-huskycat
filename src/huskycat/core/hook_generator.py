@@ -43,30 +43,40 @@ class HookGenerator:
             return "2.1.0"
 
     def _detect_binary_path(self) -> Optional[Path]:
-        """Detect HuskyCat binary location.
+        """Detect HuskyCat binary location with priority ordering.
+
+        Priority:
+        1. Running from binary right now (sys.frozen)
+        2. Installed in user's bin (~/.local/bin/huskycat)
+        3. System PATH (which huskycat)
+        4. Common system locations (/usr/local/bin, /usr/bin)
 
         Returns:
             Path to binary if found, None otherwise
         """
-        # Check if running as PyInstaller binary
+        # Priority 1: Check if running as PyInstaller binary
         if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
             return Path(sys.executable)
 
-        # Check PATH for huskycat command
+        # Priority 2: Check user's bin (most common install location)
+        user_bin = Path.home() / ".local" / "bin" / "huskycat"
+        if user_bin.exists() and user_bin.is_file():
+            return user_bin
+
+        # Priority 3: Check PATH for huskycat command
         try:
             which_result = subprocess.run(
-                ["which", "huskycat"], capture_output=True, text=True, check=False
+                ["which", "huskycat"], capture_output=True, text=True, check=False, timeout=5
             )
             if which_result.returncode == 0:
                 binary_path = Path(which_result.stdout.strip())
-                if binary_path.exists():
+                if binary_path.exists() and binary_path.is_file():
                     return binary_path
         except Exception as e:
             logger.debug(f"Error detecting binary in PATH: {e}")
 
-        # Check common locations
+        # Priority 4: Check common system locations
         common_locations = [
-            Path.home() / ".local" / "bin" / "huskycat",
             Path("/usr/local/bin/huskycat"),
             Path("/usr/bin/huskycat"),
         ]
@@ -75,6 +85,7 @@ class HookGenerator:
             if location.exists() and location.is_file():
                 return location
 
+        # No binary found - hooks will use UV fallback
         return None
 
     def detect_repo_type(self) -> Dict[str, bool]:

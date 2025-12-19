@@ -73,45 +73,9 @@ pages:
 
       echo "</ul></body></html>" >> public/downloads/index.html
 
-    # Generate install script
-    - |
-      cat > public/install.sh << 'INSTALL_EOF'
-      #!/bin/bash
-      set -e
-
-      echo "Installing HuskyCat..."
-
-      # Detect OS and architecture
-      OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-      ARCH=$(uname -m)
-
-      if [ "$ARCH" = "x86_64" ]; then
-        ARCH="amd64"
-      elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-        ARCH="arm64"
-      fi
-
-      BINARY_NAME="huskycat-${OS}-${ARCH}"
-      DOWNLOAD_URL="https://tinyland.gitlab.io/ai/huskycat/downloads/${BINARY_NAME}"
-
-      # Download binary
-      echo "Downloading $BINARY_NAME..."
-      curl -sSL "$DOWNLOAD_URL" -o /tmp/huskycat || {
-        echo "Failed to download binary. Trying source install..."
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        uv tool install --from "git+https://gitlab.com/tinyland/ai/huskycat.git" huskycat
-        exit 0
-      }
-
-      # Install binary
-      chmod +x /tmp/huskycat
-      sudo mv /tmp/huskycat /usr/local/bin/huskycat 2>/dev/null || mv /tmp/huskycat ~/.local/bin/huskycat
-
-      echo "HuskyCat installed successfully!"
-      echo "Run 'huskycat --help' to get started."
-      INSTALL_EOF
-
-      chmod +x public/install.sh
+    # Copy verified install script from scripts/
+    - cp scripts/install.sh public/install.sh
+    - chmod +x public/install.sh
 
   artifacts:
     paths:

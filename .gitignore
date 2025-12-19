@@ -34,7 +34,10 @@ yarn-error.log*
 
 # Testing
 coverage/
+coverage.json
 .nyc_output/
+.pytest_cache/
+.hypothesis/
 
 # Build
 dist/

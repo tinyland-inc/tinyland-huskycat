@@ -1,370 +1,405 @@
 # Installation Guide
 
-This guide covers installing HuskyCat locally and in development projects.
+## Quick Install (Recommended)
 
-See [Architecture Documentation](architecture/) for details on execution models and product modes.
+Download the pre-built binary for your platform and install with a single command.
 
-## Prerequisites
-
-### Core Requirements
-- **Python 3.8+**: For binary build and UV development mode
-- **UV Package Manager**: `pip install uv`
-- **Node.js and npm**: Build system
-
-### Optional Requirements
-- **Container Runtime**: Podman or Docker (for container execution mode)
-- **Git Repository**: For hooks and staged file validation
-
-### Execution Model Requirements
-
-| Model | Python | UV | Container Runtime | Build Tools |
-|-------|--------|-----|-------------------|-------------|
-| **Binary** | Build only | No | Optional | PyInstaller |
-| **Container** | No | No | Required | Podman/Docker |
-| **UV Development** | Yes | Yes | Optional | npm |
-
-See [Execution Models](architecture/execution-models.md) for complete details.
-
-## Quick Start - HuskyCat Installation
-
-HuskyCat provides multiple installation methods to suit different workflows.
-
-### Method 1: Build from Source (Recommended)
+### Linux (amd64)
 
 ```bash
-# Clone and build HuskyCat
-git clone <repository>
-cd huskycats-bates
-npm install
-
-# Install Python dependencies (for UV development mode)
-uv sync --dev
-
-# Optional: Build container for container-based execution
-npm run container:build
-
-# Build binary entry point
-npm run build:binary
-
-# Verify installation
-./dist/huskycat --version
-./dist/huskycat status
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64' -o huskycat
+chmod +x huskycat
+./huskycat install
 ```
 
-### Method 2: Development Mode (UV + npm)
+### Linux (ARM64)
 
 ```bash
-# For active development on HuskyCat itself
-npm run dev -- --help             # Show available commands
-npm run validate                   # Validate current directory
-npm run hooks:install              # Setup git hooks
-npm run mcp:server                 # Start MCP server
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64' -o huskycat
+chmod +x huskycat
+./huskycat install
 ```
 
-### Method 3: Container Execution
+### macOS (ARM64 - M1/M2/M3/M4)
 
 ```bash
-# Build validation container
-npm run container:build
-
-# Run validation through container
-npm run container:validate
-
-# Container-based validation with volume mount
-podman run --rm -v "$(pwd)":/workspace huskycat:local validate --all
+curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64' -o huskycat
+chmod +x huskycat
+./huskycat install
 ```
 
-## Using HuskyCat in Your Projects
+> **Note for Intel Mac users**: The Intel (x86_64) binary is not currently built due to GitLab SaaS runner limitations. Intel Mac users can:
+> - Use Rosetta 2 to run the ARM64 binary: `arch -x86_64 ./huskycat install`
+> - Use container execution: `podman run -v $(pwd):/workspace tinyland/huskycat validate`
 
-### 1. Setup Git Hooks
+## Verify Installation
+
+After installation, verify HuskyCat is working:
 
 ```bash
-# Navigate to your project
-cd your-project
-
-# Setup HuskyCat git hooks
-./path/to/huskycat setup-hooks
-
-# Test the installation
-git add .
-git commit -m "test: verify hooks"  # Should run validation
+huskycat --version
+huskycat --help
+huskycat status
 ```
 
-**Git Hooks Mode** uses fast subset validation (black, ruff, mypy) for <5s execution.
-See [Product Modes](architecture/product-modes.md) for mode-specific behavior.
+Expected output:
+```
+$ huskycat --version
+huskycat 2.0.0
 
-### 2. Validate Code
+$ huskycat status
+HuskyCat Status
+===============
+Installation:  ~/.local/bin/huskycat
+Tools:         ~/.huskycat/tools/ (3 tools)
+Configuration: .huskycat.yaml
+Mode:          CLI
+```
+
+## What Happens During Installation
+
+The `huskycat install` command performs these steps:
+
+### 1. Binary Installation
+- Copies binary to `~/.local/bin/huskycat`
+- Sets executable permissions (755)
+- Creates directory if it doesn't exist
+
+### 2. Tool Extraction
+Tools are extracted to `~/.huskycat/tools/` on first use:
+
+- **shellcheck** v0.10.0 (~3.4 MB) - Shell script linter
+- **hadolint** v2.12.0 (~12 MB) - Dockerfile linter
+- **taplo** v0.9.3 (~18 MB) - TOML formatter
+
+Extraction happens automatically the first time you run validation:
+```
+$ huskycat validate test.sh
+Extracting 3 validation tools to ~/.huskycat/tools/...
+  • shellcheck (3.4 MB)
+  • hadolint (12.0 MB)
+  • taplo (18.3 MB)
+✓ Tools extracted successfully
+```
+
+### 3. Shell Completions
+Completions are created in `~/.huskycat/completions/`:
+
+- **Bash**: `huskycat.bash`
+- **Zsh**: `_huskycat`
+- **Fish**: `huskycat.fish`
+
+To enable completions, add to your shell profile:
+
+**Bash** (`~/.bashrc`):
+```bash
+source ~/.huskycat/completions/huskycat.bash
+```
+
+**Zsh** (`~/.zshrc`):
+```bash
+fpath=(~/.huskycat/completions $fpath)
+autoload -Uz compinit && compinit
+```
+
+**Fish** (`~/.config/fish/config.fish`):
+```bash
+source ~/.huskycat/completions/huskycat.fish
+```
+
+### 4. PATH Configuration
+If `~/.local/bin` is not in your PATH, add it:
+
+**Bash/Zsh** (`~/.bashrc` or `~/.zshrc`):
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+**Fish** (`~/.config/fish/config.fish`):
+```bash
+set -gx PATH $HOME/.local/bin $PATH
+```
+
+Then reload your shell:
+```bash
+source ~/.bashrc  # or ~/.zshrc, or restart terminal
+```
+
+## Git Hooks Setup
+
+After installation, enable git hooks for your repository:
 
 ```bash
-# Validate current directory
-./path/to/huskycat validate
-
-# Validate specific files
-./path/to/huskycat validate src/main.py
-
-# Validate all files
-./path/to/huskycat validate --all
-
-# Validate only staged files
-./path/to/huskycat validate --staged
-
-# Auto-fix validation issues
-./path/to/huskycat validate --fix
+cd your-repo
+huskycat setup-hooks
 ```
 
-## Execution Models
+This installs hooks to `.git/hooks/`:
+- `pre-commit` - Validates staged files
+- `pre-push` - Validates CI configuration
+- `commit-msg` - Validates commit message format
 
-HuskyCat supports three execution models:
+### Enable Non-Blocking Mode (Optional)
 
-### Binary Execution (Recommended)
-```bash
-./dist/huskycat validate --staged    # Fast startup, optional container delegation
-```
-**Implementation**: `huskycat_main.py:1-27` → `__main__.py:1-50`
-**Best for**: Git hooks, CI/CD, production deployments
-**Container**: Optional delegation when runtime available (`unified_validation.py:85-109`)
-
-### Container Execution
-```bash
-npm run container:validate           # Alpine-based multi-arch
-```
-**Implementation**: `ContainerFile:1-153`, `.gitlab-ci.yml:158-218`
-**Best for**: Maximum isolation, consistent toolchain
-**Requirement**: Container runtime (podman or docker)
-
-### UV Development Mode
-```bash
-npm run dev -- validate              # UV + npm scripts
-```
-**Implementation**: `package.json:8-38`
-**Best for**: Development, testing, convenience
-**Requirement**: UV package manager, Python 3.8+
-
-## MCP Server Integration
-
-### Setup MCP for Claude Code
+For faster commits that don't block on validation:
 
 ```bash
-# Start MCP server for Claude Code integration (stdio protocol)
-./path/to/huskycat mcp-server
-
-# Test MCP server connection
-echo '{"jsonrpc": "2.0", "method": "tools/list", "id": 1}' | ./path/to/huskycat mcp-server
-
-# Configure in Claude Code MCP settings:
-# Command: /path/to/huskycat
-# Args: ["mcp-server"]
+git config --local huskycat.nonblocking true
 ```
 
-**Implementation**: `mcp_server.py:1-150` - JSON-RPC 2.0 over stdio
-
-## What Gets Configured
-
-HuskyCat setup creates:
-
+With non-blocking mode:
 ```
-your-project/
-├── .git/hooks/               # Git hooks installed by setup-hooks
-│   ├── pre-commit           # Validates staged files (fast subset)
-│   ├── pre-push             # Validates CI configuration
-│   └── commit-msg           # Validates commit message format
-├── .huskycat/               # Configuration and cache
-│   ├── config.json         # HuskyCat configuration
-│   └── schemas/            # Downloaded validation schemas
-└── (existing project files remain unchanged)
+$ git commit -m "feat: add feature"
+⚡ Non-blocking validation mode enabled
+🚀 Launching background validation...
+   Validation running in background (PID 12345)
+[main abc1234] feat: add feature
+ 1 file changed, 10 insertions(+)
 ```
 
-**Note**: Binary config stored in `~/.huskycat/` separately from repository for isolation.
-
-## Post-Installation
-
-### Verify Installation
-
-```bash
-# Check HuskyCat status
-./dist/huskycat status
-
-# Test validation
-./dist/huskycat validate --all
-
-# Verify git hooks are working (Git Hooks mode: fast subset)
-git add .
-git commit -m "test: verify hooks"  # Runs black, ruff, mypy
-
-# Update validation schemas
-./dist/huskycat update-schemas
+Without non-blocking mode (default):
 ```
-
-### Using HuskyCat Commands
-
-After installation, you can use these commands:
-
-```bash
-# Validate code
-./dist/huskycat validate                    # Validate current directory
-./dist/huskycat validate --staged          # Validate staged files
-./dist/huskycat validate src/main.py       # Validate specific file
-./dist/huskycat validate --fix             # Auto-fix issues
-
-# CI/CD validation
-./dist/huskycat ci-validate .gitlab-ci.yml # Validate GitLab CI
-
-# MCP integration
-./dist/huskycat mcp-server                  # Start MCP server (stdio)
-
-# Management
-./dist/huskycat clean                       # Clean cache
-./dist/huskycat update-schemas              # Update schemas
-./dist/huskycat status                      # Show status
-
-# Mode override
-./dist/huskycat --mode ci validate          # Force CI mode (JUnit XML)
-./dist/huskycat --mode pipeline validate    # Force pipeline mode (JSON)
-./dist/huskycat --json validate             # Shorthand for pipeline mode
-```
-
-## Product Modes
-
-HuskyCat automatically detects and adapts to different usage contexts:
-
-| Mode | Output | Tools | Interactive | Detection |
-|------|--------|-------|-------------|-----------|
-| **Git Hooks** | Minimal | Fast subset (4) | Auto-detect TTY | Git env vars |
-| **CI** | JUnit XML | All (15+) | Never | CI=true env |
-| **CLI** | Rich colored | Configurable | Yes | Default/TTY |
-| **Pipeline** | JSON | All | Never | --json flag |
-| **MCP Server** | JSON-RPC 2.0 | All | Never | mcp-server cmd |
-
-**Mode Detection**: `mode_detector.py:30-82` (priority: flag → env → command → git → CI → TTY → default)
-
-See [Product Modes Documentation](architecture/product-modes.md) for complete comparison matrix.
-
-## Development Configuration
-
-### Configure Your IDE
-
-#### VS Code
-Add to `.vscode/settings.json`:
-```json
-{
-  "editor.formatOnSave": true,
-  "python.formatting.provider": "black",
-  "python.linting.enabled": true,
-  "python.linting.flake8Enabled": true,
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
-  }
-}
-```
-
-#### PyCharm
-1. Go to Settings → Tools → File Watchers
-2. Add watchers for Black and flake8
-3. Enable "Reformat on Save"
-
-### Update package.json Scripts
-
-Add these helpful scripts:
-```json
-{
-  "scripts": {
-    "lint": "./path/to/huskycat validate --all",
-    "lint:fix": "./path/to/huskycat validate --all --fix",
-    "lint:staged": "./path/to/huskycat validate --staged"
-  }
-}
+$ git commit -m "feat: add feature"
+🚀 Running HuskyCat validation...
+✓ black: 5 files passed
+✓ mypy: 5 files passed
+✓ flake8: 5 files passed
+[main abc1234] feat: add feature
+ 1 file changed, 10 insertions(+)
 ```
 
 ## Troubleshooting
 
-### Execution Model Issues
+### Tools Not Found
 
-1. **Container runtime not available**
-   ```bash
-   # Install podman (recommended) or docker
-   brew install podman  # macOS
-   apt install podman   # Ubuntu/Debian
+**Symptom**: `shellcheck: command not found`
 
-   # Build container
-   npm run container:build
+**Solution**:
+```bash
+# Check if tools are extracted
+ls -la ~/.huskycat/tools/
 
-   # Verify container works
-   npm run container:test
-   ```
+# Force re-extraction
+rm -rf ~/.huskycat/tools
+huskycat validate --help  # Triggers extraction
+```
 
-2. **Binary execution issues**
-   ```bash
-   # Rebuild binary
-   npm run build:binary
+### Binary Not in PATH
 
-   # Check binary works
-   ./dist/huskycat --version
-   ./dist/huskycat status
-   ```
+**Symptom**: `huskycat: command not found`
 
-3. **UV development mode issues**
-   ```bash
-   # Install UV package manager
-   pip install uv
+**Solution**:
+```bash
+# Check if binary exists
+ls -l ~/.local/bin/huskycat
 
-   # Sync dependencies
-   uv sync --dev
+# Verify PATH includes ~/.local/bin
+echo $PATH | grep .local/bin
 
-   # Test UV mode
-   npm run dev -- --help
-   ```
+# Add to PATH if missing
+export PATH="$HOME/.local/bin:$PATH"
 
-### Architecture Issues
+# Make permanent by adding to ~/.bashrc or ~/.zshrc
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
 
-1. **"exec format error" when running containers**
-   ```bash
-   # Architecture mismatch - use platform flag
-   podman run --rm --platform linux/amd64 -v "$(pwd):/workspace" \
-     huskycat:local validate --all
+### Permission Denied
 
-   # Check your system architecture
-   uname -m
-   # x86_64 = use linux/amd64
-   # arm64 or aarch64 = use linux/arm64
-   ```
+**Symptom**: `Permission denied: ./huskycat`
 
-2. **Multi-arch container builds**
-   ```bash
-   # Build for specific architecture
-   podman build --platform linux/amd64 -f ContainerFile -t huskycat:amd64 .
-   podman build --platform linux/arm64 -f ContainerFile -t huskycat:arm64 .
-   ```
+**Solution**:
+```bash
+# Make binary executable
+chmod +x huskycat
 
-### Common Issues
+# After installation
+chmod +x ~/.local/bin/huskycat
+```
 
-1. **"command not found" errors**
-   - Binary not in PATH - use full path or add to PATH
-   - Container not built - run `npm run container:build`
-   - UV not installed - run `pip install uv`
+### macOS: "Cannot be opened because the developer cannot be verified"
 
-2. **Permission denied**
-   - Make binary executable: `chmod +x dist/huskycat`
-   - Check file permissions: `ls -la dist/huskycat`
+**Solution**:
+```bash
+# Remove quarantine attribute
+xattr -d com.apple.quarantine huskycat
 
-3. **Git hooks not running**
-   - Run `./dist/huskycat setup-hooks` in your project
-   - Check Git version (needs 2.9+)
-   - Verify hooks installed: `ls -la .git/hooks/`
+# Or allow in System Preferences
+# System Preferences → Security & Privacy → Allow anyway
+```
 
-4. **Mode detection issues**
-   - Force specific mode: `huskycat --mode cli validate`
-   - Check environment: `echo $CI; echo $HUSKYCAT_MODE`
-   - Review detection logic: `mode_detector.py:30-82`
+### Hooks Not Running
 
-See [Troubleshooting Guide](troubleshooting.md) for more solutions.
+**Symptom**: Commits succeed without validation
+
+**Solution**:
+```bash
+# Check if hooks are installed
+ls -la .git/hooks/pre-commit
+
+# Verify hook is executable
+chmod +x .git/hooks/pre-commit
+
+# Check hook content
+head -20 .git/hooks/pre-commit
+
+# Reinstall hooks
+huskycat setup-hooks --force
+```
+
+### Tool Extraction Fails
+
+**Symptom**: `Failed to extract tools: Permission denied`
+
+**Solution**:
+```bash
+# Check directory permissions
+ls -ld ~/.huskycat/
+
+# Create directory with correct permissions
+mkdir -p ~/.huskycat/tools
+chmod 755 ~/.huskycat ~/.huskycat/tools
+
+# Try extraction again
+huskycat validate --help
+```
+
+### Version Mismatch Warning
+
+**Symptom**: `Hook version mismatch detected`
+
+**Solution**:
+```bash
+# Update hooks to match binary version
+huskycat setup-hooks --force
+
+# Or disable version check
+export HUSKYCAT_CHECK_VERSION=0
+```
+
+## Uninstallation
+
+To remove HuskyCat:
+
+```bash
+# Remove binary
+rm ~/.local/bin/huskycat
+
+# Remove tools and cache
+rm -rf ~/.huskycat/
+
+# Remove git hooks (per repository)
+cd your-repo
+rm .git/hooks/pre-commit
+rm .git/hooks/pre-push
+rm .git/hooks/commit-msg
+
+# Or restore original hooks
+git config --unset core.hooksPath
+```
+
+## Upgrading
+
+To upgrade to a newer version:
+
+```bash
+# Download new binary
+curl -L <new-binary-url> -o huskycat
+chmod +x huskycat
+
+# Install (overwrites old version)
+./huskycat install
+
+# Update hooks in repositories
+cd your-repo
+huskycat setup-hooks --force
+```
+
+## Alternative Installation Methods
+
+### From Source (Development)
+
+```bash
+# Clone repository
+git clone https://gitlab.com/jsullivan2/huskycats-bates.git
+cd huskycats-bates
+
+# Install dependencies
+uv sync --dev
+
+# Build binary
+npm run build:binary
+
+# Install
+./dist/huskycat install
+```
+
+### Container-Based (No Installation)
+
+```bash
+# Build container
+podman build -f ContainerFile -t huskycat:local .
+
+# Run validation
+podman run --rm -v "$(pwd)":/workspace huskycat:local validate --all
+
+# Run as MCP server
+podman run --rm -i huskycat:local mcp-server
+```
+
+### UV Development Mode
+
+For HuskyCat development:
+
+```bash
+# Clone repository
+git clone https://gitlab.com/jsullivan2/huskycats-bates.git
+cd huskycats-bates
+
+# Install with UV
+uv sync --dev
+
+# Run directly
+uv run python -m huskycat validate --all
+
+# Use tracked git hooks
+git config --local core.hooksPath .githooks
+```
+
+## Platform-Specific Notes
+
+### Linux
+
+- Binary size: ~150-200 MB (with embedded tools)
+- Requires: glibc 2.17+ (most distributions)
+- Runs on: x86_64 (amd64) and ARM64 architectures
+
+### macOS
+
+- Binary size: ~21 MB (tools extracted separately)
+- Requires: macOS 10.13+ (High Sierra)
+- Architectures: Intel (x86_64) and Apple Silicon (ARM64)
+- May require: Xcode Command Line Tools for some operations
+
+### Windows
+
+**Note**: Windows support is planned but not yet implemented. Current workarounds:
+
+- Use WSL2 with Linux binary
+- Use Docker Desktop with container image
+- Use Git Bash with Linux compatibility layer
 
 ## Next Steps
 
-- [Architecture Overview](architecture/)
-  - [Execution Models](architecture/execution-models.md) - Binary, Container, UV modes
-  - [Product Modes](architecture/product-modes.md) - 5 modes with code references
-- [Configuration Guide](configuration.md) - Customize validation rules
-- [MCP Server Documentation](features/mcp-server.md) - Claude Code integration
-- [Git Hooks Guide](features/git-hooks.md) - Automated validation setup
+After installation:
+
+1. **Configure** - Create `.huskycat.yaml` in your repository
+2. **Validate** - Run `huskycat validate --all` to test
+3. **Setup Hooks** - Enable git hooks with `huskycat setup-hooks`
+4. **Customize** - Configure tools, rules, and behavior
+
+See:
+- [Configuration Guide](configuration.md)
+- [Git Hooks Guide](dogfooding.md)
+- [Binary Downloads](binary-downloads.md)
+- [Troubleshooting](troubleshooting.md)

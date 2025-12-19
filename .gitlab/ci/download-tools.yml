@@ -1,0 +1,122 @@
+# Download platform-specific validation tools for fat binary builds
+# This stage downloads pre-compiled binaries (shellcheck, hadolint, taplo)
+# that will be embedded into HuskyCat binaries for each platform.
+
+# Shared configuration for download jobs
+.download_tools_template: &download_tools_template
+  stage: build
+  image: python:3.11-slim
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends curl ca-certificates xz-utils gzip
+    - python3 --version
+    - python3 scripts/download_tools.py --help
+  script:
+    - echo "Downloading tools for ${PLATFORM}"
+    - python3 scripts/download_tools.py --platform ${PLATFORM} --output-dir ${OUTPUT_DIR}
+    - ls -lah ${OUTPUT_DIR}
+    - cat ${OUTPUT_DIR}/versions.txt
+  artifacts:
+    paths:
+      - ${OUTPUT_DIR}
+    expire_in: 1 day
+    name: "huskycat-tools-${PLATFORM}-${CI_COMMIT_SHORT_SHA}"
+  cache:
+    key: "tools-${PLATFORM}"
+    paths:
+      - ${OUTPUT_DIR}
+    policy: pull-push
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Linux AMD64 tool downloads
+download:tools:linux-amd64:
+  <<: *download_tools_template
+  variables:
+    PLATFORM: linux-amd64
+    OUTPUT_DIR: dist/tools/linux-amd64
+
+# Linux ARM64 tool downloads
+download:tools:linux-arm64:
+  <<: *download_tools_template
+  variables:
+    PLATFORM: linux-arm64
+    OUTPUT_DIR: dist/tools/linux-arm64
+
+# macOS Intel (AMD64) tool downloads
+download:tools:darwin-amd64:
+  <<: *download_tools_template
+  variables:
+    PLATFORM: darwin-amd64
+    OUTPUT_DIR: dist/tools/darwin-amd64
+
+# macOS Apple Silicon (ARM64) tool downloads
+download:tools:darwin-arm64:
+  <<: *download_tools_template
+  variables:
+    PLATFORM: darwin-arm64
+    OUTPUT_DIR: dist/tools/darwin-arm64
+
+# Verification job - ensure all tools downloaded successfully
+verify:tools:all-platforms:
+  stage: test
+  image: python:3.11-slim
+  needs:
+    - download:tools:linux-amd64
+    - download:tools:linux-arm64
+    - download:tools:darwin-amd64
+    - download:tools:darwin-arm64
+  dependencies:
+    - download:tools:linux-amd64
+    - download:tools:linux-arm64
+    - download:tools:darwin-amd64
+    - download:tools:darwin-arm64
+  script:
+    - echo "Verifying downloaded tools for all platforms..."
+    - |
+      for platform in linux-amd64 linux-arm64 darwin-amd64 darwin-arm64; do
+        echo ""
+        echo "Platform: ${platform}"
+        echo "----------------------------------------"
+
+        if [ ! -d "dist/tools/${platform}" ]; then
+          echo "ERROR: Missing tool directory for ${platform}"
+          exit 1
+        fi
+
+        # Check for expected tools
+        for tool in shellcheck hadolint taplo; do
+          tool_path="dist/tools/${platform}/${tool}"
+          if [ ! -f "${tool_path}" ]; then
+            echo "  MISSING: ${tool}"
+            exit 1
+          fi
+
+          # Check if executable
+          if [ ! -x "${tool_path}" ]; then
+            echo "  NOT EXECUTABLE: ${tool}"
+            exit 1
+          fi
+
+          # Show file info
+          size=$(stat -c%s "${tool_path}" 2>/dev/null || stat -f%z "${tool_path}" 2>/dev/null || echo "unknown")
+          echo "  OK: ${tool} (${size} bytes)"
+        done
+
+        # Verify versions.txt exists
+        if [ ! -f "dist/tools/${platform}/versions.txt" ]; then
+          echo "  WARNING: Missing versions.txt"
+        else
+          echo "  Manifest:"
+          cat "dist/tools/${platform}/versions.txt" | sed 's/^/    /'
+        fi
+      done
+    - echo ""
+    - echo "All platform tools verified successfully"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: false

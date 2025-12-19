@@ -12,6 +12,7 @@ from .base import (
     AdapterConfig,
 )
 from .git_hooks import GitHooksAdapter
+from .git_hooks_nonblocking import NonBlockingGitHooksAdapter
 from .ci import CIAdapter
 from .cli import CLIAdapter
 from .pipeline import PipelineAdapter
@@ -24,6 +25,7 @@ __all__ = [
     "TOOL_FIX_CONFIDENCE",
     "AdapterConfig",
     "GitHooksAdapter",
+    "NonBlockingGitHooksAdapter",
     "CIAdapter",
     "CLIAdapter",
     "PipelineAdapter",

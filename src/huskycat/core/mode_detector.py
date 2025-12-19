@@ -146,12 +146,13 @@ def get_mode_description(mode: ProductMode) -> str:
     return descriptions.get(mode, f"Unknown mode: {mode}")
 
 
-def get_adapter(mode: ProductMode) -> "ModeAdapter":
+def get_adapter(mode: ProductMode, use_nonblocking: bool = False) -> "ModeAdapter":
     """
     Get the adapter instance for a given mode.
 
     Args:
         mode: The ProductMode to get an adapter for
+        use_nonblocking: Use non-blocking adapter for git hooks (feature flag)
 
     Returns:
         ModeAdapter instance configured for the mode
@@ -163,6 +164,12 @@ def get_adapter(mode: ProductMode) -> "ModeAdapter":
         PipelineAdapter,
         MCPAdapter,
     )
+
+    # Check for non-blocking git hooks feature flag
+    if mode == ProductMode.GIT_HOOKS and use_nonblocking:
+        from .adapters.git_hooks_nonblocking import NonBlockingGitHooksAdapter
+
+        return NonBlockingGitHooksAdapter()
 
     adapters = {
         ProductMode.GIT_HOOKS: GitHooksAdapter,

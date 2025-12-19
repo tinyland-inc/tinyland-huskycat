@@ -7,13 +7,16 @@ include:
   - local: '/.gitlab/ci/scheduled-updates.yml'
   - local: '/.gitlab/ci/pages.yml'
   - local: '/.gitlab/ci/e2e-tests.yml'
+  - local: '/.gitlab/ci/download-tools.yml'
+  - local: '/.gitlab/ci/build.yml'
+  - local: '/.gitlab/ci/binary-tests.yml'
 
 stages:
   - validate
   - security
+  - build  # Tool downloads happen here
   - test
-  - build
-  - package
+  - package  # Binary builds happen here (depends on build stage)
   - sign
   - deploy
   - scheduled
@@ -265,72 +268,23 @@ package:python:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
 
-binary:build:linux:
-  stage: package
-  image: rockylinux/rockylinux:10  # Rocky Linux 10 (released June 2025)
-  needs:
-    - job: validate:complete
-      optional: true
-  before_script:
-    - dnf install -y epel-release  # Enable EPEL for UPX
-    - dnf install -y git curl gcc python3 python3-pip zlib-devel
-    - dnf install -y upx || echo "UPX not available, skipping compression"
-    - curl -LsSf https://astral.sh/uv/install.sh | sh
-    - export PATH="$HOME/.local/bin:$PATH"
-    - uv --version
-  script:
-    - uv sync --extra build
-    - mkdir -p dist/bin
-    - uv run pyinstaller --onefile --name huskycat-linux-amd64 huskycat_main.py
-    - mv dist/huskycat-linux-amd64 dist/bin/
-    - chmod +x dist/bin/huskycat-linux-amd64
-    - upx --best --lzma dist/bin/huskycat-linux-amd64 || echo "UPX compression failed, continuing without compression"
-    - ls -la dist/bin/
-    - file dist/bin/huskycat-linux-amd64 || true  # file command may not be available
-    - dist/bin/huskycat-linux-amd64 --version || echo "Binary test failed, but continuing"
-  artifacts:
-    paths:
-      - dist/bin/huskycat-linux-amd64
-    expire_in: 1 month
-    name: 'huskycat-linux-binary-$CI_COMMIT_SHORT_SHA'
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_TAG
+# NOTE: Old binary build jobs moved to .gitlab/ci/build.yml
+# New fat binary builds include embedded validation tools
+# See .gitlab/ci/build.yml for:
+#   - build:binary:linux-amd64
+#   - build:binary:linux-arm64
+#   - build:binary:darwin-arm64
+# These jobs depend on download:tools:* jobs from .gitlab/ci/download-tools.yml
 
-# Linux ARM64 binary build (Rocky Linux 10)
-binary:build:linux-arm64:
-  stage: package
-  image: rockylinux/rockylinux:10  # Rocky Linux 10 (released June 2025)
-  tags:
-    - saas-linux-medium-arm64  # GitLab SaaS ARM64 runner
-  needs:
-    - job: validate:complete
-      optional: true
-  before_script:
-    - dnf install -y epel-release  # Enable EPEL for UPX
-    - dnf install -y git curl gcc python3 python3-pip zlib-devel
-    - dnf install -y upx || echo "UPX not available, skipping compression"
-    - curl -LsSf https://astral.sh/uv/install.sh | sh
-    - export PATH="$HOME/.local/bin:$PATH"
-    - uv --version
-  script:
-    - uv sync --extra build
-    - mkdir -p dist/bin
-    - uv run pyinstaller --onefile --name huskycat-linux-arm64 huskycat_main.py
-    - mv dist/huskycat-linux-arm64 dist/bin/
-    - chmod +x dist/bin/huskycat-linux-arm64
-    - upx --best --lzma dist/bin/huskycat-linux-arm64 || echo "UPX compression failed, continuing without compression"
-    - ls -la dist/bin/
-    - file dist/bin/huskycat-linux-arm64 || true  # file command may not be available
-    - dist/bin/huskycat-linux-arm64 --version || echo "Binary test failed, but continuing"
-  artifacts:
-    paths:
-      - dist/bin/huskycat-linux-arm64
-    expire_in: 1 month
-    name: 'huskycat-linux-arm64-binary-$CI_COMMIT_SHORT_SHA'
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_TAG
+# Old binary:build:linux job (replaced by build:binary:linux-amd64 in build.yml)
+# binary:build:linux:
+#   stage: package
+#   ...
+
+# Old binary:build:linux-arm64 job (replaced by build:binary:linux-arm64 in build.yml)
+# binary:build:linux-arm64:
+#   stage: package
+#   ...
 
 # macOS ARM64 (Apple Silicon) build with signing - uses GitLab SaaS macOS runners
 # Required CI/CD Variables:
@@ -345,37 +299,12 @@ binary:build:linux-arm64:
     - saas-macos-medium-m1
   image: macos-14-xcode-15
 
-# macOS ARM64 (Apple Silicon) build - UNSIGNED binary only
-# Signing is handled separately in sign:darwin-arm64 job
-binary:build:darwin-arm64:
-  extends: .macos_saas_runners
-  stage: package
-  needs:
-    - job: validate:complete
-      optional: true
-  before_script:
-    - curl -LsSf https://astral.sh/uv/install.sh | sh
-    - export PATH="$HOME/.local/bin:$PATH"
-    - uv --version
-    - uv sync --extra build
-  script:
-    - mkdir -p dist/bin
-    # Build unsigned binary (signing done in separate sign stage)
-    - uv run python build_binary.py --skip-upx
-    - mv dist/huskycat dist/bin/huskycat-darwin-arm64
-    - chmod +x dist/bin/huskycat-darwin-arm64
-    # Verify
-    - file dist/bin/huskycat-darwin-arm64
-    - dist/bin/huskycat-darwin-arm64 --version
-    - ls -la dist/bin/
-  artifacts:
-    paths:
-      - dist/bin/huskycat-darwin-arm64
-    expire_in: 1 month
-    name: 'huskycat-darwin-arm64-binary-$CI_COMMIT_SHORT_SHA'
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_TAG
+# Old binary:build:darwin-arm64 job (replaced by build:binary:darwin-arm64 in build.yml)
+# The new version includes embedded validation tools
+# binary:build:darwin-arm64:
+#   extends: .macos_saas_runners
+#   stage: package
+#   ...
 
 # Darwin Code Signing (requires APPLE_* variables in CI settings)
 # Follows crush's proven temporary keychain pattern
@@ -383,7 +312,7 @@ sign:darwin-arm64:
   extends: .macos_saas_runners
   stage: sign
   needs:
-    - job: binary:build:darwin-arm64
+    - job: build:binary:darwin-arm64
       artifacts: true
   script:
     - echo "Checking for code signing certificate..."
@@ -572,6 +501,8 @@ sign:darwin-arm64:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH =~ /^feature\// # Run on feature branches for testing
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # Run on MRs
   allow_failure: true  # Don't block pipeline if signing not configured
 
 # Deploy stage jobs
@@ -582,21 +513,24 @@ release:create:
   needs:
     - job: package:python
       optional: true
-    - job: binary:build:linux
+    - job: build:binary:linux-amd64
       optional: true
-    - job: binary:build:linux-arm64
+    - job: build:binary:linux-arm64
       optional: true
     - job: sign:darwin-arm64
+      optional: true
+    - job: checksums:generate
       optional: true
   script:
     - |
       release-cli create \
         --name "HuskyCat $CI_COMMIT_TAG" \
         --tag-name $CI_COMMIT_TAG \
-        --description "Release $CI_COMMIT_TAG of HuskyCat Universal Code Validation Platform" \
-        --assets-link "{\"name\":\"Linux AMD64 Binary\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-linux-amd64?job=binary:build:linux\"}" \
-        --assets-link "{\"name\":\"Linux ARM64 Binary\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-linux-arm64?job=binary:build:linux-arm64\"}" \
-        --assets-link "{\"name\":\"macOS ARM64 Binary (Apple Silicon - Signed)\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-darwin-arm64?job=sign:darwin-arm64\"}" \
+        --description "Release $CI_COMMIT_TAG of HuskyCat Universal Code Validation Platform - Fat binaries with embedded validation tools" \
+        --assets-link "{\"name\":\"Linux AMD64 Binary (Fat)\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64\"}" \
+        --assets-link "{\"name\":\"Linux ARM64 Binary (Fat)\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64\"}" \
+        --assets-link "{\"name\":\"macOS ARM64 Binary (Apple Silicon - Signed, Fat)\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/huskycat-darwin-arm64?job=sign:darwin-arm64\"}" \
+        --assets-link "{\"name\":\"SHA256 Checksums\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/raw/dist/bin/SHA256SUMS.txt?job=checksums:generate\"}" \
         --assets-link "{\"name\":\"Python Wheel Package\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/$CI_COMMIT_TAG/browse/dist?job=package:python\"}" \
         --assets-link "{\"name\":\"Container Image\",\"url\":\"https://gitlab.com/tinyland/ai/huskycat/container_registry/$CI_COMMIT_TAG\"}" \
         --assets-link "{\"name\":\"Documentation\",\"url\":\"https://tinyland.gitlab.io/ai/huskycat/\"}"

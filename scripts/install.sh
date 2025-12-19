@@ -48,14 +48,17 @@ main() {
     if command -v curl &> /dev/null; then
         curl -fsSL "$BINARY_URL" -o "$BINARY_PATH" || {
             # Fallback to artifact URL if release doesn't exist
-            log_info "Release not found, trying artifacts..."
+            log_info "Release not found, trying artifacts from main branch..."
             case "${PLATFORM}-${ARCH}" in
-                linux-amd64) JOB="binary:build:linux" ;;
-                linux-arm64) JOB="binary:build:linux-arm64" ;;
-                darwin-arm64) JOB="binary:build:darwin-arm64" ;;
-                darwin-amd64) JOB="binary:build:darwin-amd64" ;;
+                linux-amd64) JOB="build:binary:linux-amd64" ;;
+                linux-arm64) JOB="build:binary:linux-arm64" ;;
+                darwin-arm64) JOB="build:binary:darwin-arm64" ;;
+                darwin-amd64)
+                    log_error "macOS Intel (darwin-amd64) binary not available. Intel Mac users: Use Rosetta 2 to run ARM64 binary, or use container execution with: podman run -v \$(pwd):/workspace tinyland/huskycat validate"
+                    ;;
+                *) log_error "Unsupported platform: ${PLATFORM}-${ARCH}" ;;
             esac
-            curl -fsSL "https://gitlab.com/${GITLAB_PROJECT}/-/jobs/artifacts/main/raw/dist/bin/huskycat-${PLATFORM}-${ARCH}?job=${JOB}" -o "$BINARY_PATH" || log_error "Failed to download binary"
+            curl -fsSL "https://gitlab.com/${GITLAB_PROJECT}/-/jobs/artifacts/main/raw/dist/bin/huskycat-${PLATFORM}-${ARCH}?job=${JOB}" -o "$BINARY_PATH" || log_error "Failed to download binary for ${PLATFORM}-${ARCH}"
         }
     elif command -v wget &> /dev/null; then
         wget -q "$BINARY_URL" -O "$BINARY_PATH" || log_error "Failed to download binary"

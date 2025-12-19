@@ -53,6 +53,12 @@ if [[ -n "${SKIP_HOOKS}" ]]; then
     exit 0
 fi
 
+# Check for non-blocking mode configuration
+NONBLOCKING_MODE=$(git config --get huskycat.nonblocking 2>/dev/null || echo "false")
+if [[ "$NONBLOCKING_MODE" == "true" ]]; then
+    export HUSKYCAT_NONBLOCKING=1
+fi
+
 exit_code=0
 
 # ============================================================================

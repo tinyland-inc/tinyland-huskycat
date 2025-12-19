@@ -10,6 +10,7 @@ HuskyCat operates in 5 distinct product modes:
 """
 
 import sys
+import os
 import argparse
 from pathlib import Path
 
@@ -209,6 +210,10 @@ def create_parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     """Main entry point for HuskyCat CLI."""
+    # Ensure embedded tools are available (for fat binary)
+    from .core.tool_extractor import ensure_tools
+    ensure_tools()
+
     parser = create_parser()
     args = parser.parse_args()
 
@@ -222,7 +227,10 @@ def main() -> int:
         mode_override = "pipeline"
 
     mode = detect_mode(override=mode_override)
-    adapter = get_adapter(mode)
+
+    # Check for non-blocking hooks feature flag
+    use_nonblocking = os.environ.get('HUSKYCAT_NONBLOCKING', '0') == '1'
+    adapter = get_adapter(mode, use_nonblocking=use_nonblocking)
 
     # Log mode detection in verbose mode
     verbose = getattr(args, "verbose", False)

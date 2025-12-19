@@ -49,6 +49,13 @@ if [[ -n "${SKIP_HOOKS}" ]]; then
     exit 0
 fi
 
+# Check for non-blocking mode configuration
+NONBLOCKING_MODE=$(git config --get huskycat.nonblocking 2>/dev/null || echo "false")
+if [[ "$NONBLOCKING_MODE" == "true" ]]; then
+    export HUSKYCAT_NONBLOCKING=1
+    echo "⚡ Non-blocking validation mode enabled"
+fi
+
 # Build validation arguments
 VALIDATE_ARGS="--staged"
 
@@ -64,17 +71,28 @@ fi
 # Add GitOps flags if enabled
 {{GITOPS_FLAGS}}
 
-# Run validation
-echo "🚀 Running HuskyCat validation..."
-$EXEC_CMD validate $VALIDATE_ARGS
-
-exit_code=$?
-
-if [[ $exit_code -eq 0 ]]; then
-    echo "✅ Validation passed"
+# Run validation (non-blocking or blocking)
+if [[ "$HUSKYCAT_NONBLOCKING" == "1" ]]; then
+    # Non-blocking mode: fork validation process and return immediately
+    echo "🚀 Launching background validation..."
+    $EXEC_CMD validate $VALIDATE_ARGS &
+    VALIDATE_PID=$!
+    echo "   Validation running in background (PID $VALIDATE_PID)"
+    echo "   Check results with: huskycat status"
+    exit 0
 else
-    echo "❌ Validation failed (exit code: $exit_code)"
-    echo "   Fix issues and try again, or use --no-verify to skip"
-fi
+    # Blocking mode: wait for validation to complete
+    echo "🚀 Running HuskyCat validation..."
+    $EXEC_CMD validate $VALIDATE_ARGS
 
-exit $exit_code
+    exit_code=$?
+
+    if [[ $exit_code -eq 0 ]]; then
+        echo "✅ Validation passed"
+    else
+        echo "❌ Validation failed (exit code: $exit_code)"
+        echo "   Fix issues and try again, or use --no-verify to skip"
+    fi
+
+    exit $exit_code
+fi

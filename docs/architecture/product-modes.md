@@ -6,12 +6,13 @@
 
 HuskyCat serves **FIVE distinct product modes** that share validation logic but have fundamentally different requirements for performance, output, interactivity, and tool selection.
 
-**Implementation Status**: ✅ **Sprint 0 COMPLETE** - All 5 modes implemented with adapters
+**Implementation Status**: ✅ **Sprint 0-11 COMPLETE** - All 5 modes implemented with adapters
 
 **File References**:
 - Mode detection: `src/huskycat/core/mode_detector.py:1-190`
 - Base adapter: `src/huskycat/core/adapters/base.py:1-333`
-- Mode-specific adapters: `src/huskycat/core/adapters/*.py` (5 files)
+- Mode-specific adapters: `src/huskycat/core/adapters/*.py` (6 adapter implementations for 5 modes)
+  - Git Hooks mode has **2 adapters**: blocking (`git_hooks.py`) and non-blocking (`git_hooks_nonblocking.py`)
 
 ---
 
@@ -125,7 +126,33 @@ def main() -> int:
 ### Purpose
 Pre-commit/pre-push validation for fast developer feedback
 
-### Adapter Implementation
+### Two Adapter Implementations
+
+Git Hooks mode has **TWO adapters** with different trade-offs:
+
+1. **Blocking Adapter** (`git_hooks.py`) - Fast subset, blocks commit
+2. **Non-Blocking Adapter** (`git_hooks_nonblocking.py`) - Full validation, non-blocking commits
+
+**Mode Detection**: Single `ProductMode.GIT_HOOKS` mode (`mode_detector.py:70`)
+
+**Adapter Selection** (`mode_detector.py:169`):
+```python
+if mode == ProductMode.GIT_HOOKS and use_nonblocking:
+    return NonBlockingGitHooksAdapter()
+else:
+    return GitHooksAdapter()
+```
+
+**Configuration**: Set via git config
+```bash
+git config --local huskycat.nonblocking true   # Use non-blocking adapter
+git config --local huskycat.nonblocking false  # Use blocking adapter (default)
+```
+
+---
+
+### Adapter 1: Blocking Git Hooks (Default)
+
 **File**: `src/huskycat/core/adapters/git_hooks.py:1-250`
 
 ```python
@@ -262,18 +289,152 @@ $EXEC_CMD validate --staged
 
 **File Reference**: `src/huskycat/templates/hooks/pre-commit.template:15-30`
 
-### Use Cases
+### Use Cases (Blocking Adapter)
 - Pre-commit validation of staged files
 - Pre-push validation before remote push
 - Fast feedback loop for developers
 - Block commits with validation errors
+- When you want immediate feedback before commit completes
 
-### Performance Characteristics
+### Performance Characteristics (Blocking Adapter)
 - **Startup**: ~100ms (binary) or ~200ms (UV mode)
 - **Validation**: <5s for typical changesets (4 fast tools)
 - **Total**: <6s from commit trigger to result
+- **Commit blocking**: Waits for validation to complete
 
 **Verification**: Based on git hook requirements, not benchmarked in code
+
+---
+
+### Adapter 2: Non-Blocking Git Hooks
+
+**File**: `src/huskycat/core/adapters/git_hooks_nonblocking.py:1-250`
+
+**Added**: Sprint 10-11 (Non-blocking hooks feature)
+
+```python
+class NonBlockingGitHooksAdapter(ModeAdapter):
+    """
+    Adapter for non-blocking git hooks validation.
+
+    Key Features:
+    - Parent process returns <100ms
+    - Child runs comprehensive validation (15+ tools)
+    - Real-time TUI progress display
+    - Previous failure handling with user prompts
+    """
+
+    def __init__(self, cache_dir: Path = None):
+        self.process_manager = ProcessManager(cache_dir)
+        self.tui = ValidationTUI(refresh_rate=0.1)
+        self.executor = ParallelExecutor(max_workers=8, fail_fast=False)
+```
+
+**Configuration** (`git_hooks_nonblocking.py:73-93`):
+```python
+@property
+def config(self) -> AdapterConfig:
+    return AdapterConfig(
+        output_format=OutputFormat.MINIMAL,  # Parent has minimal output
+        interactive=True,  # For previous failure prompts
+        fail_fast=False,  # Run all tools in background
+        color=sys.stdout.isatty(),
+        progress=True,  # Enable TUI in child process
+        tools="all",  # ALL validation tools (15+), not "fast"
+    )
+```
+
+### Critical Differences from Blocking Adapter
+
+| Feature | Blocking Adapter | Non-Blocking Adapter |
+|---------|------------------|----------------------|
+| **Tools** | Fast subset (4 tools) | All tools (15+) |
+| **Commit time** | 5-6 seconds | <100ms |
+| **Validation** | Blocks commit | Background process |
+| **TUI display** | No | Yes (real-time progress) |
+| **Previous failure check** | No | Yes (prompts before commit) |
+| **Parallel execution** | No | Yes (8 workers) |
+| **Results caching** | No | Yes (`.huskycat/runs/`) |
+
+### Non-Blocking Architecture
+
+```
+Parent Process (git hook):              Child Process (background):
+┌─────────────────────────┐              ┌─────────────────────────┐
+│ 1. Check previous run   │              │ 1. Initialize TUI       │
+│ 2. Prompt if failed     │              │ 2. Start ParallelExecutor│
+│ 3. Fork child process   │─────fork────>│ 3. Run 15+ tools        │
+│ 4. Return to git <100ms │              │ 4. Show progress (TUI)  │
+│ 5. Commit proceeds      │              │ 5. Save results to cache│
+└─────────────────────────┘              │ 6. Exit with status     │
+         Exit 0                           └─────────────────────────┘
+```
+
+**Implementation**: `git_hooks_nonblocking.py:95-150`
+
+### Previous Failure Handling
+
+The non-blocking adapter checks previous validation results before allowing commits:
+
+```python
+def execute_validation(self, files: List[str], tools: Dict[str, Callable]) -> int:
+    """
+    1. Check previous validation results
+    2. Prompt user if previous run failed
+    3. Fork child for background validation
+    4. Return immediately to git
+    """
+    if not should_proceed_with_commit():
+        print("❌ Previous validation failed.")
+        print("Run 'huskycat status' to see results.")
+        response = input("Commit anyway? [y/N]: ")
+        if response.lower() != 'y':
+            return 1  # Block commit
+
+    # Fork background validation
+    pid = self.process_manager.fork_validation(files, tools)
+    print(f"⚡ Non-blocking validation mode enabled")
+    print(f"🚀 Launching background validation... (PID {pid})")
+    return 0  # Allow commit immediately
+```
+
+**File Reference**: `git_hooks_nonblocking.py:95-150`
+
+### Enabling Non-Blocking Mode
+
+**Per-repository** (recommended):
+```bash
+cd /path/to/repo
+git config --local huskycat.nonblocking true
+```
+
+**Global** (all repositories):
+```bash
+git config --global huskycat.nonblocking true
+```
+
+**Verification**:
+```bash
+git config --get huskycat.nonblocking
+# Expected: true
+```
+
+### Use Cases (Non-Blocking Adapter)
+- Fast commit workflow (<100ms)
+- Comprehensive validation in background (15+ tools)
+- Real-time progress feedback via TUI
+- Previous validation result checking
+- When you want commit to proceed immediately
+- When you want to see detailed validation progress
+
+### Performance Characteristics (Non-Blocking Adapter)
+- **Parent return time**: <100ms (allows commit immediately)
+- **Child startup**: ~200ms
+- **Full validation**: 10-30s (15+ tools in parallel)
+- **Speedup**: ~7.5x vs sequential execution
+- **Commit blocking**: None (commit proceeds immediately)
+
+**File Reference**: `git_hooks_nonblocking.py:54-59`
 
 ---
 
@@ -1033,17 +1194,20 @@ uv run python3 -m huskycat mcp-server
 
 ## Mode Comparison Matrix
 
-| Feature | Git Hooks | CI | CLI | Pipeline | MCP Server |
-|---------|-----------|----|----|----------|------------|
-| **Output Format** | MINIMAL | JUNIT_XML | HUMAN | JSON | JSONRPC |
-| **Interactive** | Auto | No | Yes | No | No |
-| **Fail Fast** | Yes | No | No | No | Yes (per-request) |
-| **Tools** | Fast (4) | All (15+) | Configured | All (15+) | All (15+) |
-| **Color** | Auto | No | Auto | No | No |
-| **Progress** | No | No | Yes | No | No |
-| **Verbose** | 0 (silent) | 1 (basic) | 0-3 (adjustable) | 0 (minimal) | 0 (stderr only) |
-| **Auto-fix** | Prompt | Never | Prompt | Never | Never |
-| **stdin/stdout** | Terminal | File artifacts | Terminal | Pipeable | JSON-RPC protocol |
+| Feature | Git Hooks (Blocking) | Git Hooks (Non-Blocking) | CI | CLI | Pipeline | MCP Server |
+|---------|----------------------|--------------------------|----|----|----------|------------|
+| **Output Format** | MINIMAL | MINIMAL | JUNIT_XML | HUMAN | JSON | JSONRPC |
+| **Interactive** | Auto | Yes | No | Yes | No | No |
+| **Fail Fast** | Yes | No | No | No | No | Yes (per-request) |
+| **Tools** | Fast (4) | All (15+) | All (15+) | Configured | All (15+) | All (15+) |
+| **Color** | Auto | Auto | No | Auto | No | No |
+| **Progress** | No | Yes (TUI) | No | Yes | No | No |
+| **Verbose** | 0 (silent) | 0 (silent parent) | 1 (basic) | 0-3 (adjustable) | 0 (minimal) | 0 (stderr only) |
+| **Auto-fix** | Prompt | No (background) | Never | Prompt | Never | Never |
+| **Commit Blocking** | Yes (5-6s) | No (<100ms) | N/A | N/A | N/A | N/A |
+| **Parallel Execution** | No | Yes (8 workers) | No | No | No | No |
+| **Result Caching** | No | Yes | No | No | No | No |
+| **stdin/stdout** | Terminal | Terminal | File artifacts | Terminal | Pipeable | JSON-RPC protocol |
 
 **File Reference**: `core/adapters/base.py:54-100`
 
@@ -1089,8 +1253,9 @@ class AdapterFactory:
 - **Adapter factory**: `src/huskycat/core/factory.py:85-125`
 - **Base adapter**: `src/huskycat/core/adapters/base.py:1-333`
 
-### Mode-Specific Adapters
-- **Git Hooks**: `src/huskycat/core/adapters/git_hooks.py:1-250`
+### Mode-Specific Adapters (6 implementations for 5 modes)
+- **Git Hooks (Blocking)**: `src/huskycat/core/adapters/git_hooks.py:1-250`
+- **Git Hooks (Non-Blocking)**: `src/huskycat/core/adapters/git_hooks_nonblocking.py:1-250` (Sprint 10-11)
 - **CI**: `src/huskycat/core/adapters/ci.py:1-300`
 - **CLI**: `src/huskycat/core/adapters/cli.py:1-350`
 - **Pipeline**: `src/huskycat/core/adapters/pipeline.py:1-280`
@@ -1116,7 +1281,9 @@ class AdapterFactory:
 
 ---
 
-**Last Updated**: 2025-12-07
-**Verification Status**: ✅ Code-verified against `main` branch
-**Sprint 0 Status**: ✅ COMPLETE - All 5 modes implemented with adapters
-**Reviewed Files**: 10+ adapter files, mode detector, factory pattern, MCP server
+**Last Updated**: 2025-12-12 (Sprint 11 Documentation Cleanup)
+**Verification Status**: ✅ Code-verified against `feature/sprint-10-nonblocking-hooks` branch
+**Implementation Status**:
+- ✅ Sprint 0: 5 product modes with 5 adapters
+- ✅ Sprint 10-11: Non-blocking git hooks adapter added (6 total adapters)
+**Reviewed Files**: 11+ adapter files, mode detector, factory pattern, MCP server, non-blocking hooks
