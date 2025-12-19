@@ -6,7 +6,7 @@
 # - Hook generation
 
 .binary-test-template:
-  stage: test
+  stage: sign  # Must run after package stage where binaries are built
   image: python:3.13-slim
   before_script:
     - apt-get update -qq && apt-get install -y -qq git bash curl
@@ -30,7 +30,7 @@
 
 binary:test:linux-amd64:
   extends: .binary-test-template
-  needs:
+  dependencies:
     - build:binary:linux-amd64
   variables:
     BINARY_PATH: dist/linux-amd64/huskycat
@@ -40,7 +40,7 @@ binary:test:linux-amd64:
 
 binary:test:linux-arm64:
   extends: .binary-test-template
-  needs:
+  dependencies:
     - build:binary:linux-arm64
   variables:
     BINARY_PATH: dist/linux-arm64/huskycat
@@ -49,33 +49,12 @@ binary:test:linux-arm64:
     - arm64
   allow_failure: true  # ARM64 runners may not always be available
 
-binary:test:darwin-amd64:
-  stage: test
-  needs:
-    - build:binary:darwin-amd64
-  variables:
-    BINARY_PATH: dist/darwin-amd64/huskycat
-  tags:
-    - macos
-    - amd64
-  before_script:
-    - pip3 install pytest || python3 -m pip install pytest
-  script:
-    - chmod +x ${BINARY_PATH}
-    - bash scripts/verify_binary.sh ${BINARY_PATH}
-    - pytest tests/test_binary_bootstrap.py --binary=${BINARY_PATH} -v
-  artifacts:
-    when: always
-    reports:
-      junit: test-reports/binary-bootstrap-darwin-amd64.xml
-    paths:
-      - test-reports/
-    expire_in: 1 week
-  allow_failure: true  # macOS runners may not always be available
+# binary:test:darwin-amd64 removed - no build:binary:darwin-amd64 job exists
+# GitLab SaaS only provides ARM64 macOS runners, not Intel/AMD64
 
 binary:test:darwin-arm64:
-  stage: test
-  needs:
+  stage: sign  # Must run after package stage where binaries are built
+  dependencies:
     - build:binary:darwin-arm64
   variables:
     BINARY_PATH: dist/darwin-arm64/huskycat
@@ -99,9 +78,9 @@ binary:test:darwin-arm64:
 
 # Quick smoke test that runs on any Linux runner
 binary:smoke-test:
-  stage: test
+  stage: sign  # Must run after package stage where binaries are built
   image: python:3.13-slim
-  needs:
+  dependencies:
     - build:binary:linux-amd64
   before_script:
     - apt-get update -qq && apt-get install -y -qq git bash
