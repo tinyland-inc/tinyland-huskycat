@@ -269,6 +269,7 @@ package:python:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
+  allow_failure: true  # Don't block binary tests if Python packaging fails
 
 # NOTE: Old binary build jobs moved to .gitlab/ci/build.yml
 # New fat binary builds include embedded validation tools
