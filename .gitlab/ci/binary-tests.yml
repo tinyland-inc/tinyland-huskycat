@@ -33,21 +33,29 @@ binary:test:linux-amd64:
   dependencies:
     - build:binary:linux-amd64
   variables:
-    BINARY_PATH: dist/linux-amd64/huskycat
+    BINARY_PATH: dist/bin/huskycat-linux-amd64
   tags:
     - linux
     - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 binary:test:linux-arm64:
   extends: .binary-test-template
   dependencies:
     - build:binary:linux-arm64
   variables:
-    BINARY_PATH: dist/linux-arm64/huskycat
+    BINARY_PATH: dist/bin/huskycat-linux-arm64
   tags:
     - linux
     - arm64
   allow_failure: true  # ARM64 runners may not always be available
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 # binary:test:darwin-amd64 removed - no build:binary:darwin-amd64 job exists
 # GitLab SaaS only provides ARM64 macOS runners, not Intel/AMD64
@@ -57,7 +65,7 @@ binary:test:darwin-arm64:
   dependencies:
     - build:binary:darwin-arm64
   variables:
-    BINARY_PATH: dist/darwin-arm64/huskycat
+    BINARY_PATH: dist/bin/huskycat-darwin-arm64
   tags:
     - macos
     - arm64
@@ -75,6 +83,10 @@ binary:test:darwin-arm64:
       - test-reports/
     expire_in: 1 week
   allow_failure: true  # macOS ARM64 runners may not always be available
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 # Quick smoke test that runs on any Linux runner
 binary:smoke-test:
@@ -85,10 +97,14 @@ binary:smoke-test:
   before_script:
     - apt-get update -qq && apt-get install -y -qq git bash
   script:
-    - chmod +x dist/linux-amd64/huskycat
-    - ./dist/linux-amd64/huskycat --version
-    - ./dist/linux-amd64/huskycat --help
+    - chmod +x dist/bin/huskycat-linux-amd64
+    - ./dist/bin/huskycat-linux-amd64 --version
+    - ./dist/bin/huskycat-linux-amd64 --help
     - echo "✓ Binary smoke test passed"
   tags:
     - linux
     - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
