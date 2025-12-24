@@ -145,9 +145,9 @@ test:mcp:server:
   variables:
     STORAGE_DRIVER: vfs  # Use VFS storage driver to avoid user namespace requirements
   before_script:
-    - buildah login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - buildah --storage-driver vfs login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   after_script:
-    - buildah logout $CI_REGISTRY
+    - buildah --storage-driver vfs logout $CI_REGISTRY
 
 container:build:amd64:
   <<: *container_build_template
@@ -156,8 +156,8 @@ container:build:amd64:
     ARCH: amd64
   script:
     - echo "Building container for $PLATFORM with layer caching..."
-    - buildah build --platform=$PLATFORM --layers -f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .
-    - buildah push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH
+    - buildah --storage-driver vfs build --platform=$PLATFORM --layers -f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .
+    - buildah --storage-driver vfs push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH
   artifacts:
     reports:
       dotenv: build.env
@@ -173,8 +173,8 @@ container:build:arm64:
     ARCH: arm64
   script:
     - echo "Building container for $PLATFORM with layer caching..."
-    - buildah build --platform=$PLATFORM --layers -f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .
-    - buildah push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH
+    - buildah --storage-driver vfs build --platform=$PLATFORM --layers -f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .
+    - buildah --storage-driver vfs push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH
   artifacts:
     reports:
       dotenv: build.env
