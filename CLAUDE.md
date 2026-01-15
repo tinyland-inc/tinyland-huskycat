@@ -222,6 +222,8 @@ def _execute_command(self, cmd: List[str], **kwargs):
 
 ## MCP Server Integration
 
+### HuskyCat MCP Server
+
 HuskyCat exposes validation tools via MCP protocol for Claude Code:
 
 ```bash
@@ -232,10 +234,32 @@ huskycat mcp-server
 claude mcp add huskycat -- huskycat mcp-server
 ```
 
-### MCP Tools Exposed:
+**MCP Tools Exposed**:
 - `validate` - Validate files/directories
 - `validate_staged` - Validate git staged files
 - `validate_black`, `validate_mypy`, etc. - Individual tool validators
+
+### Global MCP Ecosystem (from crush-dots)
+
+HuskyCat's MCP server is part of a broader MCP ecosystem deployed by the `crush-dots` Ansible infrastructure.
+
+**Source of Truth**: `../crush-dots/vars/mcp_registry.yml`
+
+**Production MCP Servers** (enabled):
+- **perplexity-pro**: Sonar Pro web search (200k context, requires PERPLEXITY_API_KEY)
+- **perplexity-reasoning**: Sonar Reasoning Pro for complex tasks
+- **chrome-devtools**: Browser automation via DevTools Protocol
+- **wikipedia**: Wikipedia article lookup (Docker-based)
+- **duckduckgo**: Privacy-focused web search (Docker-based)
+- **arxiv**: Academic paper search (Docker-based)
+- **filesystem**: Project file access (~/ crush-projects)
+
+**Configuration**: Ansible role `roles/claude-code/` generates `~/.config/mcp/mcp.json` from registry.
+
+**Disabled Servers** (not deployed):
+- flow-nexus (cloud-based, not needed locally)
+- claude-flow stable (outdated, superseded by alpha)
+- agentic-payments (not needed for development)
 
 ## Repository Standards
 

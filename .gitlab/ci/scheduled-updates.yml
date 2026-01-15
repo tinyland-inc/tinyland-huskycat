@@ -324,7 +324,7 @@ validate:features:
       documented_features = {
           'gitlab_ci_validation': {
               'docs': ['docs/gitlab-ci-validation.md'],
-              'implementation': ['src/gitlab_ci_validator.py', 'scripts/validate-gitlab-ci-schema.py'],
+              'implementation': ['src/gitlab_ci_validator.py'],
               'tests': ['tests/test_gitlab_ci_validation.py']
           },
           'mcp_server': {

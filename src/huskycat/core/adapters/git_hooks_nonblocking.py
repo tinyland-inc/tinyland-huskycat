@@ -27,11 +27,13 @@ Integration:
     - ProcessManager: Fork/PID management, result caching
     - ValidationTUI: Real-time progress display
     - ParallelExecutor: Parallel tool execution with dependencies
+    - ValidationEngine: Real validation execution (NOT placeholders)
 """
 
 import sys
+import time
 from pathlib import Path
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 from .base import AdapterConfig, ModeAdapter, OutputFormat
 from ..process_manager import ProcessManager, should_proceed_with_commit
@@ -58,16 +60,21 @@ class NonBlockingGitHooksAdapter(ModeAdapter):
     - Speedup vs sequential: ~7.5x
     """
 
-    def __init__(self, cache_dir: Path = None):
+    def __init__(
+        self, cache_dir: Optional[Path] = None, auto_fix: bool = False
+    ) -> None:
         """
         Initialize the non-blocking adapter.
 
         Args:
             cache_dir: Directory for validation run cache (default: .huskycat/runs)
+            auto_fix: Whether to auto-fix issues where possible
         """
         self.process_manager = ProcessManager(cache_dir)
         self.tui = ValidationTUI(refresh_rate=0.1)
         self.executor = ParallelExecutor(max_workers=8, fail_fast=False)
+        self.auto_fix = auto_fix
+        self._validation_engine: Optional[Any] = None
 
     @property
     def name(self) -> str:
@@ -277,93 +284,155 @@ class NonBlockingGitHooksAdapter(ModeAdapter):
         # Child process output is handled in _run_validation_child()
         return ""
 
+    def _get_validation_engine(self) -> Any:
+        """
+        Lazy-load ValidationEngine to avoid circular imports.
+
+        Returns:
+            ValidationEngine instance configured for this adapter
+        """
+        if self._validation_engine is None:
+            from ...unified_validation import ValidationEngine
+
+            self._validation_engine = ValidationEngine(auto_fix=self.auto_fix)
+        return self._validation_engine
+
     def get_all_validation_tools(self, files: List[str]) -> Dict[str, Callable]:
         """
         Load ALL available validation tools for given files.
 
-        This is a placeholder that should be populated by the
-        command implementation. Returns tools based on file types.
+        Uses the real ValidationEngine to create callables that execute
+        actual validation on the provided files.
 
         Args:
             files: List of file paths to validate
 
         Returns:
-            Dict mapping tool names to validation callables
+            Dict mapping tool names to validation callables that return ToolResult
         """
-        # This will be populated by the validate command
-        # based on file extensions and configuration
-        tools = {}
+        tools: Dict[str, Callable[[], ToolResult]] = {}
 
-        # Python tools
-        if any(f.endswith(".py") for f in files):
-            tools.update(
-                {
-                    "black": lambda: self._placeholder_tool("black", files),
-                    "ruff": lambda: self._placeholder_tool("ruff", files),
-                    "mypy": lambda: self._placeholder_tool("mypy", files),
-                    "flake8": lambda: self._placeholder_tool("flake8", files),
-                    "isort": lambda: self._placeholder_tool("isort", files),
-                    "bandit": lambda: self._placeholder_tool("bandit", files),
-                }
-            )
+        # Get the validation engine with all available validators
+        engine = self._get_validation_engine()
 
-        # YAML/Config tools
-        yaml_files = [f for f in files if f.endswith((".yml", ".yaml"))]
-        if yaml_files:
-            tools.update(
-                {
-                    "yamllint": lambda: self._placeholder_tool("yamllint", yaml_files),
-                    "gitlab-ci": lambda: self._placeholder_tool(
-                        "gitlab-ci", yaml_files
-                    ),
-                }
-            )
+        # Group files by extension for efficient validator lookup
+        files_by_extension: Dict[str, List[Path]] = {}
+        for f in files:
+            path = Path(f)
+            ext = path.suffix
+            if ext not in files_by_extension:
+                files_by_extension[ext] = []
+            files_by_extension[ext].append(path)
 
-        # TOML tools
-        if any(f.endswith(".toml") for f in files):
-            tools["taplo"] = lambda: self._placeholder_tool("taplo", files)
+        # Collect all applicable validators and their files
+        validator_files: Dict[str, List[Path]] = {}
+        for validator in engine.validators:
+            applicable_files = []
+            for f in files:
+                path = Path(f)
+                if validator.can_handle(path):
+                    applicable_files.append(path)
 
-        # Shell tools
-        if any(f.endswith((".sh", ".bash")) for f in files):
-            tools["shellcheck"] = lambda: self._placeholder_tool("shellcheck", files)
+            if applicable_files:
+                validator_files[validator.name] = applicable_files
 
-        # Docker tools
-        if any("Dockerfile" in f or f.endswith(".dockerfile") for f in files):
-            tools["hadolint"] = lambda: self._placeholder_tool("hadolint", files)
-
-        # Chapel tools
-        if any(f.endswith(".chpl") for f in files):
-            tools["chapel-format"] = lambda: self._placeholder_tool(
-                "chapel-format", files
-            )
+        # Create callables for each validator that has applicable files
+        for validator in engine.validators:
+            if validator.name in validator_files:
+                applicable = validator_files[validator.name]
+                # Capture variables in closure properly
+                tools[validator.name] = self._create_tool_callable(
+                    validator, applicable
+                )
 
         return tools
 
-    def _placeholder_tool(self, tool_name: str, files: List[str]) -> ToolResult:
+    def _create_tool_callable(
+        self, validator: Any, files: List[Path]
+    ) -> Callable[[], ToolResult]:
         """
-        Placeholder tool implementation for demonstration.
+        Create a callable that executes a validator and returns ToolResult.
 
-        In production, this would call the actual validation tool.
-        The real implementation would be provided by the unified_validation
-        module or validate command.
+        This factory method properly captures the validator and files
+        in a closure to avoid late-binding issues with lambdas.
 
         Args:
-            tool_name: Name of the tool
-            files: List of files to validate
+            validator: The validator instance to execute
+            files: List of file paths to validate
 
         Returns:
-            ToolResult with validation results
+            Callable that returns ToolResult when invoked
         """
-        # Placeholder - actual implementation would call real tools
-        import time
 
-        time.sleep(0.5)  # Simulate tool execution
+        def execute_validator() -> ToolResult:
+            return self._execute_real_validation(validator, files)
+
+        return execute_validator
+
+    def _execute_real_validation(
+        self, validator: Any, files: List[Path]
+    ) -> ToolResult:
+        """
+        Execute real validation using the unified validation engine.
+
+        Runs the validator on all provided files and aggregates results
+        into a single ToolResult for the ParallelExecutor.
+
+        Args:
+            validator: The validator instance to execute
+            files: List of file paths to validate
+
+        Returns:
+            ToolResult with aggregated validation results
+        """
+        start_time = time.time()
+
+        total_errors = 0
+        total_warnings = 0
+        all_success = True
+        output_lines: List[str] = []
+        error_messages: List[str] = []
+
+        for filepath in files:
+            try:
+                # Execute the real validator
+                result = validator.validate(filepath)
+
+                # Aggregate results
+                if not result.success:
+                    all_success = False
+
+                total_errors += result.error_count
+                total_warnings += result.warning_count
+
+                # Collect error messages
+                if result.errors:
+                    error_messages.extend(
+                        [f"{filepath}: {err}" for err in result.errors]
+                    )
+
+                # Collect output messages
+                if result.messages:
+                    output_lines.extend(result.messages)
+
+            except Exception as e:
+                all_success = False
+                total_errors += 1
+                error_messages.append(f"{filepath}: Exception: {e!s}")
+
+        duration = time.time() - start_time
+
+        # Build output string
+        output = "\n".join(output_lines) if output_lines else ""
+        if error_messages:
+            output = "\n".join(error_messages) + ("\n" + output if output else "")
 
         return ToolResult(
-            tool_name=tool_name,
-            success=True,
-            duration=0.5,
-            errors=0,
-            warnings=0,
-            output=f"Validated {len(files)} files with {tool_name}",
+            tool_name=validator.name,
+            success=all_success,
+            duration=duration,
+            errors=total_errors,
+            warnings=total_warnings,
+            output=output,
+            error_message=error_messages[0] if error_messages else None,
         )

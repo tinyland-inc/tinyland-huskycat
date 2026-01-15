@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import List, Optional
 
 from ..core.base import BaseCommand, CommandResult, CommandStatus
+from ..compose_validator import ComposeSchemaValidator
+from ..github_actions_validator import GitHubActionsSchemaValidator
 from ..gitlab_ci_validator import GitLabCISchemaValidator
 
 
@@ -146,19 +148,53 @@ class CIValidateCommand(BaseCommand):
             )
 
     def _validate_github_actions(self, path: Path) -> CommandResult:
-        """Validate GitHub Actions workflow."""
-        # TODO: Implement GitHub Actions validation
-        return CommandResult(
-            status=CommandStatus.WARNING,
-            message=f"{path}: GitHub Actions validation not yet implemented",
-            warnings=[f"{path}: Skipping GitHub Actions validation"],
-        )
+        """Validate GitHub Actions workflow file."""
+        try:
+            validator = GitHubActionsSchemaValidator()
+            is_valid, errors, warnings = validator.validate_file(str(path))
+
+            if is_valid:
+                return CommandResult(
+                    status=CommandStatus.SUCCESS,
+                    message=f"{path}: Valid GitHub Actions workflow",
+                    warnings=[f"{path}: {w}" for w in warnings],
+                )
+            else:
+                return CommandResult(
+                    status=CommandStatus.FAILED,
+                    message=f"{path}: Invalid GitHub Actions workflow",
+                    errors=[f"{path}: {e}" for e in errors],
+                    warnings=[f"{path}: {w}" for w in warnings],
+                )
+        except Exception as e:
+            return CommandResult(
+                status=CommandStatus.FAILED,
+                message=f"{path}: Failed to validate",
+                errors=[f"{path}: {str(e)}"],
+            )
 
     def _validate_compose(self, path: Path) -> CommandResult:
-        """Validate Compose configuration (podman-compose)."""
-        # TODO: Implement Compose validation using YAML schema
-        return CommandResult(
-            status=CommandStatus.WARNING,
-            message=f"{path}: Compose validation not yet implemented",
-            warnings=[f"{path}: Skipping Compose validation"],
-        )
+        """Validate Compose configuration (Docker/Podman Compose)."""
+        try:
+            validator = ComposeSchemaValidator()
+            is_valid, errors, warnings = validator.validate_file(str(path))
+
+            if is_valid:
+                return CommandResult(
+                    status=CommandStatus.SUCCESS,
+                    message=f"{path}: Valid Compose configuration",
+                    warnings=[f"{path}: {w}" for w in warnings],
+                )
+            else:
+                return CommandResult(
+                    status=CommandStatus.FAILED,
+                    message=f"{path}: Invalid Compose configuration",
+                    errors=[f"{path}: {e}" for e in errors],
+                    warnings=[f"{path}: {w}" for w in warnings],
+                )
+        except Exception as e:
+            return CommandResult(
+                status=CommandStatus.FAILED,
+                message=f"{path}: Failed to validate",
+                errors=[f"{path}: {str(e)}"],
+            )

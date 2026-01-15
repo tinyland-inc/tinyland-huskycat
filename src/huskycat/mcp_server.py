@@ -3,16 +3,26 @@
 HuskyCat MCP Server
 Simple stdio-based MCP server for Claude Code integration
 Uses the unified validation engine
+
+Protocol Version: 2025-11-25
+- Implements isError flag pattern for tool errors (enables LLM self-correction)
+- Token tracking with configurable limits
+- Recovery suggestions for error responses
 """
 
 import json
 import logging
+import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 from .unified_validation import ValidationEngine
+
+# Token limits for output management
+MAX_TOKENS = int(os.environ.get("MAX_MCP_OUTPUT_TOKENS", "25000"))
+WARN_TOKENS = 10000
 
 # Configure logging to stderr so it doesn't interfere with stdio
 logging.basicConfig(
@@ -24,7 +34,13 @@ logger = logging.getLogger(__name__)
 
 
 class MCPServer:
-    """Simple MCP stdio server for validation tools"""
+    """Simple MCP stdio server for validation tools
+
+    Protocol Version: 2025-11-25
+    - Tool errors return successful JSON-RPC with isError: true
+    - Token tracking prevents context overflow
+    - Recovery suggestions help LLM self-correct
+    """
 
     def __init__(self) -> None:
         # Container-only mode - check if container runtime is available
@@ -35,6 +51,83 @@ class MCPServer:
         logger.info(
             f"MCP Server initialized (container-only mode): {self.container_available}"
         )
+
+    def _estimate_tokens(self, text: str) -> int:
+        """Rough token estimation: ~4 chars per token
+
+        This is a conservative estimate. Actual tokenization varies by model,
+        but 4 chars/token is a reasonable approximation for code/text.
+        """
+        return len(text) // 4
+
+    def _truncate_if_needed(self, text: str) -> tuple[str, int, bool]:
+        """Truncate text if it exceeds MAX_TOKENS, return (text, token_count, was_truncated)"""
+        token_count = self._estimate_tokens(text)
+
+        if token_count > WARN_TOKENS:
+            logger.warning(f"Tool output exceeds {WARN_TOKENS} tokens: {token_count}")
+
+        if token_count > MAX_TOKENS:
+            truncated_text = text[: MAX_TOKENS * 4] + "\n... [truncated - output exceeded token limit]"
+            logger.warning(f"Output truncated from {token_count} to ~{MAX_TOKENS} tokens")
+            return truncated_text, token_count, True
+
+        return text, token_count, False
+
+    def _get_recovery_suggestions(self, error: Exception, context: Optional[str] = None) -> List[str]:
+        """Generate context-aware recovery suggestions for errors"""
+        suggestions = []
+        error_str = str(error).lower()
+
+        # File/path related errors
+        if "no such file" in error_str or "not found" in error_str or "path" in error_str:
+            suggestions.extend([
+                "Verify the file path is correct and exists",
+                "Check for typos in the path",
+                "Use absolute paths instead of relative paths",
+            ])
+
+        # Permission errors
+        if "permission" in error_str or "access denied" in error_str:
+            suggestions.extend([
+                "Check file permissions (chmod)",
+                "Verify you have read/write access to the file",
+                "Try running with appropriate privileges",
+            ])
+
+        # Container runtime errors
+        if "container" in error_str or "podman" in error_str or "docker" in error_str:
+            suggestions.extend([
+                "Verify container runtime is available (podman or docker)",
+                "Check if the huskycat:local image exists",
+                "Try pulling the image: podman pull huskycat:local",
+            ])
+
+        # Timeout errors
+        if "timeout" in error_str:
+            suggestions.extend([
+                "The operation took too long - try a smaller scope",
+                "Check for infinite loops or large files",
+                "Consider increasing timeout limits",
+            ])
+
+        # Validation tool errors
+        if "validator" in error_str or "validation" in error_str:
+            suggestions.extend([
+                "Check if the required validation tool is installed",
+                "Verify the file type matches the validator",
+                "Try running with --fix to auto-fix issues",
+            ])
+
+        # Generic suggestions if none matched
+        if not suggestions:
+            suggestions = [
+                "Check the error message for specific details",
+                "Verify all required dependencies are installed",
+                "Try running the command manually for more details",
+            ]
+
+        return suggestions
 
     def _detect_container_available(self) -> bool:
         """Detect if we're in a container or have container runtime available"""
@@ -156,11 +249,16 @@ class MCPServer:
             elif method == "tools/call":
                 return self._handle_tool_call(params, request_id)
             else:
+                # Method not found is a protocol-level error
                 return self._error_response(
                     request_id, -32601, f"Method not found: {method}"
                 )
         except Exception as e:
             logger.error(f"Error handling request: {e}")
+            # For tools/call, return tool error with isError flag
+            # For other methods, use protocol-level error
+            if method == "tools/call":
+                return self._tool_error_response(request_id, e, context=f"method:{method}")
             return self._error_response(request_id, -32603, str(e))
 
     def _handle_initialize(self, request_id: Any) -> Dict[str, Any]:
@@ -173,7 +271,7 @@ class MCPServer:
             "jsonrpc": "2.0",
             "id": request_id,
             "result": {
-                "protocolVersion": "2024-11-05",
+                "protocolVersion": "2025-11-25",
                 "capabilities": {"tools": {}, "prompts": {}},
                 "serverInfo": {
                     "name": "huskycat-mcp",
@@ -279,16 +377,32 @@ class MCPServer:
                     request_id, -32602, f"Unknown tool: {tool_name}"
                 )
 
+            # Serialize and check token count
+            result_text = json.dumps(result, indent=2)
+            result_text, token_count, was_truncated = self._truncate_if_needed(result_text)
+
+            response_content = {
+                "content": [{"type": "text", "text": result_text}],
+            }
+
+            # Add metadata about truncation if it occurred
+            if was_truncated:
+                response_content["metadata"] = {
+                    "truncated": True,
+                    "original_tokens": token_count,
+                    "max_tokens": MAX_TOKENS,
+                }
+
             return {
                 "jsonrpc": "2.0",
                 "id": request_id,
-                "result": {
-                    "content": [{"type": "text", "text": json.dumps(result, indent=2)}]
-                },
+                "result": response_content,
             }
         except Exception as e:
             logger.error(f"Error calling tool {tool_name}: {e}")
-            return self._error_response(request_id, -32603, str(e))
+            # Return tool error with isError flag (NOT protocol-level error)
+            # This enables LLM self-correction by keeping it in the tool result flow
+            return self._tool_error_response(request_id, e, context=f"tool:{tool_name}")
 
     def _validate(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Validate files or directories"""
@@ -429,10 +543,51 @@ class MCPServer:
 
         return {"tool": tool_name, "result": validation_result.to_dict()}
 
+    def _tool_error_response(
+        self, request_id: Any, error: Exception, context: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Create a tool error response with isError flag
+
+        Per MCP protocol 2025-11-25: Tool errors should return successful JSON-RPC
+        response with isError: true in the result. This enables LLM self-correction
+        by keeping errors in the tool result flow rather than breaking it with
+        protocol-level errors.
+        """
+        error_message = f"Error: {error}"
+        recovery_suggestions = self._get_recovery_suggestions(error, context)
+
+        error_content = {
+            "error": str(error),
+            "error_type": type(error).__name__,
+            "recovery_suggestions": recovery_suggestions,
+        }
+
+        if context:
+            error_content["context"] = context
+
+        return {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "result": {
+                "content": [
+                    {"type": "text", "text": error_message},
+                    {"type": "text", "text": json.dumps(error_content, indent=2)},
+                ],
+                "isError": True,
+            },
+        }
+
     def _error_response(
         self, request_id: Any, code: int, message: str
     ) -> Dict[str, Any]:
-        """Create an error response"""
+        """Create a protocol-level error response
+
+        Note: For tool execution errors, use _tool_error_response instead.
+        Protocol-level errors should only be used for:
+        - Method not found (-32601)
+        - Invalid request (-32600)
+        - Parse error (-32700)
+        """
         return {
             "jsonrpc": "2.0",
             "id": request_id,

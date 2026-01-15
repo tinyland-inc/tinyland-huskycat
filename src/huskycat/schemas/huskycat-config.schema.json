@@ -1,0 +1,247 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://huskycat.dev/schemas/huskycat-config.schema.json",
+  "title": "HuskyCat Configuration",
+  "description": "Configuration schema for .huskycat.yaml files",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Configuration schema version",
+      "default": "1.0",
+      "enum": ["1.0", "1.1", "2.0"]
+    },
+    "validation": {
+      "type": "object",
+      "description": "Validation behavior configuration",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable validation",
+          "default": true
+        },
+        "staged_only": {
+          "type": "boolean",
+          "description": "Only validate staged files in git hooks mode",
+          "default": true
+        },
+        "auto_fix": {
+          "type": "boolean",
+          "description": "Automatically fix issues when possible",
+          "default": false
+        },
+        "strict": {
+          "type": "boolean",
+          "description": "Enable strict mode (treat warnings as errors)",
+          "default": false
+        },
+        "max_errors": {
+          "type": "integer",
+          "description": "Maximum number of errors to report",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 10000
+        }
+      }
+    },
+    "feature_flags": {
+      "type": "object",
+      "description": "Feature flags for optional/experimental features",
+      "additionalProperties": false,
+      "properties": {
+        "nonblocking_hooks": {
+          "type": "boolean",
+          "description": "Enable non-blocking git hooks",
+          "default": false
+        },
+        "parallel_execution": {
+          "type": "boolean",
+          "description": "Enable parallel tool execution",
+          "default": true
+        },
+        "tui_progress": {
+          "type": "boolean",
+          "description": "Enable TUI progress display",
+          "default": true
+        },
+        "cache_results": {
+          "type": "boolean",
+          "description": "Cache validation results",
+          "default": true
+        }
+      }
+    },
+    "tools": {
+      "type": "object",
+      "description": "Tool configurations by category",
+      "additionalProperties": {
+        "$ref": "#/definitions/ToolConfig"
+      }
+    },
+    "hooks": {
+      "type": "object",
+      "description": "Git hooks configuration",
+      "additionalProperties": false,
+      "properties": {
+        "pre_commit": {
+          "$ref": "#/definitions/HookConfig"
+        },
+        "commit_msg": {
+          "$ref": "#/definitions/CommitMsgHookConfig"
+        },
+        "pre_push": {
+          "$ref": "#/definitions/HookConfig"
+        }
+      }
+    },
+    "ignore_patterns": {
+      "type": "array",
+      "description": "Global patterns to ignore",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "definitions": {
+    "ToolConfig": {
+      "type": "object",
+      "description": "Configuration for a tool category",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable this tool/category",
+          "default": true
+        },
+        "auto_fix": {
+          "type": "boolean",
+          "description": "Enable auto-fix for this tool/category",
+          "default": false
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout in seconds for tool execution",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 600
+        },
+        "tools": {
+          "type": "array",
+          "description": "List of tools to run in this category",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "file_patterns": {
+          "type": "array",
+          "description": "File patterns to match for this tool",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "examples": [
+            ["*.py", "*.pyi"],
+            ["*.js", "*.jsx", "*.ts", "*.tsx"]
+          ]
+        },
+        "exclude": {
+          "type": "array",
+          "description": "Patterns to exclude from validation",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "examples": [
+            ["__pycache__", ".venv", "venv"],
+            ["node_modules", "dist", "build"]
+          ]
+        }
+      }
+    },
+    "HookConfig": {
+      "type": "object",
+      "description": "Configuration for a git hook",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable this hook",
+          "default": true
+        },
+        "commands": {
+          "type": "array",
+          "description": "Commands to run for this hook",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "examples": [
+            ["huskycat validate --staged"]
+          ]
+        }
+      }
+    },
+    "CommitMsgHookConfig": {
+      "type": "object",
+      "description": "Configuration for the commit-msg hook",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable this hook",
+          "default": true
+        },
+        "commands": {
+          "type": "array",
+          "description": "Commands to run for this hook",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "conventional_commits": {
+          "type": "boolean",
+          "description": "Enforce conventional commit format",
+          "default": true
+        },
+        "allowed_types": {
+          "type": "array",
+          "description": "Allowed commit types for conventional commits",
+          "items": {
+            "type": "string",
+            "enum": [
+              "feat",
+              "fix",
+              "docs",
+              "style",
+              "refactor",
+              "perf",
+              "test",
+              "build",
+              "ci",
+              "chore",
+              "revert"
+            ]
+          },
+          "default": [
+            "feat",
+            "fix",
+            "docs",
+            "style",
+            "refactor",
+            "perf",
+            "test",
+            "build",
+            "ci",
+            "chore",
+            "revert"
+          ]
+        }
+      }
+    }
+  }
+}

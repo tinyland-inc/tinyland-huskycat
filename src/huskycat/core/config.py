@@ -7,14 +7,23 @@ Handles loading configuration from multiple sources:
 3. Command-line flags
 
 Feature flags control optional or experimental features.
+
+Configuration is validated using Pydantic schemas to ensure
+type safety and catch configuration errors early.
 """
 
 import json
+import logging
 import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 import yaml
+from pydantic import ValidationError
+
+from .config_schema.schema import HuskyCatConfigSchema
+
+logger = logging.getLogger(__name__)
 
 
 class HuskyCatConfig:
@@ -37,6 +46,8 @@ class HuskyCatConfig:
         """
         self.config_file = config_file or self._find_config_file()
         self._config: Dict[str, Any] = {}
+        self._validated_config: Optional[HuskyCatConfigSchema] = None
+        self._validation_errors: list[str] = []
         self._load_config()
 
     def _find_config_file(self) -> Optional[Path]:
@@ -82,13 +93,16 @@ class HuskyCatConfig:
 
             except Exception as e:
                 # Fail gracefully with empty config
-                print(f"Warning: Could not load config from {self.config_file}: {e}")
+                logger.warning(f"Could not load config from {self.config_file}: {e}")
                 self._config = {}
         else:
             self._config = {}
 
         # Apply environment variable overrides
         self._apply_env_overrides()
+
+        # Validate configuration using Pydantic schema
+        self._validate_config()
 
     def _apply_env_overrides(self):
         """Apply environment variable overrides."""
@@ -105,6 +119,64 @@ class HuskyCatConfig:
                     self._config["feature_flags"] = {}
 
                 self._config["feature_flags"][feature_name] = feature_value
+
+    def _validate_config(self):
+        """
+        Validate configuration using Pydantic schema.
+
+        If validation fails, logs warnings and uses default configuration.
+        The raw config is still accessible for backward compatibility.
+        """
+        self._validation_errors = []
+
+        try:
+            self._validated_config = HuskyCatConfigSchema(**self._config)
+        except ValidationError as e:
+            # Collect all validation errors
+            for error in e.errors():
+                field_path = ".".join(str(loc) for loc in error["loc"])
+                error_msg = f"{field_path}: {error['msg']}"
+                self._validation_errors.append(error_msg)
+                logger.warning(f"Config validation error: {error_msg}")
+
+            # Fall back to default configuration
+            logger.warning(
+                "Using default configuration due to validation errors. "
+                f"Found {len(self._validation_errors)} error(s)."
+            )
+            self._validated_config = HuskyCatConfigSchema()
+
+    @property
+    def validated(self) -> HuskyCatConfigSchema:
+        """
+        Get the validated configuration schema.
+
+        Returns:
+            HuskyCatConfigSchema instance (validated or default)
+        """
+        if self._validated_config is None:
+            self._validate_config()
+        return self._validated_config  # type: ignore[return-value]
+
+    @property
+    def validation_errors(self) -> list[str]:
+        """
+        Get any validation errors that occurred.
+
+        Returns:
+            List of validation error messages
+        """
+        return self._validation_errors.copy()
+
+    @property
+    def is_valid(self) -> bool:
+        """
+        Check if the configuration is valid.
+
+        Returns:
+            True if configuration passed validation, False otherwise
+        """
+        return len(self._validation_errors) == 0
 
     def get(self, key: str, default: Any = None) -> Any:
         """
