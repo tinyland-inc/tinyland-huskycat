@@ -64,12 +64,19 @@ nav:
       - Binary Downloads: binary-downloads.md
       - Configuration: configuration.md
   - CLI Reference: cli-reference.md
+  - Features:
+      - MCP Server: features/mcp-server.md
+      - Non-Blocking Hooks: nonblocking-hooks.md
+  - Architecture:
+      - Product Modes: architecture/product-modes.md
+      - Execution Models: architecture/execution-models.md
   - CI/CD Integration:
       - GitLab CI/CD: gitlab-ci-cd.md
       - GitHub Actions: github-actions.md
-      - Auto-DevOps: gitlab-auto-devops-complete.md
-  - Features:
-      - MCP Server: features/mcp-server.md
+  - Advanced:
+      - Performance: performance.md
+      - Migration Guide: migration/to-nonblocking.md
+      - macOS Code Signing: macos-code-signing.md
   - API Reference:
       - MCP Tools: api/mcp-tools.md
   - Troubleshooting: troubleshooting.md
