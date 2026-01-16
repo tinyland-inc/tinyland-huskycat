@@ -5,12 +5,12 @@ description = "Universal Code Validation Platform with MCP Server Integration"
 authors = [{name = "Jess Sullivan", email = "jess@tinyland.ai"}]
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 keywords = ["linting", "validation", "git-hooks", "mcp", "claude", "ci-cd"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -34,6 +34,7 @@ dependencies = [
     "rich>=14.2.0",
     "networkx>=3.2.1",
     "psutil>=5.9.0",
+    "dockerfile>=3.4.0",
 ]
 
 [project.optional-dependencies]

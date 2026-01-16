@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: Apache-2.0
+# Thin wrapper container for HuskyCat
+#
+# This container delegates ALL validation work to the pre-built fat binary.
+# The binary contains embedded Python, toolchains, and all validators.
+#
+# Size: ~20MB (vs ~500MB fat container)
+# Contents: bash, curl, git, and the fat binary only
+#
+# Build: podman build -f ContainerFile.wrapper -t huskycat:wrapper .
+# Run: podman run --rm -v $(pwd):/workspace huskycat:wrapper validate
+
+FROM alpine:3.19
+
+# Install minimal runtime dependencies ONLY
+# - bash: For shell scripting and git hooks
+# - curl: For downloading/fetching resources
+# - git: For git operations and repository context
+RUN apk add --no-cache bash curl git && \
+    rm -rf /var/cache/apk/*
+
+# Create non-root user for security
+RUN addgroup -g 1001 huskycat && \
+    adduser -D -u 1001 -G huskycat huskycat
+
+# Copy the pre-built fat binary from dist/
+# This binary contains:
+# - Embedded Python interpreter
+# - All validation tools (black, ruff, mypy, etc.)
+# - HuskyCat application code
+# - All dependencies bundled
+COPY --chown=huskycat:huskycat dist/huskycat /usr/local/bin/huskycat
+
+# Make binary executable
+RUN chmod +x /usr/local/bin/huskycat
+
+# Set up workspace directory
+RUN mkdir -p /workspace && \
+    chown -R huskycat:huskycat /workspace
+
+# Switch to non-root user
+USER huskycat
+WORKDIR /workspace
+
+# Environment variables
+ENV HUSKYCAT_MODE=container
+ENV PATH="/usr/local/bin:${PATH}"
+
+# Health check - verify binary is operational
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD huskycat status --json || exit 1
+
+# Entry point - delegate to the fat binary
+ENTRYPOINT ["huskycat"]
+CMD ["--help"]

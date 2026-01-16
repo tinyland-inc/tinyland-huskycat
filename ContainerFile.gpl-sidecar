@@ -1,0 +1,63 @@
+# ContainerFile.gpl-sidecar
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# GPL-licensed sidecar for HuskyCat
+# This container bundles GPL tools and must be distributed separately
+# from the main Apache-2.0 licensed HuskyCat binary.
+#
+# Tools included:
+# - shellcheck (GPL-3.0) - Shell script analysis
+# - hadolint (GPL-3.0) - Dockerfile linting
+# - yamllint (GPL-3.0) - YAML validation
+#
+# Build:
+#   podman build -f ContainerFile.gpl-sidecar -t huskycat-gpl-sidecar:latest .
+#
+# Usage:
+#   podman run --rm -v /tmp/huskycat-ipc:/ipc huskycat-gpl-sidecar:latest
+
+FROM alpine:3.19
+
+LABEL maintainer="HuskyCat Project"
+LABEL license="GPL-3.0-only"
+LABEL description="GPL-licensed validation tools sidecar for HuskyCat"
+
+# Install GPL tools
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    shellcheck \
+    && pip3 install --no-cache-dir --break-system-packages yamllint==1.33.0 \
+    && rm -rf /var/cache/apk/* /root/.cache
+
+# Install hadolint (multi-arch)
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then HADOLINT_ARCH="x86_64"; \
+    elif [ "$ARCH" = "aarch64" ]; then HADOLINT_ARCH="arm64"; \
+    else HADOLINT_ARCH="x86_64"; fi && \
+    wget -q "https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-${HADOLINT_ARCH}" \
+        -O /usr/bin/hadolint && \
+    chmod +x /usr/bin/hadolint
+
+# Create IPC directory
+RUN mkdir -p /ipc
+
+# Copy IPC server
+COPY gpl-sidecar/server.py /app/server.py
+RUN chmod +x /app/server.py
+
+# Verify tools are installed
+RUN shellcheck --version && \
+    hadolint --version && \
+    yamllint --version
+
+# Set working directory
+WORKDIR /workspace
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD test -S /ipc/huskycat-gpl.sock || exit 1
+
+# Run IPC server
+ENTRYPOINT ["python3", "/app/server.py"]
+CMD ["--socket", "/ipc/huskycat-gpl.sock"]

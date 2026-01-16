@@ -1,0 +1,92 @@
+HuskyCat - Universal Code Validation Platform
+Copyright 2024-2025 Tinyland AI
+Copyright 2024-2025 Jess Sullivan
+
+This product includes software developed at Tinyland AI.
+
+================================================================================
+Third-Party Dependencies and Licenses
+================================================================================
+
+This software incorporates the following third-party components:
+
+Python Packages (MIT License)
+-----------------------------
+- ruff: An extremely fast Python linter
+  Copyright (c) 2022 Charlie Marsh
+  License: MIT
+
+- mypy: Optional static typing for Python
+  Copyright (c) Jukka Lehtosalo and contributors
+  License: MIT
+
+- PyYAML: YAML parser and emitter for Python
+  Copyright (c) Kirill Simonov
+  License: MIT
+
+- click: Composable command line interface toolkit
+  Copyright (c) Armin Ronacher and contributors
+  License: BSD-3-Clause
+
+- rich: Rich text and beautiful formatting in the terminal
+  Copyright (c) Will McGugan
+  License: MIT
+
+- pydantic: Data validation using Python type hints
+  Copyright (c) Samuel Colvin and contributors
+  License: MIT
+
+- dockerfile: Dockerfile parser
+  Copyright (c) Ariel Nunez
+  License: MIT
+
+- dockerfile-parse: Dockerfile parser for Python
+  Copyright (c) Red Hat, Inc.
+  License: BSD-3-Clause
+
+Python Packages (Apache-2.0 License)
+------------------------------------
+- bandit: Security oriented static analyzer for Python
+  Copyright (c) OpenStack Foundation
+  License: Apache-2.0
+
+Binary Tools (MIT License)
+--------------------------
+- taplo: TOML toolkit with formatter, linter, LSP
+  Copyright (c) tamasfe
+  License: MIT
+
+================================================================================
+GPL-Licensed Tools (Distributed Separately)
+================================================================================
+
+The following tools are GPL-licensed and are NOT included in the main
+HuskyCat distribution. They are available as a separate optional container:
+
+- shellcheck: Shell script static analysis tool
+  Copyright (c) Vidar Holen
+  License: GPL-3.0
+
+- hadolint: Dockerfile linter
+  Copyright (c) hadolint contributors
+  License: GPL-3.0
+
+- yamllint: YAML linter
+  Copyright (c) Adrien Verge
+  License: GPL-3.0
+
+These tools are isolated via IPC and run in a separate process/container
+to maintain license compliance. See gpl-sidecar/ for details.
+
+================================================================================
+Clean-Room Implementations
+================================================================================
+
+The following components were implemented using clean-room techniques based
+on public specifications, without reference to GPL-licensed implementations:
+
+- src/huskycat/linters/yaml_lint.py
+  Based on: YAML 1.2 Specification (https://yaml.org/spec/1.2/)
+  License: Apache-2.0 (original implementation)
+
+================================================================================
