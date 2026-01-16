@@ -8,6 +8,13 @@ See `docs/SPRINT_PLAN.md` for comprehensive development roadmap covering:
 - **Auto-Fix Framework**: Confidence tiers, mode-specific behavior
 - **Sprint 0-8**: From architecture foundation to auto-fix implementation
 
+## License
+
+HuskyCat is licensed under **Apache-2.0** for libre sales compatibility.
+
+GPL tools (shellcheck, hadolint, yamllint) are isolated in a separate
+`gpl-sidecar/` component that communicates via IPC.
+
 ## CRITICAL: Git Commit Rules
 
 **Prefer using validation hooks, but `--no-verify` is acceptable during development.**
@@ -101,6 +108,27 @@ Mode is auto-detected based on environment:
 - **`src/huskycat/mcp_server.py`** → MCP stdio protocol
 - **`huskycat_main.py`** → Binary entry point wrapper
 
+## Tool Architecture
+
+### Bundled Tools (Apache-2.0 compatible)
+- ruff (MIT) - Python linting + formatting
+- mypy (MIT) - Type checking
+- bandit (Apache) - Security scanning
+- dockerlint (MIT) - Dockerfile linting
+- yaml_lint (Apache) - YAML linting (5 rules, clean-room)
+- taplo (MIT) - TOML formatting
+
+### GPL Tools (Container/Sidecar only)
+- shellcheck (GPL-3.0) - Shell script analysis
+- hadolint (GPL-3.0) - Comprehensive Dockerfile linting
+- yamllint (GPL-3.0) - Comprehensive YAML linting
+
+### Linting Modes
+- `FAST`: Binary-only, Apache/MIT tools (git hooks, quick validation)
+- `COMPREHENSIVE`: Includes GPL tools via sidecar (CI, thorough validation)
+
+Set via: `--mode fast` or `HUSKYCAT_LINTING_MODE=comprehensive`
+
 ## Build System: Multi-Modal Command Interface
 
 HuskyCat supports multiple execution modes optimized for different use cases:
@@ -176,6 +204,12 @@ huskycat clean                   # Clean cache
 
 See [docs/architecture/execution-models.md](docs/architecture/execution-models.md) for complete details.
 
+### Container Architecture
+
+- `ContainerFile.wrapper` - Thin ~20MB container with fat binary
+- `ContainerFile.gpl-sidecar` - GPL tools container (~50MB)
+- Original `ContainerFile` - Legacy fat container (deprecated)
+
 ### Three Execution Models:
 
 1. **Binary Execution** (`huskycat_main.py:1-27`)
@@ -184,9 +218,9 @@ See [docs/architecture/execution-models.md](docs/architecture/execution-models.m
    - Fast startup (~100ms)
    - Implementation: `unified_validation.py:85-170`
 
-2. **Container Execution** (`ContainerFile:1-153`)
-   - Alpine-based multi-arch images (amd64, arm64)
-   - Complete toolchain bundled
+2. **Container Execution** (`ContainerFile.wrapper:1-153`)
+   - Thin wrapper container with fat binary (~20MB)
+   - Multi-arch support (amd64, arm64)
    - Container runtime required (podman or docker)
    - Implementation: `.gitlab-ci.yml:158-218`
 

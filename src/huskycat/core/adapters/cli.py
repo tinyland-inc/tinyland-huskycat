@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 """
 CLI Mode Adapter.
 
@@ -63,9 +64,9 @@ class CLIAdapter(ModeAdapter):
 
         if fixed_files > 0:
             if self.config.color:
-                lines.append(f"\033[94m🔧 Fixed: {fixed_files} files\033[0m")
+                lines.append(f"\033[94mFixed: {fixed_files} files\033[0m")
             else:
-                lines.append(f"🔧 Fixed: {fixed_files} files")
+                lines.append(f"Fixed: {fixed_files} files")
 
         # Status
         if total_errors > 0:

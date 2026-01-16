@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 HuskyCat Unified Validation Engine
 Single source of truth for all validation logic
@@ -16,6 +17,13 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
+
+from huskycat.core.tool_selector import (
+    LintingMode,
+    get_mode_from_env,
+    get_tool_info,
+    is_tool_bundled,
+)
 
 # Configure logging
 logging.basicConfig(
@@ -1807,42 +1815,108 @@ class ValidationEngine:
         interactive: bool = False,
         allow_warnings: bool = False,
         use_container: bool = False,
+        adapter: Optional[Any] = None,
+        linting_mode: Optional[LintingMode] = None,
     ):
         self.auto_fix = auto_fix
         self.interactive = interactive
         self.allow_warnings = allow_warnings
         self.use_container = use_container
+        self.adapter = adapter
+        self.linting_mode = linting_mode or get_mode_from_env()
+        logger.info(f"ValidationEngine initialized with linting_mode={self.linting_mode.value}")
         self.validators = self._initialize_validators()
         self._extension_map = self._build_extension_map()
 
+    def _load_dockerlint_validator(self):
+        """Dynamically load DockerLintValidator if available"""
+        try:
+            from huskycat.linters.dockerlint_validator import DockerLintValidator  # type: ignore
+            return DockerLintValidator
+        except ImportError:
+            logger.debug("DockerLintValidator not available")
+            return None
+
+    def _should_tool_auto_fix(self, tool_name: str) -> bool:
+        """
+        Check if a specific tool should auto-fix based on adapter rules.
+
+        Uses adapter's should_auto_fix_tool() if available, otherwise
+        falls back to global auto_fix setting.
+
+        Args:
+            tool_name: Name of the validation tool
+
+        Returns:
+            True if tool should auto-fix
+        """
+        if self.adapter is not None and hasattr(self.adapter, "should_auto_fix_tool"):
+            return self.adapter.should_auto_fix_tool(tool_name, self.auto_fix)
+        return self.auto_fix
+
+    def _should_use_tool(self, tool_name: str) -> bool:
+        """
+        Check if tool should be used based on linting mode and license.
+
+        In FAST mode, only bundled Apache/MIT tools are used.
+        In COMPREHENSIVE mode, all tools including GPL are used.
+
+        Args:
+            tool_name: Name of the validation tool
+
+        Returns:
+            True if tool should be used in current linting mode
+        """
+        if self.linting_mode == LintingMode.COMPREHENSIVE:
+            return True  # Use all tools in comprehensive mode
+
+        # In FAST mode, only use bundled (non-GPL) tools
+        try:
+            return is_tool_bundled(tool_name)
+        except KeyError:
+            # Tool not in registry - allow it (backward compatibility)
+            logger.warning(f"Tool {tool_name} not in tool registry, allowing by default")
+            return True
+
     def _initialize_validators(self) -> List[Validator]:
-        """Initialize all available validators (container-only mode)"""
+        """Initialize all available validators with per-tool auto-fix decisions."""
+        # Create validators with per-tool auto-fix based on adapter rules
         validators = [
-            BlackValidator(self.auto_fix),
-            AutoflakeValidator(self.auto_fix),
-            Flake8Validator(self.auto_fix),
-            MypyValidator(self.auto_fix),
-            RuffValidator(self.auto_fix),
-            IsortValidator(self.auto_fix),
-            TaploValidator(self.auto_fix),
-            TerraformValidator(self.auto_fix),
-            BanditValidator(self.auto_fix),
-            ESLintValidator(self.auto_fix),
-            PrettierValidator(self.auto_fix),
-            ChapelValidator(self.auto_fix),
-            AnsibleLintValidator(self.auto_fix),
-            YamlLintValidator(self.auto_fix),
-            HadolintValidator(self.auto_fix),
-            ShellcheckValidator(self.auto_fix),
-            GitLabCIValidator(self.auto_fix),
+            BlackValidator(self._should_tool_auto_fix("python-black")),
+            AutoflakeValidator(self._should_tool_auto_fix("autoflake")),
+            Flake8Validator(False),  # No auto-fix support
+            MypyValidator(False),  # No auto-fix support
+            RuffValidator(self._should_tool_auto_fix("ruff")),
+            IsortValidator(self._should_tool_auto_fix("isort")),
+            TaploValidator(self._should_tool_auto_fix("taplo")),
+            TerraformValidator(self._should_tool_auto_fix("terraform")),
+            BanditValidator(False),  # No auto-fix support
+            ESLintValidator(self._should_tool_auto_fix("js-eslint")),
+            PrettierValidator(self._should_tool_auto_fix("js-prettier")),
+            ChapelValidator(self._should_tool_auto_fix("chapel")),
+            AnsibleLintValidator(self._should_tool_auto_fix("ansible-lint")),
+            YamlLintValidator(self._should_tool_auto_fix("yamllint")),
+            HadolintValidator(False),  # No auto-fix support (GPL licensed, being replaced)
+            ShellcheckValidator(False),  # No auto-fix support
+            GitLabCIValidator(False),  # No auto-fix support
         ]
 
-        # Filter to only available validators
+        # Dynamically add DockerLintValidator if available
+        DockerLintValidatorClass = self._load_dockerlint_validator()
+        if DockerLintValidatorClass is not None:
+            validators.append(DockerLintValidatorClass(False))  # No auto-fix support
+
+        # Filter to only available validators, respecting linting mode
         available = []
         for v in validators:
+            # Check if tool should be used based on linting mode
+            if not self._should_use_tool(v.name):
+                logger.info(f"Skipping {v.name} in {self.linting_mode.value} mode (GPL or not bundled)")
+                continue
+
             if v.is_available():
                 available.append(v)
-                logger.info(f"Validator {v.name} is available")
+                logger.info(f"Validator {v.name} is available (auto_fix={v.auto_fix}, mode={self.linting_mode.value})")
             else:
                 logger.warning(f"Validator {v.name} is not available")
 
@@ -1977,12 +2051,15 @@ class ValidationEngine:
             if self.interactive and not self.auto_fix:
                 fixable_issues = self._count_fixable_issues(results)
                 if fixable_issues > 0:
-                    print(f"\n🔧 Found {fixable_issues} auto-fixable issues.")
+                    print(f"\nFound {fixable_issues} auto-fixable issues.")
                     response = input("Attempt auto-fix? [y/N]: ").strip().lower()
                     if response in ["y", "yes"]:
-                        print("🔄 Applying auto-fixes...")
-                        # Re-run with auto-fix enabled
-                        auto_fix_engine = ValidationEngine(auto_fix=True)
+                        print("Applying auto-fixes...")
+                        # Re-run with auto-fix enabled, preserving linting mode
+                        auto_fix_engine = ValidationEngine(
+                            auto_fix=True,
+                            linting_mode=self.linting_mode
+                        )
                         results = {}
                         for filename in result.stdout.splitlines():
                             filepath = Path(filename)
@@ -2076,6 +2153,11 @@ def main() -> None:
     parser.add_argument(
         "--container", action="store_true", help="Run validation in container"
     )
+    parser.add_argument(
+        "--linting-mode",
+        choices=["fast", "comprehensive"],
+        help="Linting mode: fast (bundled tools only) or comprehensive (all tools including GPL)",
+    )
 
     args = parser.parse_args()
 
@@ -2088,7 +2170,16 @@ def main() -> None:
     if args.container:
         print("Note: --container flag is now default behavior (container-only mode)")
 
-    engine = ValidationEngine(auto_fix=args.fix, interactive=interactive_mode)
+    # Parse linting mode from args or environment
+    linting_mode = None
+    if args.linting_mode:
+        linting_mode = LintingMode.FAST if args.linting_mode == "fast" else LintingMode.COMPREHENSIVE
+
+    engine = ValidationEngine(
+        auto_fix=args.fix,
+        interactive=interactive_mode,
+        linting_mode=linting_mode
+    )
 
     # Run validation
     if args.staged:

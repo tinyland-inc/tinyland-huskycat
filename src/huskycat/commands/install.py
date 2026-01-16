@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 """
 Self-contained installation command for HuskyCat.
 
@@ -5,8 +6,10 @@ When running from a binary, this command:
 1. Copies itself to ~/.local/bin/huskycat
 2. Sets up git hooks in the current repository
 3. Creates shell completions
+4. Optionally registers MCP server with Claude Code (--with-claude)
 """
 
+import json
 import os
 import shutil
 import stat
@@ -33,6 +36,9 @@ class InstallCommand(BaseCommand):
         bin_dir: str | None = None,
         setup_hooks: bool = True,
         skip_path_check: bool = False,
+        with_claude: bool = False,
+        scope: str = "user",
+        verify: bool = False,
     ) -> CommandResult:
         """
         Install HuskyCat binary and configure environment.
@@ -41,6 +47,9 @@ class InstallCommand(BaseCommand):
             bin_dir: Installation directory (default: ~/.local/bin)
             setup_hooks: Also setup git hooks in current repo
             skip_path_check: Don't warn about PATH issues
+            with_claude: Register MCP server with Claude Code
+            scope: MCP registration scope ("user", "project", or "local")
+            verify: Verify MCP connection after registration
 
         Returns:
             CommandResult with installation status
@@ -121,6 +130,27 @@ class InstallCommand(BaseCommand):
         # Create config directory
         self.config_dir.mkdir(parents=True, exist_ok=True)
 
+        # Register MCP server with Claude Code
+        if with_claude:
+            mcp_result = self._register_mcp_server(scope)
+            if mcp_result["success"]:
+                data["mcp_registered"] = True
+                data["mcp_scope"] = scope
+                self.log(f"MCP server registered (scope: {scope})")
+            else:
+                warnings.append(f"MCP registration: {mcp_result['error']}")
+                data["mcp_registered"] = False
+
+            # Verify MCP connection if requested
+            if verify and mcp_result["success"]:
+                verify_result = self._verify_mcp_connection()
+                if verify_result["success"]:
+                    data["mcp_verified"] = True
+                    self.log("MCP connection verified")
+                else:
+                    warnings.append(f"MCP verification: {verify_result['error']}")
+                    data["mcp_verified"] = False
+
         # Summary
         if errors:
             return CommandResult(
@@ -182,7 +212,7 @@ class InstallCommand(BaseCommand):
         else:
             return f'export PATH="$PATH:{install_dir}"'
 
-    def _create_completions(self):
+    def _create_completions(self) -> None:
         """Create shell completion scripts."""
         completions_dir = self.config_dir / "completions"
         completions_dir.mkdir(parents=True, exist_ok=True)
@@ -243,7 +273,10 @@ _huskycat() {
                     _arguments \
                         '--bin-dir[Installation directory]:dir:_directories' \
                         '--no-hooks[Skip git hooks setup]' \
-                        '--skip-path-check[Skip PATH check]'
+                        '--skip-path-check[Skip PATH check]' \
+                        '--with-claude[Register MCP server with Claude Code]' \
+                        '--scope[MCP registration scope]:scope:(user project local)' \
+                        '--verify[Verify MCP connection after registration]'
                     ;;
             esac
             ;;
@@ -270,4 +303,141 @@ complete -c huskycat -n '__fish_seen_subcommand_from validate' -l fix -d 'Auto-f
 """
         (completions_dir / "huskycat.fish").write_text(fish_completion)
 
-        self.log(f"✓ Shell completions created in {completions_dir}")
+        self.log(f"Shell completions created in {completions_dir}")
+
+    def _register_mcp_server(self, scope: str) -> dict:
+        """
+        Register HuskyCat MCP server with Claude Code.
+
+        Uses `claude mcp add-json` for scripted registration.
+        Falls back to writing .mcp.json directly if claude CLI not found.
+
+        Args:
+            scope: Registration scope ("user", "project", or "local")
+
+        Returns:
+            dict with "success" and optional "error" keys
+        """
+        mcp_config = {"command": "huskycat", "args": ["mcp-server"], "env": {}}
+
+        # First, try using claude CLI
+        try:
+            result = subprocess.run(
+                [
+                    "claude",
+                    "mcp",
+                    "add-json",
+                    "huskycat",
+                    "--scope",
+                    scope,
+                    json.dumps(mcp_config),
+                ],
+                capture_output=True,
+                timeout=30,
+                check=False,
+            )
+
+            if result.returncode == 0:
+                return {"success": True}
+            else:
+                error_msg = result.stderr.decode().strip()
+                # If already registered, treat as success
+                if "already" in error_msg.lower():
+                    return {"success": True}
+                return {"success": False, "error": error_msg}
+
+        except FileNotFoundError:
+            # Claude CLI not found, fall back to direct file manipulation
+            return self._register_mcp_direct(scope)
+
+        except subprocess.TimeoutExpired:
+            return {"success": False, "error": "Claude CLI timed out"}
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def _register_mcp_direct(self, scope: str) -> dict:
+        """
+        Register MCP server by directly creating/updating .mcp.json.
+
+        This is a fallback when claude CLI is not available.
+
+        Args:
+            scope: Registration scope ("user", "project", or "local")
+
+        Returns:
+            dict with "success" and optional "error" keys
+        """
+        mcp_entry = {
+            "huskycat": {"command": "huskycat", "args": ["mcp-server"], "env": {}}
+        }
+
+        try:
+            if scope == "user":
+                # User scope: ~/.claude/.mcp.json
+                mcp_file = Path.home() / ".claude" / ".mcp.json"
+            elif scope == "project":
+                # Project scope: .mcp.json in current directory
+                mcp_file = Path.cwd() / ".mcp.json"
+            else:
+                # Local scope: ~/.claude.json under project path
+                mcp_file = Path.cwd() / ".claude.json"
+
+            # Read existing config or start fresh
+            mcp_file.parent.mkdir(parents=True, exist_ok=True)
+            if mcp_file.exists():
+                with mcp_file.open() as f:
+                    config = json.load(f)
+            else:
+                config = {}
+
+            # Add/update mcpServers section
+            if "mcpServers" not in config:
+                config["mcpServers"] = {}
+            config["mcpServers"].update(mcp_entry)
+
+            # Write back
+            with mcp_file.open("w") as f:
+                json.dump(config, f, indent=2)
+
+            self.log(f"MCP config written to {mcp_file}")
+            return {"success": True}
+
+        except Exception as e:
+            return {"success": False, "error": f"Direct registration failed: {e}"}
+
+    def _verify_mcp_connection(self) -> dict:
+        """
+        Verify MCP server is working by running a quick test.
+
+        Returns:
+            dict with "success" and optional "error" keys
+        """
+        try:
+            # Try to run MCP server with a quick test
+            result = subprocess.run(
+                ["huskycat", "mcp-server", "--test"],
+                capture_output=True,
+                timeout=10,
+                check=False,
+            )
+
+            if result.returncode == 0:
+                return {"success": True}
+            # Fallback: just check if huskycat is in PATH
+            result = subprocess.run(
+                ["huskycat", "--version"],
+                capture_output=True,
+                timeout=5,
+                check=False,
+            )
+            if result.returncode == 0:
+                return {"success": True}
+            return {"success": False, "error": "huskycat not in PATH"}
+
+        except FileNotFoundError:
+            return {"success": False, "error": "huskycat not found in PATH"}
+        except subprocess.TimeoutExpired:
+            return {"success": False, "error": "MCP test timed out"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 """
 Process Manager for Non-Blocking Git Hook Execution.
 
@@ -32,6 +33,30 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class ErrorDetail:
+    """
+    Represents a single error or warning with full details.
+
+    Attributes:
+        file: Path to the file where the issue was found
+        line: Line number (None if not applicable)
+        tool: Name of the tool that reported the issue
+        message: The actual error/warning message
+        severity: Severity level (error, warning, info)
+        column: Column number (optional)
+        code: Error code from the tool (optional)
+    """
+
+    file: str
+    tool: str
+    message: str
+    severity: str = "error"
+    line: Optional[int] = None
+    column: Optional[int] = None
+    code: Optional[str] = None
+
+
+@dataclass
 class ValidationRun:
     """
     Represents a single validation run with results.
@@ -45,6 +70,8 @@ class ValidationRun:
         tools_run: List of tool names executed
         errors: Number of errors found
         warnings: Number of warnings found
+        error_details: List of detailed error information
+        warning_details: List of detailed warning information
         exit_code: Process exit code (0=success, non-zero=failure)
         pid: Process ID of validation run
     """
@@ -57,6 +84,8 @@ class ValidationRun:
     tools_run: List[str] = None
     errors: int = 0
     warnings: int = 0
+    error_details: List[Dict[str, Any]] = None
+    warning_details: List[Dict[str, Any]] = None
     exit_code: Optional[int] = None
     pid: Optional[int] = None
 
@@ -66,6 +95,10 @@ class ValidationRun:
             self.files = []
         if self.tools_run is None:
             self.tools_run = []
+        if self.error_details is None:
+            self.error_details = []
+        if self.warning_details is None:
+            self.warning_details = []
 
 
 class ProcessManager:
@@ -100,8 +133,15 @@ class ProcessManager:
         self.logs_dir = self.cache_dir / "logs"
         self.logs_dir.mkdir(parents=True, exist_ok=True)
 
+        # Directory for detailed validation results
+        self.results_dir = self.cache_dir.parent / "results"
+        self.results_dir.mkdir(parents=True, exist_ok=True)
+
         # File to track last validation run
         self.last_run_file = self.cache_dir / "last_run.json"
+
+        # Symlink to latest results
+        self.latest_results_link = self.results_dir / "latest.json"
 
     def check_previous_run(self) -> Optional[ValidationRun]:
         """
@@ -331,6 +371,142 @@ class ProcessManager:
             logger.debug(f"Saved validation run: {run.run_id}")
         except Exception as e:
             logger.error(f"Could not save validation run: {e}")
+
+    def save_detailed_results(
+        self, run_id: str, results: List[Any], tool_results: List[Dict[str, Any]] = None
+    ):
+        """
+        Save detailed validation results to the results directory.
+
+        This saves the full ToolResult objects with all error messages,
+        not just counts. Results are stored in .huskycat/results/{run_id}_results.json
+        and a latest.json symlink is updated.
+
+        Args:
+            run_id: The validation run ID
+            results: List of ToolResult objects from parallel executor
+            tool_results: Optional pre-serialized tool results (for flexibility)
+        """
+        results_file = self.results_dir / f"{run_id}_results.json"
+
+        try:
+            # Convert ToolResult objects to serializable dicts if needed
+            if tool_results is not None:
+                serializable_results = tool_results
+            else:
+                serializable_results = []
+                for result in results:
+                    # Handle ToolResult dataclass or dict
+                    if hasattr(result, "__dict__"):
+                        # It's an object, try to get asdict or __dict__
+                        if hasattr(result, "tool_name"):
+                            result_dict = {
+                                "tool_name": result.tool_name,
+                                "success": result.success,
+                                "duration": result.duration,
+                                "errors": result.errors,
+                                "warnings": result.warnings,
+                                "output": result.output,
+                                "error_message": result.error_message,
+                                "status": (
+                                    result.status.value
+                                    if hasattr(result.status, "value")
+                                    else str(result.status)
+                                ),
+                                "metadata": getattr(result, "metadata", {}),
+                            }
+                            serializable_results.append(result_dict)
+                    elif isinstance(result, dict):
+                        serializable_results.append(result)
+
+            # Save results file
+            output_data = {
+                "run_id": run_id,
+                "timestamp": datetime.now().isoformat(),
+                "tool_count": len(serializable_results),
+                "results": serializable_results,
+            }
+            results_file.write_text(json.dumps(output_data, indent=2))
+
+            # Update latest symlink
+            try:
+                if (
+                    self.latest_results_link.exists()
+                    or self.latest_results_link.is_symlink()
+                ):
+                    self.latest_results_link.unlink()
+                self.latest_results_link.symlink_to(results_file.name)
+            except OSError as e:
+                # Symlinks may not work on all systems, fall back to copy
+                logger.debug(f"Could not create symlink, copying instead: {e}")
+                self.latest_results_link.write_text(results_file.read_text())
+
+            logger.debug(f"Saved detailed results for run: {run_id}")
+        except Exception as e:
+            logger.error(f"Could not save detailed results: {e}")
+
+    def get_detailed_results(self, run_id: str) -> List[Dict[str, Any]]:
+        """
+        Retrieve detailed validation results for a specific run.
+
+        Args:
+            run_id: The validation run ID to retrieve results for
+
+        Returns:
+            List of tool result dictionaries with full error details,
+            or empty list if not found
+        """
+        results_file = self.results_dir / f"{run_id}_results.json"
+
+        if not results_file.exists():
+            logger.warning(f"No detailed results found for run: {run_id}")
+            return []
+
+        try:
+            data = json.loads(results_file.read_text())
+            return data.get("results", [])
+        except (json.JSONDecodeError, KeyError) as e:
+            logger.error(f"Could not parse detailed results for {run_id}: {e}")
+            return []
+
+    def get_latest_results(self) -> List[Dict[str, Any]]:
+        """
+        Retrieve the most recent validation results.
+
+        Returns:
+            List of tool result dictionaries from the latest run,
+            or empty list if no results found
+        """
+        # Try to read from latest symlink first
+        if self.latest_results_link.exists():
+            try:
+                data = json.loads(self.latest_results_link.read_text())
+                return data.get("results", [])
+            except (json.JSONDecodeError, KeyError) as e:
+                logger.warning(f"Could not parse latest results: {e}")
+
+        # Fall back to finding most recent results file
+        results_files = sorted(
+            self.results_dir.glob("*_results.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+
+        if not results_files:
+            logger.debug("No results files found")
+            return []
+
+        try:
+            # Skip latest.json if it's in the list
+            for results_file in results_files:
+                if results_file.name == "latest.json":
+                    continue
+                data = json.loads(results_file.read_text())
+                return data.get("results", [])
+        except (json.JSONDecodeError, KeyError) as e:
+            logger.error(f"Could not parse results file: {e}")
+
+        return []
 
     def get_running_validations(self) -> List[Dict[str, Any]]:
         """

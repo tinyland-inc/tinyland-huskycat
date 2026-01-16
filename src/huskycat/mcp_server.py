@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 HuskyCat MCP Server
 Simple stdio-based MCP server for Claude Code integration
@@ -15,9 +16,14 @@ import logging
 import os
 import subprocess
 import sys
+import threading
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from dataclasses import asdict
+
+from .core.process_manager import ProcessManager, ValidationRun
+from .core.task_manager import TaskManager, TaskStatus, get_task_manager
 from .unified_validation import ValidationEngine
 
 # Token limits for output management
@@ -46,6 +52,8 @@ class MCPServer:
         # Container-only mode - check if container runtime is available
         self.container_available = self._detect_container_available()
         self.engine = ValidationEngine(auto_fix=False)
+        self.process_manager = ProcessManager()
+        self.task_manager = get_task_manager()
         self.request_id = 0
 
         logger.info(
@@ -271,7 +279,7 @@ class MCPServer:
             "jsonrpc": "2.0",
             "id": request_id,
             "result": {
-                "protocolVersion": "2025-11-25",
+                "protocolVersion": "2024-11-05",
                 "capabilities": {"tools": {}, "prompts": {}},
                 "serverInfo": {
                     "name": "huskycat-mcp",
@@ -352,6 +360,146 @@ class MCPServer:
                 }
             )
 
+        # Add result query tools
+        tools.append(
+            {
+                "name": "get_last_run",
+                "description": "Get the most recent validation run with results. Returns run metadata including success status, error count, and tools used.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {},
+                },
+            }
+        )
+
+        tools.append(
+            {
+                "name": "get_run_history",
+                "description": "Get recent validation run history. Returns a list of previous runs with their status and results summary.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "limit": {
+                            "type": "integer",
+                            "description": "Maximum number of runs to return",
+                            "default": 10,
+                        },
+                    },
+                },
+            }
+        )
+
+        tools.append(
+            {
+                "name": "get_run_results",
+                "description": "Get detailed results for a specific validation run by run_id.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "run_id": {
+                            "type": "string",
+                            "description": "The run_id to get results for (e.g., 20241219_114200_123456)",
+                        },
+                    },
+                    "required": ["run_id"],
+                },
+            }
+        )
+
+        tools.append(
+            {
+                "name": "get_running_validations",
+                "description": "Check if any validations are currently in progress. Returns list of running validation processes.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {},
+                },
+            }
+        )
+
+        # Async validation tools - for long-running validations
+        tools.append(
+            {
+                "name": "validate_async",
+                "description": "Start an asynchronous validation and return immediately with a task_id. "
+                "Use this for long-running validations (mypy: 10-30s, CI schema: 5-15s) to avoid blocking. "
+                "Poll with get_task_status to check progress and get results.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "description": "File or directory path to validate",
+                        },
+                        "fix": {
+                            "type": "boolean",
+                            "description": "Auto-fix issues where possible",
+                            "default": False,
+                        },
+                    },
+                    "required": ["path"],
+                },
+            }
+        )
+
+        tools.append(
+            {
+                "name": "get_task_status",
+                "description": "Get the status of an async validation task. "
+                "Returns task status (pending, running, completed, failed), progress, and results when complete.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "task_id": {
+                            "type": "string",
+                            "description": "The task_id returned from validate_async",
+                        },
+                    },
+                    "required": ["task_id"],
+                },
+            }
+        )
+
+        tools.append(
+            {
+                "name": "list_async_tasks",
+                "description": "List all async validation tasks. "
+                "Optionally filter by status (pending, running, completed, failed).",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "description": "Filter by task status",
+                            "enum": ["pending", "running", "completed", "failed", "cancelled"],
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "description": "Maximum number of tasks to return",
+                            "default": 20,
+                        },
+                    },
+                },
+            }
+        )
+
+        tools.append(
+            {
+                "name": "cancel_async_task",
+                "description": "Cancel a running async validation task.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "task_id": {
+                            "type": "string",
+                            "description": "The task_id to cancel",
+                        },
+                    },
+                    "required": ["task_id"],
+                },
+            }
+        )
+
         return {"jsonrpc": "2.0", "id": request_id, "result": {"tools": tools}}
 
     def _handle_tool_call(
@@ -368,6 +516,22 @@ class MCPServer:
                 result = self._validate(arguments)
             elif tool_name == "validate_staged":
                 result = self._validate_staged(arguments)
+            elif tool_name == "get_last_run":
+                result = self._get_last_run(arguments)
+            elif tool_name == "get_run_history":
+                result = self._get_run_history(arguments)
+            elif tool_name == "get_run_results":
+                result = self._get_run_results(arguments)
+            elif tool_name == "get_running_validations":
+                result = self._get_running_validations(arguments)
+            elif tool_name == "validate_async":
+                result = self._validate_async(arguments)
+            elif tool_name == "get_task_status":
+                result = self._get_task_status(arguments)
+            elif tool_name == "list_async_tasks":
+                result = self._list_async_tasks(arguments)
+            elif tool_name == "cancel_async_task":
+                result = self._cancel_async_task(arguments)
             elif tool_name.startswith("validate_"):
                 # Individual validator
                 validator_name = tool_name.replace("validate_", "")
@@ -542,6 +706,338 @@ class MCPServer:
         validation_result = validator.validate(path)
 
         return {"tool": tool_name, "result": validation_result.to_dict()}
+
+    def _get_last_run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the most recent validation run with results.
+
+        Checks both the last_run tracking file and recent run history
+        to provide the most recent validation result.
+        """
+        # First try check_previous_run which returns failed runs
+        run = self.process_manager.check_previous_run()
+
+        # If no failed run, check the last_run file directly for any run
+        if run is None:
+            last_run_file = self.process_manager.last_run_file
+            if last_run_file.exists():
+                try:
+                    import json
+                    data = json.loads(last_run_file.read_text())
+                    run = ValidationRun(**data)
+                except (json.JSONDecodeError, TypeError, ValueError) as e:
+                    logger.warning(f"Could not parse last run file: {e}")
+
+        # If still no run found, try getting the most recent from history
+        if run is None:
+            history = self.process_manager.get_run_history(limit=1)
+            if history:
+                run = history[0]
+
+        if run is None:
+            return {
+                "found": False,
+                "message": "No validation runs found. Run 'huskycat validate' to create a validation record.",
+            }
+
+        # Load detailed results if available
+        run_results_file = self.process_manager.cache_dir / f"{run.run_id}_results.json"
+        detailed_results = None
+        if run_results_file.exists():
+            try:
+                import json
+                detailed_results = json.loads(run_results_file.read_text())
+            except Exception as e:
+                logger.warning(f"Could not load detailed results: {e}")
+
+        # Load log file content if available
+        log_file = self.process_manager.logs_dir / f"{run.run_id}.log"
+        log_content = None
+        if log_file.exists():
+            try:
+                log_content = log_file.read_text()
+                # Truncate if too long
+                if len(log_content) > 5000:
+                    log_content = log_content[-5000:] + "\n... [truncated, showing last 5000 chars]"
+            except Exception as e:
+                logger.warning(f"Could not load log file: {e}")
+
+        return {
+            "found": True,
+            "run": asdict(run),
+            "detailed_results": detailed_results,
+            "log_content": log_content,
+        }
+
+    def _get_run_history(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get recent validation run history."""
+        limit = arguments.get("limit", 10)
+
+        # Ensure limit is reasonable
+        limit = min(max(1, limit), 100)
+
+        runs = self.process_manager.get_run_history(limit=limit)
+
+        return {
+            "count": len(runs),
+            "limit": limit,
+            "runs": [asdict(r) for r in runs],
+        }
+
+    def _get_run_results(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get detailed results for a specific validation run."""
+        run_id = arguments.get("run_id")
+
+        if not run_id:
+            raise ValueError("run_id is required")
+
+        # Look for the run file
+        run_file = self.process_manager.cache_dir / f"{run_id}.json"
+        if not run_file.exists():
+            return {
+                "found": False,
+                "run_id": run_id,
+                "message": f"No validation run found with ID: {run_id}",
+            }
+
+        try:
+            import json
+            run_data = json.loads(run_file.read_text())
+            run = ValidationRun(**run_data)
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            raise ValueError(f"Could not parse run file: {e}")
+
+        # Load detailed results if available
+        results_file = self.process_manager.cache_dir / f"{run_id}_results.json"
+        detailed_results = None
+        if results_file.exists():
+            try:
+                detailed_results = json.loads(results_file.read_text())
+            except Exception as e:
+                logger.warning(f"Could not load detailed results: {e}")
+
+        # Load log file content if available
+        log_file = self.process_manager.logs_dir / f"{run_id}.log"
+        log_content = None
+        if log_file.exists():
+            try:
+                log_content = log_file.read_text()
+                # Truncate if too long
+                if len(log_content) > 10000:
+                    log_content = log_content[-10000:] + "\n... [truncated, showing last 10000 chars]"
+            except Exception as e:
+                logger.warning(f"Could not load log file: {e}")
+
+        return {
+            "found": True,
+            "run": asdict(run),
+            "detailed_results": detailed_results,
+            "log_content": log_content,
+        }
+
+    def _get_running_validations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Check if any validations are currently in progress."""
+        # Cleanup zombies first to ensure accurate status
+        self.process_manager.cleanup_zombies()
+
+        running = self.process_manager.get_running_validations()
+
+        return {
+            "count": len(running),
+            "running": len(running) > 0,
+            "validations": running,
+        }
+
+    # ==========================================================================
+    # Async Validation Tools
+    # ==========================================================================
+
+    def _validate_async(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Start async validation, return task ID immediately.
+
+        This allows long-running validations (mypy: 10-30s, CI schema: 5-15s)
+        to run without blocking the MCP client. Use get_task_status to poll
+        for results.
+        """
+        path_str = arguments.get("path", ".")
+        fix = arguments.get("fix", False)
+
+        # Create task
+        task_id = self.task_manager.create_task(
+            tool_name="validate",
+            arguments={"path": path_str, "fix": fix},
+        )
+
+        # Start validation in background thread
+        thread = threading.Thread(
+            target=self._run_async_validation,
+            args=(task_id, arguments),
+            daemon=True,
+            name=f"async-validate-{task_id}",
+        )
+        thread.start()
+
+        logger.info(f"Started async validation task {task_id} for path: {path_str}")
+
+        return {
+            "task_id": task_id,
+            "status": "started",
+            "poll_tool": "get_task_status",
+            "message": f"Validation started for '{path_str}'. Poll get_task_status with task_id='{task_id}' to check progress.",
+        }
+
+    def _run_async_validation(self, task_id: str, arguments: Dict[str, Any]) -> None:
+        """Run validation in background thread, update task manager with results.
+
+        This method runs in a daemon thread and should not raise exceptions
+        that could crash the server.
+        """
+        try:
+            path_str = arguments.get("path", ".")
+
+            # Update task to running
+            self.task_manager.update_progress(
+                task_id, 0, 100, f"Starting validation for {path_str}..."
+            )
+
+            # Run the actual validation (this may take 10-30s)
+            self.task_manager.update_progress(
+                task_id, 10, 100, "Running validators..."
+            )
+
+            result = self._validate(arguments)
+
+            # Update progress to 90% before completion
+            self.task_manager.update_progress(
+                task_id, 90, 100, "Processing results..."
+            )
+
+            # Complete the task with results
+            self.task_manager.complete_task(task_id, result)
+            logger.info(f"Async validation task {task_id} completed successfully")
+
+        except Exception as e:
+            logger.error(f"Async validation task {task_id} failed: {e}")
+            self.task_manager.fail_task(task_id, str(e))
+
+    def _get_task_status(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get async task status and results.
+
+        Returns task status including progress and results when complete.
+        """
+        task_id = arguments.get("task_id")
+
+        if not task_id:
+            raise ValueError("task_id is required")
+
+        task = self.task_manager.get_task(task_id)
+
+        if task is None:
+            return {
+                "found": False,
+                "task_id": task_id,
+                "error": f"Task not found: {task_id}",
+                "message": "The task may have expired or never existed. Use list_async_tasks to see available tasks.",
+            }
+
+        # Build response based on task state
+        response: Dict[str, Any] = {
+            "found": True,
+            "task_id": task.task_id,
+            "status": task.status.value,
+            "progress": task.progress,
+            "total": task.total,
+            "progress_percent": task.progress_percent,
+            "message": task.message,
+            "started": task.started,
+            "completed": task.completed,
+            "tool_name": task.tool_name,
+        }
+
+        # Include result for completed tasks
+        if task.status == TaskStatus.COMPLETED:
+            response["result"] = task.result
+            response["message"] = "Validation completed successfully. See 'result' for details."
+
+        # Include error for failed tasks
+        if task.status == TaskStatus.FAILED:
+            response["error"] = task.error
+            response["message"] = f"Validation failed: {task.error}"
+
+        # Include reason for cancelled tasks
+        if task.status == TaskStatus.CANCELLED:
+            response["error"] = task.error
+            response["message"] = f"Task was cancelled: {task.error}"
+
+        return response
+
+    def _list_async_tasks(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List all async validation tasks, optionally filtered by status."""
+        status_filter = arguments.get("status")
+        limit = arguments.get("limit", 20)
+
+        # Ensure limit is reasonable
+        limit = min(max(1, limit), 100)
+
+        # Convert status string to enum if provided
+        status_enum = None
+        if status_filter:
+            try:
+                status_enum = TaskStatus(status_filter)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid status filter: {status_filter}. "
+                    f"Valid values: pending, running, completed, failed, cancelled"
+                )
+
+        tasks = self.task_manager.list_tasks(status=status_enum, limit=limit)
+
+        return {
+            "count": len(tasks),
+            "filter": status_filter,
+            "limit": limit,
+            "tasks": [task.to_dict() for task in tasks],
+        }
+
+    def _cancel_async_task(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Cancel a running async validation task."""
+        task_id = arguments.get("task_id")
+
+        if not task_id:
+            raise ValueError("task_id is required")
+
+        task = self.task_manager.get_task(task_id)
+
+        if task is None:
+            return {
+                "success": False,
+                "task_id": task_id,
+                "error": f"Task not found: {task_id}",
+            }
+
+        if task.is_complete:
+            return {
+                "success": False,
+                "task_id": task_id,
+                "error": f"Task already {task.status.value}, cannot cancel",
+                "status": task.status.value,
+            }
+
+        # Cancel the task
+        cancelled = self.task_manager.cancel_task(task_id, reason="Cancelled via MCP")
+
+        if cancelled:
+            return {
+                "success": True,
+                "task_id": task_id,
+                "message": "Task cancelled successfully",
+                "status": "cancelled",
+            }
+        else:
+            return {
+                "success": False,
+                "task_id": task_id,
+                "error": "Failed to cancel task",
+            }
 
     def _tool_error_response(
         self, request_id: Any, error: Exception, context: Optional[str] = None

@@ -4,7 +4,7 @@ version = "2.0.0"
 description = "Universal Code Validation Platform with MCP Server Integration"
 authors = [{name = "Jess Sullivan", email = "jess@tinyland.ai"}]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.14"
 license = {text = "Apache-2.0"}
 keywords = ["linting", "validation", "git-hooks", "mcp", "claude", "ci-cd"]
 classifiers = [

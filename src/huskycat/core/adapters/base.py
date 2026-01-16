@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 """
 Base Mode Adapter for HuskyCat.
 
@@ -8,10 +9,33 @@ The ModeAdapter pattern encapsulates mode-specific behavior:
 - Error handling strategies
 """
 
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
+
+def get_fix_threshold_from_env() -> Optional["FixConfidence"]:
+    """
+    Get fix confidence threshold from HUSKYCAT_FIX environment variable.
+
+    Values:
+    - "safe": Only apply SAFE fixes (formatting only)
+    - "likely": Apply SAFE + LIKELY fixes
+    - "all": Apply all fixes including UNCERTAIN
+
+    Returns:
+        FixConfidence threshold, or None if not set
+    """
+    fix_level = os.environ.get("HUSKYCAT_FIX", "").lower()
+    if fix_level == "safe":
+        return FixConfidence.SAFE
+    elif fix_level == "likely":
+        return FixConfidence.LIKELY
+    elif fix_level == "all":
+        return FixConfidence.UNCERTAIN
+    return None
 
 
 class OutputFormat(Enum):
@@ -42,12 +66,20 @@ class FixConfidence(Enum):
 
 # Tool confidence mapping - which tools produce which confidence fixes
 TOOL_FIX_CONFIDENCE = {
-    "python-black": FixConfidence.SAFE,  # Formatting only
-    "js-prettier": FixConfidence.SAFE,  # Formatting only
+    # SAFE: Formatting only, cannot change semantics
+    "python-black": FixConfidence.SAFE,
+    "js-prettier": FixConfidence.SAFE,
+    "yamllint": FixConfidence.SAFE,  # Whitespace/newline fixes
+    "taplo": FixConfidence.SAFE,  # TOML formatting
+    "isort": FixConfidence.SAFE,  # Import ordering
+    "chapel": FixConfidence.SAFE,  # Chapel formatting
+    # LIKELY: Usually safe style fixes
     "autoflake": FixConfidence.LIKELY,  # Import removal
     "ruff": FixConfidence.LIKELY,  # Style fixes
-    "yamllint": FixConfidence.SAFE,  # Whitespace fixes
     "js-eslint": FixConfidence.LIKELY,  # Style fixes
+    "ansible-lint": FixConfidence.LIKELY,  # Ansible fixes
+    # UNCERTAIN: May change semantics, needs review
+    "terraform": FixConfidence.UNCERTAIN,  # May reorder blocks
 }
 
 
@@ -308,6 +340,44 @@ class ModeAdapter(ABC):
             FixConfidence level for the tool's fixes
         """
         return TOOL_FIX_CONFIDENCE.get(tool_name, FixConfidence.UNCERTAIN)
+
+    def should_auto_fix_tool(self, tool_name: str, fix_requested: bool = False) -> bool:
+        """
+        Determine if a specific tool should auto-fix based on mode and env var.
+
+        This combines:
+        1. HUSKYCAT_FIX env var threshold (if set)
+        2. Mode-specific auto-fix rules
+        3. Tool confidence level
+
+        Args:
+            tool_name: Name of the validation tool
+            fix_requested: Whether --fix was passed on command line
+
+        Returns:
+            True if this tool should auto-fix, False otherwise
+        """
+        # If --fix not requested and no env var, no auto-fix
+        env_threshold = get_fix_threshold_from_env()
+        if not fix_requested and env_threshold is None:
+            return False
+
+        # Get tool's confidence level
+        tool_confidence = self.get_fix_confidence(tool_name)
+
+        # Check env var threshold first (highest priority)
+        if env_threshold is not None:
+            # Map confidence levels to hierarchy: SAFE=0, LIKELY=1, UNCERTAIN=2
+            confidence_order = {
+                FixConfidence.SAFE: 0,
+                FixConfidence.LIKELY: 1,
+                FixConfidence.UNCERTAIN: 2,
+            }
+            # Tool can fix if its confidence is <= threshold
+            return confidence_order[tool_confidence] <= confidence_order[env_threshold]
+
+        # Fall back to mode-specific behavior
+        return self.should_auto_fix(tool_confidence)
 
     def get_tool_selection(self) -> List[str]:
         """

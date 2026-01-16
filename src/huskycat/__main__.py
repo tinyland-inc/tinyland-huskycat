@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 """
 CLI interface for HuskyCat using factory pattern with mode detection.
 
@@ -276,6 +277,10 @@ def _print_result(result, adapter):
     from .core.adapters.base import OutputFormat
 
     config = adapter.config
+
+    # MCP mode: stdout is used for JSON-RPC protocol, never print results
+    if config.mode == ProductMode.MCP:
+        return  # MCP server handles its own output
 
     # JSON/JSONRPC modes: use adapter formatting with results data
     if config.output_format in (

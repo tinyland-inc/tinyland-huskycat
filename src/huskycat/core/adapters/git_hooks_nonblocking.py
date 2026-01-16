@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 """
 Non-Blocking Git Hooks Mode Adapter.
 
@@ -35,10 +36,10 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
-from .base import AdapterConfig, ModeAdapter, OutputFormat
-from ..process_manager import ProcessManager, should_proceed_with_commit
-from ..tui import ValidationTUI, ToolState
 from ..parallel_executor import ParallelExecutor, ToolResult
+from ..process_manager import ProcessManager, should_proceed_with_commit
+from ..tui import ToolState, ValidationTUI
+from .base import AdapterConfig, ModeAdapter, OutputFormat
 
 
 class NonBlockingGitHooksAdapter(ModeAdapter):
@@ -230,6 +231,47 @@ class NonBlockingGitHooksAdapter(ModeAdapter):
         all_success = all(r.success for r in results)
         failed_tools = [r.tool_name for r in results if not r.success]
 
+        # Extract detailed error and warning information from results
+        error_details = []
+        warning_details = []
+
+        for result in results:
+            tool_name = result.tool_name
+
+            # Parse output for error details
+            if result.output:
+                for line in result.output.split("\n"):
+                    line = line.strip()
+                    if not line:
+                        continue
+
+                    # Try to extract file:line:message format
+                    detail = self._parse_error_line(line, tool_name)
+                    if detail:
+                        # Determine if it's an error or warning based on content
+                        if (
+                            "warning" in line.lower()
+                            or result.warnings > 0
+                            and result.errors == 0
+                        ):
+                            detail["severity"] = "warning"
+                            warning_details.append(detail)
+                        else:
+                            detail["severity"] = "error"
+                            error_details.append(detail)
+
+            # Add error_message if present
+            if result.error_message:
+                error_details.append(
+                    {
+                        "file": "",
+                        "line": None,
+                        "tool": tool_name,
+                        "message": result.error_message,
+                        "severity": "error",
+                    }
+                )
+
         print("-" * 60)
         print(f"Validation complete:")
         print(f"  Files:    {len(files)}")
@@ -241,12 +283,15 @@ class NonBlockingGitHooksAdapter(ModeAdapter):
         if failed_tools:
             print(f"  Failed tools: {', '.join(failed_tools)}")
 
-        # Save validation run results
+        # Save validation run results with detailed error information
         from datetime import datetime
+
         from ..process_manager import ValidationRun
 
+        run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+
         run = ValidationRun(
-            run_id=datetime.now().isoformat(),
+            run_id=run_id,
             started=datetime.now().isoformat(),
             completed=datetime.now().isoformat(),
             files=files,
@@ -254,11 +299,16 @@ class NonBlockingGitHooksAdapter(ModeAdapter):
             tools_run=tool_names,
             errors=total_errors,
             warnings=total_warnings,
+            error_details=error_details,
+            warning_details=warning_details,
             exit_code=0 if all_success else 1,
             pid=None,  # Will be set by ProcessManager
         )
 
         self.process_manager.save_run(run)
+
+        # Save detailed results separately for full ToolResult data
+        self.process_manager.save_detailed_results(run_id, results)
 
         # Exit with appropriate code
         exit_code = 0 if all_success else 1
@@ -283,6 +333,87 @@ class NonBlockingGitHooksAdapter(ModeAdapter):
         # Parent process output is handled in execute_validation()
         # Child process output is handled in _run_validation_child()
         return ""
+
+    def _parse_error_line(self, line: str, tool_name: str) -> Optional[Dict[str, Any]]:
+        """
+        Parse an error/warning line to extract structured information.
+
+        Handles common formats from various linters:
+        - file:line:col: message (mypy, flake8, ruff)
+        - file:line: message (black, isort)
+        - file(line): message (some tools)
+        - Plain message (fallback)
+
+        Args:
+            line: The line of output to parse
+            tool_name: Name of the tool that produced this output
+
+        Returns:
+            Dict with file, line, column, tool, message keys,
+            or None if line appears to be non-error content
+        """
+        import re
+
+        # Skip empty or header lines
+        if not line or line.startswith("---") or line.startswith("==="):
+            return None
+
+        # Pattern 1: file:line:col: message (most common)
+        match = re.match(r"^(.+?):(\d+):(\d+):\s*(.+)$", line)
+        if match:
+            return {
+                "file": match.group(1),
+                "line": int(match.group(2)),
+                "column": int(match.group(3)),
+                "tool": tool_name,
+                "message": match.group(4).strip(),
+            }
+
+        # Pattern 2: file:line: message (no column)
+        match = re.match(r"^(.+?):(\d+):\s*(.+)$", line)
+        if match:
+            return {
+                "file": match.group(1),
+                "line": int(match.group(2)),
+                "column": None,
+                "tool": tool_name,
+                "message": match.group(3).strip(),
+            }
+
+        # Pattern 3: file(line): message
+        match = re.match(r"^(.+?)\((\d+)\):\s*(.+)$", line)
+        if match:
+            return {
+                "file": match.group(1),
+                "line": int(match.group(2)),
+                "column": None,
+                "tool": tool_name,
+                "message": match.group(3).strip(),
+            }
+
+        # Pattern 4: file: message (no line number)
+        match = re.match(r"^(.+?\.\w+):\s+(.+)$", line)
+        if match and "/" in match.group(1) or "\\" in match.group(1):
+            return {
+                "file": match.group(1),
+                "line": None,
+                "column": None,
+                "tool": tool_name,
+                "message": match.group(2).strip(),
+            }
+
+        # Fallback: treat as message without file/line
+        # Only return if line looks like an error message
+        if any(kw in line.lower() for kw in ["error", "warning", "fail", "invalid"]):
+            return {
+                "file": "",
+                "line": None,
+                "column": None,
+                "tool": tool_name,
+                "message": line.strip(),
+            }
+
+        return None
 
     def _get_validation_engine(self) -> Any:
         """
@@ -369,9 +500,7 @@ class NonBlockingGitHooksAdapter(ModeAdapter):
 
         return execute_validator
 
-    def _execute_real_validation(
-        self, validator: Any, files: List[Path]
-    ) -> ToolResult:
+    def _execute_real_validation(self, validator: Any, files: List[Path]) -> ToolResult:
         """
         Execute real validation using the unified validation engine.
 
