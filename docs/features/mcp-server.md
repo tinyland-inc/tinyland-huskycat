@@ -1,6 +1,6 @@
 # MCP Server Integration
 
-HuskyCat includes a built-in **stdio-based MCP Server** with container-backed validation tools, enabling AI-powered code quality feedback through Claude Code integration.
+HuskyCat includes a built-in **stdio-based MCP Server** that exposes validation tools via MCP protocol, enabling AI-powered code quality feedback through Claude Code integration.
 
 ## What is MCP?
 
@@ -220,22 +220,24 @@ The MCP server works seamlessly with Git hooks. You can:
 2. Set up pre-push validation
 3. Integrate with CI/CD workflows
 
-### Container-Only Validation
+### Execution Model
 
-The MCP server uses container-only execution for all validation:
+The MCP server uses HuskyCat's multi-modal execution:
 
 ```bash
-# All validation automatically runs in containers
-./dist/huskycat mcp-server  # Uses container internally
+# Start MCP server (uses best available execution model)
+./dist/huskycat mcp-server
 
-# Verify container is working
-npm run container:test
+# Verify installation
+huskycat status
 ```
 
-**Benefits**:
-- Consistent toolchain across environments
-- Repository isolation and safety
-- No missing tool dependencies
+**Execution Priority**:
+1. **Bundled tools** (~/.huskycat/tools/) - fastest, no dependencies
+2. **System PATH** - local tools if available
+3. **Container delegation** - fallback when runtime available
+
+See [Execution Models](../architecture/execution-models.md) for details.
 
 ## Troubleshooting
 

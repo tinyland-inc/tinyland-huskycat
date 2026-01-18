@@ -1,6 +1,6 @@
 # Configuration Reference
 
-This document details all configuration options for HuskyCat's container-only validation platform.
+This document details all configuration options for HuskyCat's multi-modal validation platform.
 
 ## Linting Configuration Files
 
@@ -106,9 +106,9 @@ File-specific linting rules:
 
 ## Script Configuration
 
-### HuskyCat Container Configuration
+### HuskyCat Execution Configuration
 
-**Container-Only Execution**: All validation runs in containers with complete toolchains.
+**Multi-Modal Execution**: HuskyCat supports three execution models - Binary (embedded tools), Container (delegated), and UV Development mode. See [Execution Models](architecture/execution-models.md) for details.
 
 Environment variables:
 ```bash

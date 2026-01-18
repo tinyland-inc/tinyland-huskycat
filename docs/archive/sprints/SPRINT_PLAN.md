@@ -1222,7 +1222,22 @@ For Darwin code signing, configure these in GitLab CI/CD settings:
 - [ ] Remove duplicate conditionals
 - [ ] Final integration testing across all modes
 
-### Sprint 8 (Auto-Fix Framework)
+### Sprint 8 (Auto-Fix Framework) - FUTURE WORK
+
+**Status**: SKELETON IMPLEMENTED - Full implementation pending
+
+**What exists**:
+- `FixConfidence` enum in `adapters/base.py`
+- `should_auto_fix()` method in adapters
+- Basic `--fix` flag support
+
+**What does NOT exist**:
+- `BlackFixer`, `RuffFixer`, etc. classes
+- Full `AutoFixer` interface
+- Fix orchestration
+- Interactive fix prompts
+
+**Implementation Checklist** (FUTURE):
 - [ ] Create unified `AutoFixer` interface
 - [ ] Implement Python auto-fixers (black, ruff, autoflake, isort)
 - [ ] Implement JavaScript auto-fixers (eslint --fix, prettier)

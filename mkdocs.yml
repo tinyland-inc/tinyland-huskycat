@@ -38,14 +38,9 @@ plugins:
   - search
   - mermaid2
 
-# Exclude archived/internal docs from build warnings
+# Exclude archived docs from build warnings
 not_in_nav: |
   archive/**
-  BETA_*.md
-  SPRINT_PLAN.md
-  *_SUMMARY.md
-  *_COMPLETE.md
-  *_PLAN.md
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -72,6 +67,7 @@ nav:
       - Installation: installation.md
       - Binary Downloads: binary-downloads.md
       - Configuration: configuration.md
+      - Beta Testing: BETA_TESTING.md
   - CLI Reference: cli-reference.md
   - Features:
       - MCP Server: features/mcp-server.md
@@ -79,12 +75,14 @@ nav:
   - Architecture:
       - Product Modes: architecture/product-modes.md
       - Execution Models: architecture/execution-models.md
+      - Fat Binaries: architecture/fat-binaries.md
+      - Integration Roadmap: architecture/INTEGRATION_ROADMAP.md
   - CI/CD Integration:
       - GitLab CI/CD: ci-cd/gitlab.md
       - GitHub Actions: github-actions.md
   - Development:
+      - Build Guide: development/BUILD.md
       - Dogfooding Guide: dogfooding.md
-      - Parallel Executor: parallel_executor.md
   - Advanced:
       - Performance: performance.md
       - Migration Guide: migration/to-nonblocking.md
@@ -92,3 +90,7 @@ nav:
   - API Reference:
       - MCP Tools: api/mcp-tools.md
   - Troubleshooting: troubleshooting.md
+  - Project:
+      - Sources of Truth: SOURCES.md
+      - Contributing: CONTRIBUTING.md
+      - Security: SECURITY.md

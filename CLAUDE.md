@@ -12,8 +12,11 @@ See `docs/SPRINT_PLAN.md` for comprehensive development roadmap covering:
 
 HuskyCat is licensed under **Apache-2.0** for libre sales compatibility.
 
-GPL tools (shellcheck, hadolint, yamllint) are isolated in a separate
-`gpl-sidecar/` component that communicates via IPC.
+GPL tools (shellcheck, hadolint, yamllint) are handled via linting mode selection:
+- **FAST mode**: GPL tools excluded (Apache/MIT tools only)
+- **COMPREHENSIVE mode**: GPL tools included via container execution
+
+Note: GPL tools are filtered at runtime, not isolated via IPC.
 
 ## CRITICAL: Git Commit Rules
 
@@ -205,55 +208,14 @@ huskycat clean                   # Clean cache
 
 See [docs/architecture/execution-models.md](docs/architecture/execution-models.md) for complete details.
 
-### Container Architecture
+**Summary**: HuskyCat supports three execution models:
+1. **Binary Execution** - PyInstaller binary with embedded or delegated tools
+2. **Container Execution** - Alpine-based multi-arch container
+3. **UV Development Mode** - npm scripts + UV package manager
 
-- `ContainerFile.wrapper` - Thin ~20MB container with fat binary
-- `ContainerFile.gpl-sidecar` - GPL tools container (~50MB)
-- Original `ContainerFile` - Legacy fat container (deprecated)
+**Tool Resolution Priority**: Bundled tools > System PATH > Container delegation
 
-### Three Execution Models:
-
-1. **Binary Execution** (`huskycat_main.py:1-27`)
-   - PyInstaller single-file executable
-   - Optional container delegation when runtime available
-   - Fast startup (~100ms)
-   - Implementation: `unified_validation.py:85-170`
-
-2. **Container Execution** (`ContainerFile.wrapper:1-153`)
-   - Thin wrapper container with fat binary (~20MB)
-   - Multi-arch support (amd64, arm64)
-   - Container runtime required (podman or docker)
-   - Implementation: `.gitlab-ci.yml:158-218`
-
-3. **UV Development Mode** (`package.json:8-38`)
-   - npm scripts + UV package manager
-   - Local Python environment
-   - Development and testing
-   - Optional container delegation
-
-### Execution Routing Logic
-
-```python
-# unified_validation.py:85-170
-def is_available(self) -> bool:
-    """Check validator availability in current context"""
-    if self._is_running_in_container():
-        # Inside container: check tool directly
-        return tool_exists_locally()
-    else:
-        # On host: check container runtime available
-        return container_runtime_exists()
-
-def _execute_command(self, cmd: List[str], **kwargs):
-    """Route execution: direct or container-delegated"""
-    if self._is_running_in_container():
-        # Direct execution inside container
-        return subprocess.run(cmd, **kwargs)
-    else:
-        # Container-delegated execution from host
-        container_cmd = self._build_container_command(cmd)
-        return subprocess.run(container_cmd, **kwargs)
-```
+See [docs/SOURCES.md](docs/SOURCES.md) for authoritative source references.
 
 ## MCP Server Integration
 
@@ -269,11 +231,13 @@ huskycat mcp-server
 claude mcp add huskycat -- huskycat mcp-server
 ```
 
-**MCP Tools Exposed** (28 total):
+**MCP Tools Exposed** (28+ tools, context-dependent):
 - `validate` - Validate files/directories
 - `validate_staged` - Validate git staged files
 - `validate_black`, `validate_mypy`, etc. - Individual tool validators
 - `juggler_*` - Git identity tools (when RemoteJuggler available)
+
+See [docs/SOURCES.md](docs/SOURCES.md) for tool count breakdown.
 
 ### Global MCP Ecosystem (from crush-dots)
 
@@ -337,7 +301,7 @@ mcp:
 - Pre-commit: Detects expected identity and warns on mismatch
 - Pre-push: Validates GPG signing and credentials
 
-**Total MCP Tools**: 28 (22 HuskyCat + 6 RemoteJuggler)
+**Total MCP Tools**: 28+ (varies by configuration and integrations)
 
 ## Repository Standards
 
