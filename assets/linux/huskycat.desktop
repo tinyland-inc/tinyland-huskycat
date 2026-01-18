@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: Apache-2.0
+# HuskyCat Desktop Entry for Linux
+# Install to: /usr/share/applications/ or ~/.local/share/applications/
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=HuskyCat
+GenericName=Code Validator
+Comment=Universal Code Validation Platform with MCP Integration
+Exec=huskycat status
+Icon=huskycat
+Categories=Development;IDE;Utility;
+Terminal=false
+StartupNotify=true
+Keywords=validation;linting;git;hooks;code;quality;mcp;claude;
+
+# Actions for right-click menu
+Actions=Validate;ValidateStaged;Status;
+
+[Desktop Action Validate]
+Name=Validate Current Directory
+Exec=huskycat validate --all
+Icon=huskycat
+
+[Desktop Action ValidateStaged]
+Name=Validate Staged Files
+Exec=huskycat validate --staged
+Icon=huskycat
+
+[Desktop Action Status]
+Name=Show Status
+Exec=huskycat status
+Icon=huskycat

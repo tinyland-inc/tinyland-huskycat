@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: Apache-2.0
+# Systemd user service for HuskyCat tray application
+# Install to: ~/.config/systemd/user/
+
+[Unit]
+Description=HuskyCat Tray Application
+Documentation=https://tinyland.gitlab.io/ai/huskycat
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/huskycat-tray
+Restart=on-failure
+RestartSec=5
+
+# Environment
+Environment="DISPLAY=:0"
+Environment="HUSKYCAT_MODE=tray"
+
+[Install]
+WantedBy=default.target

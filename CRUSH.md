@@ -76,11 +76,11 @@ git push --no-verify
 # Build fat binary (with embedded tools)
 npm run build:binary
 npm run build:fat
-uv run python build_binary.py
+uv run python scripts/build_fat_binary.py
 
 # Build for all platforms
 npm run build:fat:all
-uv run python build_fat_binary.py --all-platforms
+uv run python scripts/build_fat_binary.py --all-platforms
 
 # Download embedded tools
 npm run tools:download

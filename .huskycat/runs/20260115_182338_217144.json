@@ -1,0 +1,23 @@
+{
+  "run_id": "20260115_182338_217144",
+  "started": "2026-01-15T18:23:38.220721",
+  "completed": "2026-01-15T18:23:38.220733",
+  "files": [
+    "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py"
+  ],
+  "success": false,
+  "tools_run": [
+    "ruff",
+    "flake8",
+    "mypy",
+    "autoflake",
+    "isort",
+    "bandit"
+  ],
+  "errors": 15,
+  "warnings": 0,
+  "error_details": [],
+  "warning_details": [],
+  "exit_code": 1,
+  "pid": null
+}

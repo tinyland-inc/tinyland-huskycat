@@ -1,0 +1,2411 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Universal Code Validation Platform">
+      
+      
+      
+        <link rel="canonical" href="https://huskycat-570fbd.gitlab.io/proposals/auto-format-comprehensive-review/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Comprehensive Auto-Format and Linting Review - HuskyCat Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#comprehensive-auto-format-and-linting-review" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HuskyCat Documentation" class="md-header__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HuskyCat Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Comprehensive Auto-Format and Linting Review
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../features/mcp-server/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/product-modes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ci-cd/gitlab/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  CI/CD Integration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../dogfooding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../performance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/mcp-tools/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../troubleshooting/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Troubleshooting
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HuskyCat Documentation" class="md-nav__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    HuskyCat Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../binary-downloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Binary Downloads
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Features
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nonblocking-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/product-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/execution-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            CI/CD Integration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ci-cd/gitlab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitHub Actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dogfooding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dogfooding Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parallel_executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Performance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migration/to-nonblocking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../macos-code-signing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    macOS Code Signing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/mcp-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="comprehensive-auto-format-and-linting-review">Comprehensive Auto-Format and Linting Review<a class="headerlink" href="#comprehensive-auto-format-and-linting-review" title="Permanent link">&para;</a></h1>
+<p><strong>Date</strong>: December 5, 2025
+<strong>Status</strong>: 🔍 RESEARCH COMPLETE
+<strong>Version</strong>: 1.0.0</p>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p>This document provides a comprehensive review of HuskyCat's auto-formatting and auto-fixing capabilities across all supported and requested languages. The review identifies significant gaps in language support and incomplete implementation of existing formatters.</p>
+<h3 id="key-findings">Key Findings<a class="headerlink" href="#key-findings" title="Permanent link">&para;</a></h3>
+<p><strong>Working</strong>: Black (Python), Autoflake (Python), YAMLLint (limited)
+ <strong>Partially Implemented</strong>: ESLint, Prettier, Ruff
+ <strong>Missing</strong>: IsSort, TOML formatters, Terraform, Chapel language
+ <strong>Critical Gap</strong>: Whitespace cleanup not universally implemented</p>
+<hr />
+<h2 id="language-support-matrix">Language Support Matrix<a class="headerlink" href="#language-support-matrix" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Language</th>
+<th>Validation</th>
+<th>Auto-Fix</th>
+<th>Whitespace Cleanup</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Python</strong></td>
+<td>Full</td>
+<td>🟡 Partial</td>
+<td>🟡 Partial</td>
+<td>Needs Ruff fix, IsSort</td>
+</tr>
+<tr>
+<td><strong>JavaScript/TypeScript</strong></td>
+<td>Full</td>
+<td>🟡 Partial</td>
+<td>Missing</td>
+<td>Prettier not enabled</td>
+</tr>
+<tr>
+<td><strong>YAML</strong></td>
+<td>Full</td>
+<td>🟡 Limited</td>
+<td>Complete</td>
+<td>Only whitespace fixes</td>
+</tr>
+<tr>
+<td><strong>TOML</strong></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td><strong>MISSING</strong></td>
+</tr>
+<tr>
+<td><strong>Terraform</strong></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td><strong>MISSING</strong></td>
+</tr>
+<tr>
+<td><strong>Chapel</strong></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td><strong>MISSING</strong></td>
+</tr>
+<tr>
+<td><strong>Shell Scripts</strong></td>
+<td>Full</td>
+<td>None</td>
+<td>None</td>
+<td>Report-only</td>
+</tr>
+<tr>
+<td><strong>Docker</strong></td>
+<td>Full</td>
+<td>None</td>
+<td>None</td>
+<td>Report-only</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="current-implementation-analysis">Current Implementation Analysis<a class="headerlink" href="#current-implementation-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="1-python-auto-formatting">1. Python Auto-Formatting<a class="headerlink" href="#1-python-auto-formatting" title="Permanent link">&para;</a></h3>
+<h4 id="working-tools">Working Tools<a class="headerlink" href="#working-tools" title="Permanent link">&para;</a></h4>
+<p><strong>Black</strong> (<code>src/huskycat/core/validators/python.py:87-149</code>)
+- <strong>Confidence</strong>: SAFE
+- <strong>Auto-fix mechanism</strong>: Removes <code>--check</code> flag, applies formatting directly
+- <strong>Whitespace</strong>: Comprehensive (trailing, indentation, line length)
+- <strong>Extensions</strong>: <code>.py</code>, <code>.pyi</code>
+- <strong>Status</strong>:  Complete</p>
+<p><strong>Autoflake</strong> (<code>src/huskycat/core/validators/python.py:152-231</code>)
+- <strong>Confidence</strong>: LIKELY
+- <strong>Auto-fix mechanism</strong>: Two-phase (check, then <code>--in-place</code>)
+- <strong>Fixes</strong>: Unused imports, unused variables
+- <strong>Extensions</strong>: <code>.py</code>, <code>.pyi</code>
+- <strong>Status</strong>:  Complete</p>
+<h4 id="incomplete-tools">Incomplete Tools<a class="headerlink" href="#incomplete-tools" title="Permanent link">&para;</a></h4>
+<p><strong>Ruff</strong> (<code>src/huskycat/core/validators/python.py:450-510</code>)
+- <strong>Confidence</strong>: LIKELY (configured in <code>base.py:48</code>)
+- <strong>Current implementation</strong>: JSON output with <code>ruff check</code> only
+- <strong>Missing</strong>: Does NOT use <code>ruff check --fix</code> even when <code>auto_fix=True</code>
+- <strong>Impact</strong>: HIGH - Ruff can fix 100+ rule violations automatically
+- <strong>Configuration</strong>: <code>pyproject.toml:227</code> shows <code>fixable = ["ALL"]</code>
+- <strong>Status</strong>:  Incomplete - Fix capability exists but not used</p>
+<h4 id="missing-tools">Missing Tools<a class="headerlink" href="#missing-tools" title="Permanent link">&para;</a></h4>
+<p><strong>IsSort</strong> (Import sorting)
+- <strong>Configuration exists</strong>: <code>pyproject.toml:123-130</code>
+- <strong>Validator</strong>: Does NOT exist in codebase
+- <strong>Confidence</strong>: SAFE (formatting-only)
+- <strong>Impact</strong>: MEDIUM - Import organization improves readability
+- <strong>Status</strong>:  Missing validator implementation</p>
+<h3 id="2-javascripttypescript-auto-formatting">2. JavaScript/TypeScript Auto-Formatting<a class="headerlink" href="#2-javascripttypescript-auto-formatting" title="Permanent link">&para;</a></h3>
+<h4 id="partially-working">🟡 Partially Working<a class="headerlink" href="#partially-working" title="Permanent link">&para;</a></h4>
+<p><strong>ESLint</strong> (<code>src/huskycat/core/validators/javascript.py:600-662</code>)
+- <strong>Confidence</strong>: LIKELY
+- <strong>Auto-fix mechanism</strong>: Inserts <code>--fix</code> flag (line 605)
+- <strong>Extensions</strong>: <code>.js</code>, <code>.jsx</code>, <code>.ts</code>, <code>.tsx</code>, <code>.mjs</code>, <code>.cjs</code>
+- <strong>Status</strong>: 🟡 Partial - Fix enabled but status tracking unclear
+- <strong>Whitespace</strong>: Depends on ESLint rules configured</p>
+<p><strong>Prettier</strong> (<code>src/huskycat/core/validators/javascript.py:664-719</code>)
+- <strong>Confidence</strong>: SAFE (configured in <code>base.py:49</code>)
+- <strong>Current implementation</strong>: Uses <code>--check</code> flag only
+- <strong>Missing</strong>: No <code>--write</code> mode for auto-fix
+- <strong>Extensions</strong>: <code>.js</code>, <code>.jsx</code>, <code>.ts</code>, <code>.tsx</code>, <code>.json</code>, <code>.css</code>, <code>.scss</code>, <code>.html</code>, <code>.md</code>
+- <strong>Impact</strong>: HIGH - Prettier is the standard formatter for JS/TS
+- <strong>Whitespace</strong>: Comprehensive (when enabled)
+- <strong>Status</strong>:  Incomplete - Check-only, no fix</p>
+<h3 id="3-yaml-auto-formatting">3. YAML Auto-Formatting<a class="headerlink" href="#3-yaml-auto-formatting" title="Permanent link">&para;</a></h3>
+<p><strong>YAMLLint</strong> (<code>src/huskycat/core/validators/yaml.py:736-770</code>)
+- <strong>Confidence</strong>: SAFE
+- <strong>Auto-fix mechanism</strong>: Custom <code>_auto_fix_yaml()</code> method
+- <strong>Fixes implemented</strong>:
+  - Trailing whitespace removal: 
+  - Ensures file ends with newline: 
+  - Indentation:  Not implemented
+  - Line length:  Not implemented
+- <strong>Extensions</strong>: <code>.yaml</code>, <code>.yml</code>
+- <strong>Status</strong>: 🟡 Partial - Only whitespace, not full formatting</p>
+<h3 id="4-toml-formatting">4. TOML Formatting<a class="headerlink" href="#4-toml-formatting" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>:  Completely missing</p>
+<p><strong>No validator exists for:</strong>
+- <code>.toml</code> file validation
+- <code>pyproject.toml</code> formatting
+- <code>Cargo.toml</code> formatting</p>
+<p><strong>Recommended tools</strong>:
+1. <strong>taplo</strong> - Rust-based TOML formatter
+   - Fast, comprehensive
+   - Supports auto-fix
+   - Confidence: SAFE (formatting-only)
+2. <strong>Prettier TOML plugin</strong>
+   - Integrates with existing Prettier
+   - Node.js based</p>
+<p><strong>Current situation</strong>:
+- Container: taplo NOT installed
+- Prettier TOML plugin: NOT installed
+- No configuration in <code>pyproject.toml</code> or <code>.huskycat.yaml</code></p>
+<h3 id="5-terraform-formatting">5. Terraform Formatting<a class="headerlink" href="#5-terraform-formatting" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>:  Completely missing</p>
+<p><strong>No validator exists for:</strong>
+- <code>.tf</code> file validation
+- <code>terraform fmt</code> integration
+- <code>terraform validate</code> checks</p>
+<p><strong>Recommended tools</strong>:
+1. <strong>terraform fmt</strong> - Official formatter
+   - Safe, deterministic
+   - Confidence: SAFE
+2. <strong>tflint</strong> - Terraform linter
+   - Additional validation beyond fmt
+   - Can detect errors terraform fmt won't catch</p>
+<p><strong>Current situation</strong>:
+- Container: terraform NOT installed
+- No <code>.tf</code> file handling</p>
+<h3 id="6-chapel-language-formatting">6. Chapel Language Formatting<a class="headerlink" href="#6-chapel-language-formatting" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>:  Completely missing</p>
+<p><strong>No validator exists for:</strong>
+- <code>.chpl</code> file validation
+- Chapel compiler integration
+- Chapel formatting</p>
+<p><strong>Chapel language details</strong>:
+- Version requested: Chapel 2.6+
+- Official formatter: <code>chplfmt</code> (if available)
+- Chapel compiler: <code>chpl</code></p>
+<p><strong>Research needed</strong>:
+1. Does Chapel 2.6+ have an official formatter?
+2. What linting tools exist for Chapel?
+3. Is Chapel available in Alpine Linux packages?</p>
+<p><strong>Current situation</strong>:
+- Container: Chapel NOT installed
+- No <code>.chpl</code> file handling
+- No Chapel documentation</p>
+<hr />
+<h2 id="fix-confidence-framework">Fix Confidence Framework<a class="headerlink" href="#fix-confidence-framework" title="Permanent link">&para;</a></h2>
+<h3 id="current-tiers-srchuskycatcoreadaptersbasepy27-51">Current Tiers (<code>src/huskycat/core/adapters/base.py:27-51</code>)<a class="headerlink" href="#current-tiers-srchuskycatcoreadaptersbasepy27-51" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">FixConfidence</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">SAFE</span> <span class="o">=</span> <span class="s2">&quot;safe&quot;</span>           <span class="c1"># Formatting-only, always apply</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">LIKELY</span> <span class="o">=</span> <span class="s2">&quot;likely&quot;</span>       <span class="c1"># Style fixes, usually safe</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">UNCERTAIN</span> <span class="o">=</span> <span class="s2">&quot;uncertain&quot;</span> <span class="c1"># Semantic changes, needs review</span>
+</code></pre></div>
+<h3 id="tool-confidence-mapping">Tool Confidence Mapping<a class="headerlink" href="#tool-confidence-mapping" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">TOOL_FIX_CONFIDENCE</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="s2">&quot;python-black&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span>      <span class="c1">#  Implemented</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="s2">&quot;js-prettier&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span>       <span class="c1">#  Not used for fixing</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">&quot;autoflake&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">LIKELY</span><span class="p">,</span>       <span class="c1">#  Implemented</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="s2">&quot;ruff&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">LIKELY</span><span class="p">,</span>            <span class="c1">#  Not used for fixing</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="s2">&quot;yamllint&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span>          <span class="c1"># 🟡 Limited fixes</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="s2">&quot;js-eslint&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">LIKELY</span><span class="p">,</span>       <span class="c1"># 🟡 Status unclear</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="proposed-additions">Proposed Additions<a class="headerlink" href="#proposed-additions" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">TOOL_FIX_CONFIDENCE</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="c1"># ... existing ...</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="s2">&quot;isort&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span>        <span class="c1"># Import sorting</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="s2">&quot;taplo&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span>        <span class="c1"># TOML formatting</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="s2">&quot;terraform-fmt&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span> <span class="c1"># Terraform formatting</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="s2">&quot;chplfmt&quot;</span><span class="p">:</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span>      <span class="c1"># Chapel formatting (if exists)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="whitespace-cleanup-analysis">Whitespace Cleanup Analysis<a class="headerlink" href="#whitespace-cleanup-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="user-requirement">User Requirement<a class="headerlink" href="#user-requirement" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>"automatically remove whitespace, clear up / fail fast on whitespace related formatting"</p>
+</blockquote>
+<h3 id="current-whitespace-handling">Current Whitespace Handling<a class="headerlink" href="#current-whitespace-handling" title="Permanent link">&para;</a></h3>
+<h4 id="complete-whitespace-cleanup">Complete Whitespace Cleanup<a class="headerlink" href="#complete-whitespace-cleanup" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Black (Python)</strong>:</li>
+<li>Trailing whitespace:  Removed</li>
+<li>Line endings:  Normalized to LF</li>
+<li>Final newline:  Ensured</li>
+<li>
+<p>Indentation:  Spaces (configurable)</p>
+</li>
+<li>
+<p><strong>YAMLLint</strong>:</p>
+</li>
+<li>Trailing whitespace:  Removed (line 759)</li>
+<li>Final newline:  Ensured (line 761)</li>
+<li>Indentation:  Only validates, doesn't fix</li>
+</ol>
+<h4 id="no-whitespace-cleanup">No Whitespace Cleanup<a class="headerlink" href="#no-whitespace-cleanup" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Prettier</strong>: Not enabled for auto-fix (would handle all JS/TS/JSON/Markdown)</li>
+<li><strong>TOML</strong>: No formatter at all</li>
+<li><strong>Terraform</strong>: No formatter at all</li>
+<li><strong>Chapel</strong>: No formatter at all</li>
+</ol>
+<h3 id="whitespace-issues-by-file-type">Whitespace Issues by File Type<a class="headerlink" href="#whitespace-issues-by-file-type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>File Type</th>
+<th>Trailing Whitespace</th>
+<th>Final Newline</th>
+<th>Indentation</th>
+<th>Line Endings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.py</code></td>
+<td>Black</td>
+<td>Black</td>
+<td>Black</td>
+<td>Black</td>
+</tr>
+<tr>
+<td><code>.js/.ts</code></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>.yaml</code></td>
+<td>YAMLLint</td>
+<td>YAMLLint</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>.toml</code></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>.tf</code></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>.chpl</code></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>.md</code></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>.json</code></td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="git-hook-integration">Git Hook Integration<a class="headerlink" href="#git-hook-integration" title="Permanent link">&para;</a></h2>
+<h3 id="current-pre-commit-hook-scriptspre-commit-hooksh">Current Pre-Commit Hook (<code>scripts/pre-commit-hook.sh</code>)<a class="headerlink" href="#current-pre-commit-hook-scriptspre-commit-hooksh" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Current implementation validates but doesn&#39;t auto-fix by default</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--staged
+</code></pre></div>
+<h3 id="desired-workflow">Desired Workflow<a class="headerlink" href="#desired-workflow" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Auto-fix SAFE changes, prompt for LIKELY changes</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--staged<span class="w"> </span>--fix<span class="w"> </span>--interactive
+</code></pre></div>
+<h3 id="cicd-auto-fix-workflow">CI/CD Auto-Fix Workflow<a class="headerlink" href="#cicd-auto-fix-workflow" title="Permanent link">&para;</a></h3>
+<p><strong>Publishing bot / agent CI job requirements</strong>:
+1. Auto-fix all SAFE changes without prompting
+2. Report LIKELY/UNCERTAIN changes without applying
+3. Exit with error if unfixable issues remain</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># CI mode: fix SAFE only, report others</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w"> </span>--safe-only<span class="w"> </span>--mode<span class="w"> </span>ci
+</code></pre></div>
+<hr />
+<h2 id="container-toolchain-gaps">Container Toolchain Gaps<a class="headerlink" href="#container-toolchain-gaps" title="Permanent link">&para;</a></h2>
+<h3 id="current-container-tools-containerfile">Current Container Tools (<code>ContainerFile</code>)<a class="headerlink" href="#current-container-tools-containerfile" title="Permanent link">&para;</a></h3>
+<p><strong>Installed Python tools</strong>:
+- black 
+- flake8 
+- autoflake 
+- mypy 
+- pylint 
+- bandit 
+- ruff 
+- yamllint </p>
+<p><strong>Installed JavaScript tools</strong>:
+- eslint 
+- prettier 
+- typescript </p>
+<p><strong>Installed shell/docker tools</strong>:
+- shellcheck 
+- hadolint </p>
+<h3 id="missing-tools-for-full-support">Missing Tools for Full Support<a class="headerlink" href="#missing-tools-for-full-support" title="Permanent link">&para;</a></h3>
+<p><strong>Required additions</strong>:
+1. <strong>isort</strong> - Python import sorting
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">RUN</span><span class="w"> </span>pip3<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>--break-system-packages<span class="w"> </span>isort
+</code></pre></div></p>
+<ol>
+<li>
+<p><strong>taplo</strong> - TOML formatting
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">RUN</span><span class="w"> </span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://github.com/tamasfe/taplo/releases/latest/download/taplo-linux-x86_64.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span>gunzip<span class="w"> </span>&gt;<span class="w"> </span>/usr/local/bin/taplo<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/taplo
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>terraform</strong> - Terraform validation and formatting
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">RUN</span><span class="w"> </span>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span>terraform
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Chapel compiler</strong> - Chapel language support
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c"># Research: Chapel installation for Alpine Linux</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c"># May require building from source or using different base image</span>
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="gap-analysis-summary">Gap Analysis Summary<a class="headerlink" href="#gap-analysis-summary" title="Permanent link">&para;</a></h2>
+<h3 id="critical-gaps-blocking-auto-format-workflow">Critical Gaps (Blocking auto-format workflow)<a class="headerlink" href="#critical-gaps-blocking-auto-format-workflow" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Prettier auto-fix not enabled</strong></li>
+<li>Impact: HIGH</li>
+<li>Effort: LOW</li>
+<li>Priority: 🔴 Critical</li>
+<li>
+<p>Blocks: JavaScript, TypeScript, JSON, Markdown whitespace cleanup</p>
+</li>
+<li>
+<p><strong>Ruff auto-fix not enabled</strong></p>
+</li>
+<li>Impact: HIGH</li>
+<li>Effort: LOW</li>
+<li>Priority: 🔴 Critical</li>
+<li>
+<p>Blocks: 100+ Python style fixes</p>
+</li>
+<li>
+<p><strong>IsSort not implemented</strong></p>
+</li>
+<li>Impact: MEDIUM</li>
+<li>Effort: MEDIUM</li>
+<li>Priority: 🟡 High</li>
+<li>Blocks: Python import organization</li>
+</ol>
+<h3 id="missing-language-support">Missing Language Support<a class="headerlink" href="#missing-language-support" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>TOML formatting</strong></li>
+<li>Impact: MEDIUM</li>
+<li>Effort: MEDIUM</li>
+<li>Priority: 🟡 High</li>
+<li>
+<p>Required for: pyproject.toml, Cargo.toml, config files</p>
+</li>
+<li>
+<p><strong>Terraform formatting</strong></p>
+</li>
+<li>Impact: MEDIUM</li>
+<li>Effort: MEDIUM</li>
+<li>Priority: 🟡 High</li>
+<li>
+<p>Required for: .tf infrastructure files</p>
+</li>
+<li>
+<p><strong>Chapel language support</strong></p>
+</li>
+<li>Impact: LOW (niche language)</li>
+<li>Effort: HIGH (research needed)</li>
+<li>Priority: 🟢 Future</li>
+<li>Required for: .chpl files</li>
+</ol>
+<h3 id="incomplete-features">Incomplete Features<a class="headerlink" href="#incomplete-features" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>YAML full formatting</strong></li>
+<li>Current: Only whitespace fixes</li>
+<li>Missing: Indentation, line length, key ordering</li>
+<li>
+<p>Priority: 🟢 Nice-to-have</p>
+</li>
+<li>
+<p><strong>Dry-run preview mode</strong></p>
+</li>
+<li>Current: Flag exists but no diff output</li>
+<li>Missing: Show what would be changed</li>
+<li>Priority: 🟢 Nice-to-have</li>
+</ol>
+<hr />
+<h2 id="proposed-implementation-plan">Proposed Implementation Plan<a class="headerlink" href="#proposed-implementation-plan" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-fix-existing-tools-sprint-8a">Phase 1: Fix Existing Tools (Sprint 8A)<a class="headerlink" href="#phase-1-fix-existing-tools-sprint-8a" title="Permanent link">&para;</a></h3>
+<p><strong>Goal</strong>: Enable auto-fix for already-installed tools</p>
+<p><strong>Tasks</strong>:
+1. <strong>Enable Ruff auto-fix</strong> (<code>src/huskycat/core/validators/python.py</code>)
+   - Add <code>ruff check --fix</code> support
+   - Handle <code>--fix</code> flag in validator
+   - Update <code>fixable_tools</code> list</p>
+<ol>
+<li><strong>Enable Prettier auto-fix</strong> (<code>src/huskycat/core/validators/javascript.py</code>)</li>
+<li>Replace <code>--check</code> with <code>--write</code> when <code>auto_fix=True</code></li>
+<li>Update confidence mapping</li>
+<li>
+<p>Add to <code>fixable_tools</code> list</p>
+</li>
+<li>
+<p><strong>Verify ESLint auto-fix</strong> (<code>src/huskycat/core/validators/javascript.py</code>)</p>
+</li>
+<li>Test fix status tracking</li>
+<li>Ensure <code>fixed</code> property correctly set</li>
+</ol>
+<p><strong>Acceptance Criteria</strong>:
+- <code>huskycat validate --fix</code> applies Ruff fixes to Python
+- <code>huskycat validate --fix</code> applies Prettier fixes to JS/TS/JSON
+- All existing tests pass
+- Container toolchain unchanged (already installed)</p>
+<p><strong>Files Changed</strong>:
+- <code>src/huskycat/core/validators/python.py</code> (Ruff validator)
+- <code>src/huskycat/core/validators/javascript.py</code> (Prettier validator)
+- <code>src/huskycat/unified_validation.py</code> (fixable_tools list)</p>
+<p><strong>Testing</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Create test files with fixable issues</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;x=1&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>test.py<span class="w">  </span><span class="c1"># Missing spaces around =</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;const x  =  1&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>test.js<span class="w">  </span><span class="c1"># Extra spaces</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># Run auto-fix</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w"> </span>test.py<span class="w"> </span>test.js
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c1"># Verify fixes applied</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>cat<span class="w"> </span>test.py<span class="w">  </span><span class="c1"># Should show &quot;x = 1&quot;</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>cat<span class="w"> </span>test.js<span class="w">  </span><span class="c1"># Should show &quot;const x = 1;&quot;</span>
+</code></pre></div></p>
+<hr />
+<h3 id="phase-2-add-python-import-sorting-sprint-8b">Phase 2: Add Python Import Sorting (Sprint 8B)<a class="headerlink" href="#phase-2-add-python-import-sorting-sprint-8b" title="Permanent link">&para;</a></h3>
+<p><strong>Goal</strong>: Implement IsSort validator for Python import organization</p>
+<p><strong>Tasks</strong>:
+1. <strong>Add IsSort to container</strong> (<code>ContainerFile</code>)
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">RUN</span><span class="w"> </span>pip3<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>--break-system-packages<span class="w"> </span>isort
+</code></pre></div></p>
+<ol>
+<li><strong>Create IsortValidator</strong> (<code>src/huskycat/core/validators/python.py</code>)</li>
+<li>Implement check phase: <code>isort --check-only --diff</code></li>
+<li>Implement fix phase: <code>isort</code></li>
+<li>Confidence: SAFE</li>
+<li>
+<p>Extensions: <code>.py</code>, <code>.pyi</code></p>
+</li>
+<li>
+<p><strong>Update configuration</strong></p>
+</li>
+<li>Add to <code>.huskycat.yaml</code> Python tools</li>
+<li>
+<p>IsSort already configured in <code>pyproject.toml:123-130</code></p>
+</li>
+<li>
+<p><strong>Update documentation</strong></p>
+</li>
+<li>Add to CLI reference</li>
+<li>Add to MCP tools</li>
+</ol>
+<p><strong>Acceptance Criteria</strong>:
+- <code>huskycat validate</code> detects import order issues
+- <code>huskycat validate --fix</code> sorts imports correctly
+- IsSort respects <code>pyproject.toml</code> configuration
+- Container includes isort binary</p>
+<p><strong>Files Changed</strong>:
+- <code>ContainerFile</code> (add isort)
+- <code>src/huskycat/core/validators/python.py</code> (new IsortValidator class)
+- <code>.huskycat.yaml</code> (add isort to Python tools)
+- <code>docs/cli-reference.md</code> (document isort)</p>
+<p><strong>Testing</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># test_imports.py - unsorted imports</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1"># After isort --fix:</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</code></pre></div></p>
+<hr />
+<h3 id="phase-3-add-toml-formatting-sprint-8c">Phase 3: Add TOML Formatting (Sprint 8C)<a class="headerlink" href="#phase-3-add-toml-formatting-sprint-8c" title="Permanent link">&para;</a></h3>
+<p><strong>Goal</strong>: Add TOML validation and formatting support</p>
+<p><strong>Tasks</strong>:
+1. <strong>Add taplo to container</strong> (<code>ContainerFile</code>)
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c"># Install taplo (TOML formatter)</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">RUN</span><span class="w"> </span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://github.com/tamasfe/taplo/releases/latest/download/taplo-linux-x86_64.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span>gunzip<span class="w"> </span>&gt;<span class="w"> </span>/usr/local/bin/taplo<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span>chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/taplo
+</code></pre></div></p>
+<ol>
+<li><strong>Create TaploValidator</strong> (<code>src/huskycat/core/validators/toml.py</code> - NEW FILE)</li>
+<li>Implement check: <code>taplo format --check</code></li>
+<li>Implement fix: <code>taplo format</code></li>
+<li>Confidence: SAFE</li>
+<li>
+<p>Extensions: <code>.toml</code></p>
+</li>
+<li>
+<p><strong>Update configuration</strong></p>
+</li>
+<li>Add TOML section to <code>.huskycat.yaml</code></li>
+<li>
+<p>Configure taplo options if needed</p>
+</li>
+<li>
+<p><strong>Update documentation</strong></p>
+</li>
+<li>Add TOML to supported languages</li>
+<li>Document taplo options</li>
+</ol>
+<p><strong>Acceptance Criteria</strong>:
+- <code>huskycat validate pyproject.toml</code> detects formatting issues
+- <code>huskycat validate --fix pyproject.toml</code> formats correctly
+- Whitespace cleanup: trailing spaces, final newline
+- Container includes taplo binary</p>
+<p><strong>Files Created</strong>:
+- <code>src/huskycat/core/validators/toml.py</code> (new)</p>
+<p><strong>Files Changed</strong>:
+- <code>ContainerFile</code> (add taplo)
+- <code>src/huskycat/core/validators/__init__.py</code> (export TaploValidator)
+- <code>.huskycat.yaml</code> (add TOML section)
+- <code>docs/cli-reference.md</code> (add TOML)</p>
+<p><strong>Testing</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># test.toml - bad formatting</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">[package]</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">name</span><span class="o">=</span><span class="s2">&quot;mypackage&quot;</span><span class="w">  </span><span class="c1"># Missing space</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">version</span><span class="w">   </span><span class="o">=</span><span class="w">   </span><span class="s2">&quot;1.0.0&quot;</span><span class="w">  </span><span class="c1"># Extra spaces</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="c1"># After taplo format:</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="k">[package]</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;mypackage&quot;</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1.0.0&quot;</span>
+</code></pre></div></p>
+<hr />
+<h3 id="phase-4-add-terraform-support-sprint-8d">Phase 4: Add Terraform Support (Sprint 8D)<a class="headerlink" href="#phase-4-add-terraform-support-sprint-8d" title="Permanent link">&para;</a></h3>
+<p><strong>Goal</strong>: Add Terraform validation and formatting</p>
+<p><strong>Tasks</strong>:
+1. <strong>Add terraform to container</strong> (<code>ContainerFile</code>)
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c"># Install Terraform</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">RUN</span><span class="w"> </span>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span>terraform
+</code></pre></div></p>
+<ol>
+<li><strong>Create TerraformValidator</strong> (<code>src/huskycat/core/validators/terraform.py</code> - NEW FILE)</li>
+<li>Implement check: <code>terraform fmt -check -diff</code></li>
+<li>Implement fix: <code>terraform fmt</code></li>
+<li>Optional: <code>terraform validate</code> for syntax</li>
+<li>Confidence: SAFE (fmt), LIKELY (validate)</li>
+<li>
+<p>Extensions: <code>.tf</code>, <code>.tfvars</code></p>
+</li>
+<li>
+<p><strong>Update configuration</strong></p>
+</li>
+<li>
+<p>Add Terraform section to <code>.huskycat.yaml</code></p>
+</li>
+<li>
+<p><strong>Update documentation</strong></p>
+</li>
+<li>Add Terraform to supported languages</li>
+</ol>
+<p><strong>Acceptance Criteria</strong>:
+- <code>huskycat validate *.tf</code> detects formatting issues
+- <code>huskycat validate --fix *.tf</code> applies terraform fmt
+- Container includes terraform binary</p>
+<p><strong>Files Created</strong>:
+- <code>src/huskycat/core/validators/terraform.py</code> (new)</p>
+<p><strong>Files Changed</strong>:
+- <code>ContainerFile</code> (add terraform)
+- <code>src/huskycat/core/validators/__init__.py</code> (export TerraformValidator)
+- <code>.huskycat.yaml</code> (add Terraform section)
+- <code>docs/cli-reference.md</code> (add Terraform)</p>
+<p><strong>Testing</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># test.tf - bad formatting</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_instance&quot;</span><span class="w"> </span><span class="nv">&quot;example&quot;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="na">ami</span><span class="o">=</span><span class="s2">&quot;ami-12345&quot;</span><span class="c1">  # Missing space</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="na">instance_type</span><span class="w">    </span><span class="o">=</span><span class="w">    </span><span class="s2">&quot;t2.micro&quot;</span><span class="c1">  # Extra spaces</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="p">}</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="c1"># After terraform fmt:</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_instance&quot;</span><span class="w"> </span><span class="nv">&quot;example&quot;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">  </span><span class="na">ami</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ami-12345&quot;</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">  </span><span class="na">instance_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;t2.micro&quot;</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h3 id="phase-5-chapel-language-support-sprint-9-future">Phase 5: Chapel Language Support (Sprint 9 - Future)<a class="headerlink" href="#phase-5-chapel-language-support-sprint-9-future" title="Permanent link">&para;</a></h3>
+<p><strong>Goal</strong>: Research and implement Chapel language support</p>
+<p><strong>Status</strong>: 🔬 Research required</p>
+<p><strong>Research Questions</strong>:
+1. Does Chapel 2.6+ include an official formatter?
+2. What linting tools exist for Chapel?
+3. How to install Chapel in Alpine Linux container?
+4. Chapel compiler size/performance impact?</p>
+<p><strong>Preliminary Tasks</strong>:
+1. <strong>Research Chapel tooling</strong>
+   - Check Chapel 2.6+ documentation
+   - Identify <code>chplfmt</code> or equivalent
+   - Chapel Language Server Protocol (LSP) support?</p>
+<ol>
+<li><strong>Evaluate installation options</strong></li>
+<li>Option A: Alpine package (if exists)</li>
+<li>Option B: Build from source</li>
+<li>
+<p>Option C: Different base image (Ubuntu has Chapel packages)</p>
+</li>
+<li>
+<p><strong>Prototype Chapel validator</strong></p>
+</li>
+<li>If formatter exists, create ChapelValidator</li>
+<li>Extensions: <code>.chpl</code></li>
+<li>Confidence: TBD based on formatter behavior</li>
+</ol>
+<p><strong>Acceptance Criteria</strong> (if implemented):
+- Container includes Chapel compiler/formatter
+- <code>huskycat validate *.chpl</code> validates Chapel files
+- <code>huskycat validate --fix *.chpl</code> formats Chapel code</p>
+<p><strong>Blocking Issues</strong>:
+- Chapel tooling maturity unknown
+- Container size impact (Chapel compiler may be large)
+- Alpine Linux support unclear</p>
+<p><strong>Recommendation</strong>: Defer to Sprint 9 after Phase 1-4 complete</p>
+<hr />
+<h2 id="whitespace-cleanup-implementation">Whitespace Cleanup Implementation<a class="headerlink" href="#whitespace-cleanup-implementation" title="Permanent link">&para;</a></h2>
+<h3 id="universal-whitespace-fixer">Universal Whitespace Fixer<a class="headerlink" href="#universal-whitespace-fixer" title="Permanent link">&para;</a></h3>
+<p><strong>Location</strong>: <code>src/huskycat/core/validators/whitespace.py</code> (NEW FILE)</p>
+<p><strong>Purpose</strong>: Universal whitespace cleanup for any file type</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">WhitespaceFixer</span><span class="p">(</span><span class="n">AutoFixer</span><span class="p">):</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Universal whitespace cleanup for all file types.&quot;&quot;&quot;</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;whitespace&quot;</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="n">confidence</span> <span class="o">=</span> <span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">can_fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Can fix any text file.&quot;&quot;&quot;</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>        <span class="c1"># Exclude binary files</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_binary</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">FixResult</span><span class="p">]:</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply whitespace fixes.&quot;&quot;&quot;</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>        <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>        <span class="n">fixed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_whitespace</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>        <span class="k">if</span> <span class="n">content</span> <span class="o">!=</span> <span class="n">fixed</span><span class="p">:</span>
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">dry_run</span><span class="p">:</span>
+<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>                <span class="n">file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">fixed</span><span class="p">)</span>
+<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">FixResult</span><span class="p">(</span>
+<a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>                <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+<a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>                <span class="n">original</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+<a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>                <span class="n">fixed</span><span class="o">=</span><span class="n">fixed</span><span class="p">,</span>
+<a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>                <span class="n">confidence</span><span class="o">=</span><span class="n">FixConfidence</span><span class="o">.</span><span class="n">SAFE</span><span class="p">,</span>
+<a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>                <span class="n">tool</span><span class="o">=</span><span class="s2">&quot;whitespace&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Removed trailing whitespace and ensured final newline&quot;</span>
+<a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>            <span class="p">)]</span>
+<a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>        <span class="k">return</span> <span class="p">[]</span>
+<a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>
+<a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_fix_whitespace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Fix whitespace issues.&quot;&quot;&quot;</span>
+<a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>        <span class="n">lines</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+<a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>
+<a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>        <span class="c1"># Remove trailing whitespace from each line</span>
+<a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+<a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>
+<a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>        <span class="c1"># Rejoin with newlines</span>
+<a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>
+<a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>        <span class="c1"># Ensure final newline</span>
+<a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>        <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>            <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+<a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a>
+<a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a>        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+<p><strong>Integration</strong>:
+- Run as FIRST fixer before language-specific formatters
+- Always SAFE confidence (whitespace-only)
+- Applies to ALL file types unless formatter handles it</p>
+<p><strong>Configuration</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># .huskycat.yaml</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nt">tools</span><span class="p">:</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span><span class="nt">whitespace</span><span class="p">:</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="nt">file_patterns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;*&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># All files</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">    </span><span class="nt">exclude_patterns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;*.pyc&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;*.jpg&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;*.png&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Binary files</span>
+</code></pre></div></p>
+<hr />
+<h2 id="cli-flag-design">CLI Flag Design<a class="headerlink" href="#cli-flag-design" title="Permanent link">&para;</a></h2>
+<h3 id="current-flags">Current Flags<a class="headerlink" href="#current-flags" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w">              </span><span class="c1"># Auto-fix with default confidence</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--staged<span class="w"> </span>--fix<span class="w">    </span><span class="c1"># Fix staged files only</span>
+</code></pre></div>
+<h3 id="proposed-additional-flags">Proposed Additional Flags<a class="headerlink" href="#proposed-additional-flags" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Confidence control</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w"> </span>--safe-only<span class="w">        </span><span class="c1"># Only SAFE fixes (black, prettier, whitespace)</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w"> </span>--unsafe<span class="w">           </span><span class="c1"># Include UNCERTAIN fixes (prompts in interactive mode)</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="c1"># Preview mode</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w"> </span>--dry-run<span class="w">          </span><span class="c1"># Show what would be fixed</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w"> </span>--diff<span class="w">             </span><span class="c1"># Show diffs of changes</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c1"># Whitespace-specific</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix-whitespace<span class="w">         </span><span class="c1"># Only fix whitespace (fast, safe)</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--no-fix-whitespace<span class="w">      </span><span class="c1"># Skip whitespace fixes</span>
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="c1"># CI/CD mode</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--fix<span class="w"> </span>--ci-mode<span class="w">          </span><span class="c1"># Fix SAFE only, JSON output, no prompts</span>
+</code></pre></div>
+<h3 id="git-hook-integration_1">Git Hook Integration<a class="headerlink" href="#git-hook-integration_1" title="Permanent link">&para;</a></h3>
+<p><strong>Pre-commit hook with auto-fix</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="ch">#!/usr/bin/env sh</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="c1"># .git/hooks/pre-commit (installed by huskycat setup-hooks --auto-fix)</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--staged<span class="w"> </span>--fix<span class="w"> </span>--safe-only
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="c1"># Exit code: 0 if all fixed or clean, 1 if unfixable issues</span>
+</code></pre></div></p>
+<p><strong>Interactive pre-commit</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="ch">#!/usr/bin/env sh</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1"># .git/hooks/pre-commit (installed by huskycat setup-hooks --interactive)</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>huskycat<span class="w"> </span>validate<span class="w"> </span>--staged<span class="w"> </span>--fix<span class="w"> </span>--interactive
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="c1"># Prompts user for LIKELY fixes, auto-applies SAFE fixes</span>
+</code></pre></div></p>
+<hr />
+<h2 id="testing-strategy">Testing Strategy<a class="headerlink" href="#testing-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="unit-tests-required">Unit Tests Required<a class="headerlink" href="#unit-tests-required" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Ruff auto-fix tests</strong> (<code>tests/test_validators/test_python.py</code>)</li>
+<li>Test Ruff detects fixable issues</li>
+<li>Test <code>--fix</code> applies fixes</li>
+<li>
+<p>Test fixed files pass validation</p>
+</li>
+<li>
+<p><strong>Prettier auto-fix tests</strong> (<code>tests/test_validators/test_javascript.py</code>)</p>
+</li>
+<li>Test Prettier formatting JS/TS</li>
+<li>Test JSON formatting</li>
+<li>
+<p>Test Markdown formatting</p>
+</li>
+<li>
+<p><strong>IsSort tests</strong> (<code>tests/test_validators/test_python.py</code>)</p>
+</li>
+<li>Test import ordering detection</li>
+<li>
+<p>Test import sorting fixes</p>
+</li>
+<li>
+<p><strong>TOML formatting tests</strong> (<code>tests/test_validators/test_toml.py</code> - NEW)</p>
+</li>
+<li>Test taplo formatting</li>
+<li>
+<p>Test pyproject.toml fixes</p>
+</li>
+<li>
+<p><strong>Terraform formatting tests</strong> (<code>tests/test_validators/test_terraform.py</code> - NEW)</p>
+</li>
+<li>Test terraform fmt</li>
+<li>
+<p>Test .tf and .tfvars files</p>
+</li>
+<li>
+<p><strong>Whitespace fixer tests</strong> (<code>tests/test_validators/test_whitespace.py</code> - NEW)</p>
+</li>
+<li>Test trailing whitespace removal</li>
+<li>Test final newline addition</li>
+<li>Test binary file exclusion</li>
+</ol>
+<h3 id="integration-tests">Integration Tests<a class="headerlink" href="#integration-tests" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>End-to-end auto-fix workflow</strong>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Create test repository with issues</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="c1"># Run huskycat validate --fix</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="c1"># Verify all SAFE issues fixed</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Verify LIKELY issues reported</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Git hook integration</strong>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Install hooks with --auto-fix</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="c1"># Create commit with fixable issues</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="c1"># Verify fixes applied before commit</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>CI mode auto-fix</strong>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Run in CI with --fix --ci-mode</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="c1"># Verify JSON output</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="c1"># Verify no prompts</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="c1"># Verify SAFE fixes applied</span>
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="documentation-updates-required">Documentation Updates Required<a class="headerlink" href="#documentation-updates-required" title="Permanent link">&para;</a></h2>
+<h3 id="1-cli-reference-docscli-referencemd">1. CLI Reference (<code>docs/cli-reference.md</code>)<a class="headerlink" href="#1-cli-reference-docscli-referencemd" title="Permanent link">&para;</a></h3>
+<p>Add sections for:
+- <code>--fix-whitespace</code> flag
+- <code>--safe-only</code> flag
+- <code>--dry-run</code> with diff output
+- Auto-fix examples for each language</p>
+<h3 id="2-configuration-guide-docsconfigurationmd">2. Configuration Guide (<code>docs/configuration.md</code>)<a class="headerlink" href="#2-configuration-guide-docsconfigurationmd" title="Permanent link">&para;</a></h3>
+<p>Add:
+- TOML validation configuration
+- Terraform validation configuration
+- Whitespace fixer configuration
+- Fix confidence tier explanation</p>
+<h3 id="3-git-hooks-guide-docsinstallationmd">3. Git Hooks Guide (<code>docs/installation.md</code>)<a class="headerlink" href="#3-git-hooks-guide-docsinstallationmd" title="Permanent link">&para;</a></h3>
+<p>Update:
+- <code>setup-hooks --auto-fix</code> option
+- <code>setup-hooks --interactive</code> option
+- Examples of pre-commit with auto-fix</p>
+<h3 id="4-language-support-matrix">4. Language Support Matrix<a class="headerlink" href="#4-language-support-matrix" title="Permanent link">&para;</a></h3>
+<p>Create new doc: <code>docs/language-support.md</code>
+- Complete matrix of languages, validators, formatters
+- Auto-fix capability for each
+- Whitespace handling per language</p>
+<hr />
+<h2 id="success-metrics">Success Metrics<a class="headerlink" href="#success-metrics" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-success-criteria">Phase 1 Success Criteria<a class="headerlink" href="#phase-1-success-criteria" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Ruff auto-fix enabled and working</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Prettier auto-fix enabled and working</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> ESLint auto-fix verified</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> All existing tests pass</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> New tests for auto-fix functionality</li>
+</ul>
+<h3 id="phase-2-success-criteria">Phase 2 Success Criteria<a class="headerlink" href="#phase-2-success-criteria" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> IsSort validator implemented</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Python import sorting works</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Container includes isort</li>
+</ul>
+<h3 id="phase-3-success-criteria">Phase 3 Success Criteria<a class="headerlink" href="#phase-3-success-criteria" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> TOML formatting works</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> pyproject.toml can be formatted</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Container includes taplo</li>
+</ul>
+<h3 id="phase-4-success-criteria">Phase 4 Success Criteria<a class="headerlink" href="#phase-4-success-criteria" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Terraform formatting works</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> .tf files can be formatted</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Container includes terraform</li>
+</ul>
+<h3 id="overall-success-metrics">Overall Success Metrics<a class="headerlink" href="#overall-success-metrics" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Current</th>
+<th>Gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Languages with auto-fix</td>
+<td>6</td>
+<td>2</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Formatters enabled</td>
+<td>8</td>
+<td>3</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Whitespace cleanup coverage</td>
+<td>100%</td>
+<td>40%</td>
+<td>60%</td>
+</tr>
+<tr>
+<td>CI auto-fix workflow</td>
+<td>Working</td>
+<td>Partial</td>
+<td>Incomplete</td>
+</tr>
+<tr>
+<td>Git hook auto-fix</td>
+<td>Working</td>
+<td>Manual</td>
+<td>Incomplete</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="risks-and-mitigation">Risks and Mitigation<a class="headerlink" href="#risks-and-mitigation" title="Permanent link">&para;</a></h2>
+<h3 id="risk-1-chapel-tooling-immaturity">Risk 1: Chapel Tooling Immaturity<a class="headerlink" href="#risk-1-chapel-tooling-immaturity" title="Permanent link">&para;</a></h3>
+<p><strong>Risk</strong>: Chapel 2.6+ may not have mature formatting tools
+<strong>Impact</strong>: HIGH (cannot meet user requirement)
+<strong>Mitigation</strong>: Research thoroughly before committing; consider Chapel optional</p>
+<h3 id="risk-2-container-size-growth">Risk 2: Container Size Growth<a class="headerlink" href="#risk-2-container-size-growth" title="Permanent link">&para;</a></h3>
+<p><strong>Risk</strong>: Adding terraform, Chapel may significantly increase container size
+<strong>Impact</strong>: MEDIUM (slower pulls, larger storage)
+<strong>Mitigation</strong>:
+- Use multi-stage builds
+- Only install in "full" variant
+- Offer "lite" container without Chapel</p>
+<h3 id="risk-3-breaking-changes-to-existing-workflows">Risk 3: Breaking Changes to Existing Workflows<a class="headerlink" href="#risk-3-breaking-changes-to-existing-workflows" title="Permanent link">&para;</a></h3>
+<p><strong>Risk</strong>: Enabling auto-fix by default may surprise users
+<strong>Impact</strong>: MEDIUM (unexpected commits)
+<strong>Mitigation</strong>:
+- Auto-fix requires explicit <code>--fix</code> flag
+- Default behavior unchanged (validate only)
+- Clear documentation and changelog</p>
+<h3 id="risk-4-fix-confidence-misclassification">Risk 4: Fix Confidence Misclassification<a class="headerlink" href="#risk-4-fix-confidence-misclassification" title="Permanent link">&para;</a></h3>
+<p><strong>Risk</strong>: Tool marked SAFE actually makes semantic changes
+<strong>Impact</strong>: HIGH (code breakage)
+<strong>Mitigation</strong>:
+- Conservative confidence assignments
+- Extensive testing before SAFE classification
+- User override: <code>--unsafe</code> flag for risky fixes</p>
+<hr />
+<h2 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h2>
+<h3 id="immediate-actions-this-sprint">Immediate Actions (This Sprint)<a class="headerlink" href="#immediate-actions-this-sprint" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Enable Ruff and Prettier auto-fix</strong> (Phase 1)</li>
+<li>Highest impact, lowest effort</li>
+<li>Unblocks JavaScript/TypeScript whitespace cleanup</li>
+<li>
+<p>Unlocks 100+ Python style fixes</p>
+</li>
+<li>
+<p><strong>Add IsSort support</strong> (Phase 2)</p>
+</li>
+<li>Medium effort, high value</li>
+<li>Python import organization is common need</li>
+</ol>
+<h3 id="next-sprint">Next Sprint<a class="headerlink" href="#next-sprint" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Implement TOML formatting</strong> (Phase 3)</li>
+<li>Critical for <code>pyproject.toml</code> consistency</li>
+<li>
+<p>Growing importance with Python packaging</p>
+</li>
+<li>
+<p><strong>Add Terraform support</strong> (Phase 4)</p>
+</li>
+<li>Infrastructure-as-code becoming standard</li>
+<li>Many projects have <code>.tf</code> files</li>
+</ol>
+<h3 id="future-consideration">Future Consideration<a class="headerlink" href="#future-consideration" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Chapel language support</strong> (Phase 5)</li>
+<li>Research-heavy, uncertain payoff</li>
+<li>Defer until user demand confirmed</li>
+<li>May require specialized container variant</li>
+</ol>
+<h3 id="optional-enhancements">Optional Enhancements<a class="headerlink" href="#optional-enhancements" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Universal whitespace fixer</strong></li>
+<li>Nice-to-have for comprehensive whitespace cleanup</li>
+<li>
+<p>Could be separate tool called before formatters</p>
+</li>
+<li>
+<p><strong>Dry-run with diff output</strong></p>
+</li>
+<li>Improves user confidence in auto-fix</li>
+<li>Helps debugging formatting issues</li>
+</ol>
+<hr />
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>HuskyCat has a <strong>solid foundation</strong> for auto-formatting with clear confidence tiers and mode-aware behavior. However, <strong>critical gaps exist</strong>:</p>
+<ol>
+<li><strong>Two major formatters disabled</strong>: Ruff and Prettier auto-fix not enabled despite being installed</li>
+<li><strong>Import sorting missing</strong>: IsSort configured but not implemented</li>
+<li><strong>Three languages unsupported</strong>: TOML, Terraform, Chapel have no validators</li>
+<li><strong>Whitespace cleanup incomplete</strong>: Only Python and YAML (partially) handle whitespace</li>
+</ol>
+<p><strong>Priority 1 recommendation</strong>: Enable Ruff and Prettier auto-fix (Phase 1) - this is LOW EFFORT, HIGH IMPACT and unblocks the user's primary use case of whitespace cleanup for Python and JavaScript/TypeScript.</p>
+<p><strong>Priority 2 recommendation</strong>: Add IsSort, TOML, and Terraform support (Phases 2-4) - these are common file types in modern projects.</p>
+<p><strong>Defer</strong>: Chapel language support (Phase 5) until tooling maturity confirmed and user demand established.</p>
+<p>With Phases 1-4 complete, HuskyCat will have <strong>comprehensive auto-formatting</strong> across Python, JavaScript/TypeScript, YAML, TOML, and Terraform with <strong>universal whitespace cleanup</strong> and <strong>simple flag-based control</strong> suitable for git hooks, CI/CD, and interactive use.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.follow", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

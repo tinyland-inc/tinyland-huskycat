@@ -1,0 +1,308 @@
+# SPDX-License-Identifier: Apache-2.0
+# FPM-based Linux Package Generation
+#
+# Creates RPM and DEB packages from the fat binary using FPM (Effing Package Management)
+# Packages include:
+# - Binary at /usr/local/bin/huskycat
+# - Desktop entry for application menu
+# - Configuration example at /etc/huskycat/
+# - Icons for desktop integration
+#
+# Usage:
+#   include:
+#     - local: '/.gitlab/ci/fpm-packages.yml'
+
+variables:
+  FPM_VERSION: "1.15.1"
+  PACKAGE_RELEASE: "1"
+  PACKAGE_MAINTAINER: "HuskyCat Project <huskycat@tinyland.ai>"
+  PACKAGE_URL: "https://tinyland.gitlab.io/ai/huskycat"
+  PACKAGE_LICENSE: "Apache-2.0"
+  PACKAGE_VENDOR: "Tinyland AI"
+  PACKAGE_DESCRIPTION: "Universal Code Validation Platform - AI-powered linting and formatting"
+
+# Base template for FPM jobs
+.fpm_base:
+  image: ruby:3.2-slim
+  stage: package
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends rpm rpmbuild binutils
+    - gem install fpm -v $FPM_VERSION --no-document
+    - fpm --version
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+# RPM Package (RHEL/Rocky Linux/Fedora)
+package:rpm:x86_64:
+  extends: .fpm_base
+  needs:
+    - job: build:binary:linux-amd64
+      artifacts: true
+  variables:
+    PACKAGE_VERSION: ${CI_COMMIT_TAG:-2.0.0}
+    ARCH: x86_64
+  script:
+    - echo "📦 Building RPM package for ${ARCH}..."
+
+    # Create package directory structure
+    - mkdir -p pkg-root/usr/local/bin
+    - mkdir -p pkg-root/usr/share/huskycat
+    - mkdir -p pkg-root/etc/huskycat
+    - mkdir -p pkg-root/usr/share/applications
+    - mkdir -p pkg-root/usr/share/icons/hicolor/256x256/apps
+    - mkdir -p pkg-root/usr/share/doc/huskycat
+
+    # Copy binary
+    - cp dist/bin/huskycat-linux-amd64 pkg-root/usr/local/bin/huskycat
+    - chmod +x pkg-root/usr/local/bin/huskycat
+
+    # Copy assets (if they exist)
+    - |
+      if [ -f assets/huskycat.desktop ]; then
+        cp assets/huskycat.desktop pkg-root/usr/share/applications/
+      else
+        echo "[Desktop Entry]
+Version=1.0
+Type=Application
+Name=HuskyCat
+GenericName=Code Validator
+Comment=Universal Code Validation Platform
+Exec=huskycat-tray
+Icon=huskycat
+Categories=Development;IDE;
+Terminal=false
+StartupNotify=true
+Keywords=validation;linting;git;hooks;" > pkg-root/usr/share/applications/huskycat.desktop
+      fi
+
+    # Copy icon (create placeholder if not exists)
+    - |
+      if [ -f assets/icons/huskycat-256.png ]; then
+        cp assets/icons/huskycat-256.png pkg-root/usr/share/icons/hicolor/256x256/apps/huskycat.png
+      fi
+
+    # Copy documentation
+    - cp README.md pkg-root/usr/share/doc/huskycat/
+    - cp LICENSE pkg-root/usr/share/doc/huskycat/
+
+    # Copy example configuration
+    - |
+      if [ -f docs/examples/.huskycat.yaml ]; then
+        cp docs/examples/.huskycat.yaml pkg-root/etc/huskycat/huskycat.yaml.example
+      fi
+
+    # Create RPM with FPM
+    - |
+      fpm -s dir -t rpm \
+        --name huskycat \
+        --version "${PACKAGE_VERSION#v}" \
+        --iteration "${PACKAGE_RELEASE}" \
+        --architecture "${ARCH}" \
+        --description "${PACKAGE_DESCRIPTION}" \
+        --url "${PACKAGE_URL}" \
+        --maintainer "${PACKAGE_MAINTAINER}" \
+        --license "${PACKAGE_LICENSE}" \
+        --vendor "${PACKAGE_VENDOR}" \
+        --category "Development/Tools" \
+        --depends "git >= 2.0" \
+        --config-files /etc/huskycat \
+        --rpm-summary "Universal Code Validation Platform" \
+        --rpm-auto-add-directories \
+        -C pkg-root \
+        .
+
+    # Move package to artifacts
+    - mkdir -p dist/rpm
+    - mv *.rpm dist/rpm/
+    - ls -la dist/rpm/
+
+    - echo "✅ RPM package created successfully"
+  artifacts:
+    paths:
+      - dist/rpm/*.rpm
+    expire_in: 1 month
+
+# DEB Package (Debian/Ubuntu)
+package:deb:amd64:
+  extends: .fpm_base
+  needs:
+    - job: build:binary:linux-amd64
+      artifacts: true
+  variables:
+    PACKAGE_VERSION: ${CI_COMMIT_TAG:-2.0.0}
+    ARCH: amd64
+  script:
+    - echo "📦 Building DEB package for ${ARCH}..."
+
+    # Create package directory structure
+    - mkdir -p pkg-root/usr/local/bin
+    - mkdir -p pkg-root/usr/share/huskycat
+    - mkdir -p pkg-root/etc/huskycat
+    - mkdir -p pkg-root/usr/share/applications
+    - mkdir -p pkg-root/usr/share/icons/hicolor/256x256/apps
+    - mkdir -p pkg-root/usr/share/doc/huskycat
+
+    # Copy binary
+    - cp dist/bin/huskycat-linux-amd64 pkg-root/usr/local/bin/huskycat
+    - chmod +x pkg-root/usr/local/bin/huskycat
+
+    # Copy assets (if they exist)
+    - |
+      if [ -f assets/huskycat.desktop ]; then
+        cp assets/huskycat.desktop pkg-root/usr/share/applications/
+      else
+        echo "[Desktop Entry]
+Version=1.0
+Type=Application
+Name=HuskyCat
+GenericName=Code Validator
+Comment=Universal Code Validation Platform
+Exec=huskycat-tray
+Icon=huskycat
+Categories=Development;IDE;
+Terminal=false
+StartupNotify=true
+Keywords=validation;linting;git;hooks;" > pkg-root/usr/share/applications/huskycat.desktop
+      fi
+
+    # Copy icon (create placeholder if not exists)
+    - |
+      if [ -f assets/icons/huskycat-256.png ]; then
+        cp assets/icons/huskycat-256.png pkg-root/usr/share/icons/hicolor/256x256/apps/huskycat.png
+      fi
+
+    # Copy documentation
+    - cp README.md pkg-root/usr/share/doc/huskycat/
+    - cp LICENSE pkg-root/usr/share/doc/huskycat/
+
+    # Copy example configuration
+    - |
+      if [ -f docs/examples/.huskycat.yaml ]; then
+        cp docs/examples/.huskycat.yaml pkg-root/etc/huskycat/huskycat.yaml.example
+      fi
+
+    # Create DEB with FPM
+    - |
+      fpm -s dir -t deb \
+        --name huskycat \
+        --version "${PACKAGE_VERSION#v}" \
+        --iteration "${PACKAGE_RELEASE}" \
+        --architecture "${ARCH}" \
+        --description "${PACKAGE_DESCRIPTION}" \
+        --url "${PACKAGE_URL}" \
+        --maintainer "${PACKAGE_MAINTAINER}" \
+        --license "${PACKAGE_LICENSE}" \
+        --vendor "${PACKAGE_VENDOR}" \
+        --category "devel" \
+        --depends "git" \
+        --config-files /etc/huskycat \
+        --deb-priority optional \
+        --deb-compression xz \
+        -C pkg-root \
+        .
+
+    # Move package to artifacts
+    - mkdir -p dist/deb
+    - mv *.deb dist/deb/
+    - ls -la dist/deb/
+
+    - echo "✅ DEB package created successfully"
+  artifacts:
+    paths:
+      - dist/deb/*.deb
+    expire_in: 1 month
+
+# ARM64 RPM Package
+package:rpm:aarch64:
+  extends: .fpm_base
+  needs:
+    - job: build:binary:linux-arm64
+      artifacts: true
+  variables:
+    PACKAGE_VERSION: ${CI_COMMIT_TAG:-2.0.0}
+    ARCH: aarch64
+  script:
+    - echo "📦 Building RPM package for ${ARCH}..."
+    - mkdir -p pkg-root/usr/local/bin
+    - cp dist/bin/huskycat-linux-arm64 pkg-root/usr/local/bin/huskycat
+    - chmod +x pkg-root/usr/local/bin/huskycat
+    - |
+      fpm -s dir -t rpm \
+        --name huskycat \
+        --version "${PACKAGE_VERSION#v}" \
+        --iteration "${PACKAGE_RELEASE}" \
+        --architecture "${ARCH}" \
+        --description "${PACKAGE_DESCRIPTION}" \
+        --url "${PACKAGE_URL}" \
+        --maintainer "${PACKAGE_MAINTAINER}" \
+        --license "${PACKAGE_LICENSE}" \
+        --vendor "${PACKAGE_VENDOR}" \
+        --category "Development/Tools" \
+        --depends "git >= 2.0" \
+        -C pkg-root \
+        .
+    - mkdir -p dist/rpm
+    - mv *.rpm dist/rpm/
+  artifacts:
+    paths:
+      - dist/rpm/*.rpm
+    expire_in: 1 month
+  allow_failure: true  # ARM64 builds are optional
+
+# ARM64 DEB Package
+package:deb:arm64:
+  extends: .fpm_base
+  needs:
+    - job: build:binary:linux-arm64
+      artifacts: true
+  variables:
+    PACKAGE_VERSION: ${CI_COMMIT_TAG:-2.0.0}
+    ARCH: arm64
+  script:
+    - echo "📦 Building DEB package for ${ARCH}..."
+    - mkdir -p pkg-root/usr/local/bin
+    - cp dist/bin/huskycat-linux-arm64 pkg-root/usr/local/bin/huskycat
+    - chmod +x pkg-root/usr/local/bin/huskycat
+    - |
+      fpm -s dir -t deb \
+        --name huskycat \
+        --version "${PACKAGE_VERSION#v}" \
+        --iteration "${PACKAGE_RELEASE}" \
+        --architecture "${ARCH}" \
+        --description "${PACKAGE_DESCRIPTION}" \
+        --url "${PACKAGE_URL}" \
+        --maintainer "${PACKAGE_MAINTAINER}" \
+        --license "${PACKAGE_LICENSE}" \
+        --vendor "${PACKAGE_VENDOR}" \
+        --category "devel" \
+        --depends "git" \
+        -C pkg-root \
+        .
+    - mkdir -p dist/deb
+    - mv *.deb dist/deb/
+  artifacts:
+    paths:
+      - dist/deb/*.deb
+    expire_in: 1 month
+  allow_failure: true  # ARM64 builds are optional
+
+# Package verification job
+verify:packages:
+  stage: deploy
+  image: ubuntu:22.04
+  needs:
+    - job: package:deb:amd64
+      artifacts: true
+  script:
+    - echo "🔍 Verifying DEB package..."
+    - apt-get update && apt-get install -y file
+    - file dist/deb/*.deb
+    - dpkg-deb --info dist/deb/*.deb
+    - dpkg-deb --contents dist/deb/*.deb
+    - echo "✅ Package verification complete"
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual

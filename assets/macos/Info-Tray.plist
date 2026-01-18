@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>HuskyCat-Tray</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>ai.tinyland.huskycat.tray</string>
+
+    <key>CFBundleName</key>
+    <string>HuskyCat Tray</string>
+
+    <key>CFBundleDisplayName</key>
+    <string>HuskyCat</string>
+
+    <key>CFBundleVersion</key>
+    <string>2.0.0</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>2.0.0</string>
+
+    <key>CFBundleIconFile</key>
+    <string>huskycat.icns</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleSignature</key>
+    <string>HCTR</string>
+
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.developer-tools</string>
+
+    <key>LSMinimumSystemVersion</key>
+    <string>11.0</string>
+
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright 2024-2026 Tinyland AI. Apache-2.0 License.</string>
+
+    <!-- Hide from Dock, show only in menu bar -->
+    <key>LSUIElement</key>
+    <true/>
+
+    <!-- Launch at login -->
+    <key>LSBackgroundOnly</key>
+    <false/>
+</dict>
+</plist>

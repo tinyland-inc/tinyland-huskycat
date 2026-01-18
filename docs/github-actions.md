@@ -473,7 +473,7 @@ Complete workflow examples are available in the [HuskyCat repository](https://gi
 
 ---
 
-For GitLab CI integration, see [GitLab CI/CD Guide](gitlab-ci-cd.md).
+For GitLab CI integration, see [GitLab CI/CD Guide](ci-cd/gitlab.md).
 
 For CLI usage, see [CLI Reference](cli-reference.md).
 

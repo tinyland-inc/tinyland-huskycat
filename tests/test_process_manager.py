@@ -351,3 +351,181 @@ def test_validation_run_serialization(process_manager):
     assert loaded_run.tools_run == run.tools_run
     assert loaded_run.success == run.success
     assert loaded_run.exit_code == run.exit_code
+
+
+def test_validation_run_with_error_details():
+    """Test ValidationRun with error_details and warning_details fields."""
+    error_details = [
+        {
+            "file": "test.py",
+            "line": 10,
+            "tool": "ruff",
+            "message": "Unused import",
+            "severity": "error",
+        },
+        {
+            "file": "test2.py",
+            "line": 25,
+            "tool": "mypy",
+            "message": "Incompatible types",
+            "severity": "error",
+            "column": 5,
+        },
+    ]
+    warning_details = [
+        {
+            "file": "test.py",
+            "line": 15,
+            "tool": "flake8",
+            "message": "Line too long",
+            "severity": "warning",
+        },
+    ]
+
+    run = ValidationRun(
+        run_id="details_test",
+        started="2025-12-07T10:00:00",
+        files=["test.py", "test2.py"],
+        tools_run=["ruff", "mypy", "flake8"],
+        errors=2,
+        warnings=1,
+        error_details=error_details,
+        warning_details=warning_details,
+    )
+
+    assert len(run.error_details) == 2
+    assert len(run.warning_details) == 1
+    assert run.error_details[0]["tool"] == "ruff"
+    assert run.error_details[1]["line"] == 25
+    assert run.warning_details[0]["severity"] == "warning"
+
+
+def test_validation_run_error_details_default():
+    """Test ValidationRun error_details defaults to empty list."""
+    run = ValidationRun(run_id="default_test", started="2025-12-07T10:00:00")
+
+    assert run.error_details == []
+    assert run.warning_details == []
+
+
+def test_process_manager_results_dir(process_manager):
+    """Test ProcessManager creates results directory."""
+    assert process_manager.results_dir.exists()
+    # Results dir should be at .huskycat/results (sibling of runs)
+    assert process_manager.results_dir.parent == process_manager.cache_dir.parent
+
+
+def test_save_and_get_detailed_results(process_manager):
+    """Test saving and retrieving detailed validation results."""
+    run_id = "detailed_test_001"
+    results = [
+        {
+            "tool_name": "black",
+            "success": True,
+            "duration": 0.5,
+            "errors": 0,
+            "warnings": 0,
+            "output": "",
+            "status": "success",
+        },
+        {
+            "tool_name": "ruff",
+            "success": False,
+            "duration": 0.3,
+            "errors": 2,
+            "warnings": 1,
+            "output": "test.py:10:5: E501 Line too long",
+            "error_message": "Found 2 errors",
+            "status": "failed",
+        },
+    ]
+
+    # Save detailed results
+    process_manager.save_detailed_results(run_id, [], tool_results=results)
+
+    # Verify file exists
+    results_file = process_manager.results_dir / f"{run_id}_results.json"
+    assert results_file.exists()
+
+    # Retrieve and verify
+    loaded_results = process_manager.get_detailed_results(run_id)
+    assert len(loaded_results) == 2
+    assert loaded_results[0]["tool_name"] == "black"
+    assert loaded_results[0]["success"] is True
+    assert loaded_results[1]["tool_name"] == "ruff"
+    assert loaded_results[1]["errors"] == 2
+
+
+def test_get_latest_results(process_manager):
+    """Test get_latest_results returns most recent results."""
+    # Save multiple runs
+    for i in range(3):
+        run_id = f"latest_test_{i:03d}"
+        results = [
+            {
+                "tool_name": f"tool_{i}",
+                "success": True,
+                "duration": 0.1,
+                "errors": i,
+                "warnings": 0,
+                "output": "",
+                "status": "success",
+            }
+        ]
+        process_manager.save_detailed_results(run_id, [], tool_results=results)
+        time.sleep(0.01)  # Ensure different mtimes
+
+    # Get latest should return last one
+    latest = process_manager.get_latest_results()
+    assert len(latest) == 1
+    assert latest[0]["tool_name"] == "tool_2"
+    assert latest[0]["errors"] == 2
+
+
+def test_get_detailed_results_not_found(process_manager):
+    """Test get_detailed_results returns empty list for non-existent run."""
+    results = process_manager.get_detailed_results("nonexistent_run_id")
+    assert results == []
+
+
+def test_validation_run_with_error_details_serialization(process_manager):
+    """Test ValidationRun with error_details serializes correctly."""
+    error_details = [
+        {
+            "file": "test.py",
+            "line": 10,
+            "tool": "ruff",
+            "message": "Unused import",
+            "severity": "error",
+        },
+    ]
+
+    run = ValidationRun(
+        run_id="serialize_details_test",
+        started=datetime.now().isoformat(),
+        completed=datetime.now().isoformat(),
+        files=["test.py"],
+        success=False,
+        tools_run=["ruff"],
+        errors=1,
+        warnings=0,
+        error_details=error_details,
+        warning_details=[],
+        exit_code=1,
+    )
+
+    # Save run
+    process_manager.save_run(run)
+
+    # Verify file exists and load
+    run_file = process_manager.cache_dir / f"{run.run_id}.json"
+    assert run_file.exists()
+
+    # Load and verify error_details preserved
+    loaded_data = json.loads(run_file.read_text())
+    loaded_run = ValidationRun(**loaded_data)
+
+    assert len(loaded_run.error_details) == 1
+    assert loaded_run.error_details[0]["file"] == "test.py"
+    assert loaded_run.error_details[0]["line"] == 10
+    assert loaded_run.error_details[0]["tool"] == "ruff"

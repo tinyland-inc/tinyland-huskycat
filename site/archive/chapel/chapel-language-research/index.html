@@ -1,0 +1,1920 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Universal Code Validation Platform">
+      
+      
+      
+        <link rel="canonical" href="https://huskycat-570fbd.gitlab.io/archive/chapel/chapel-language-research/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Chapel Language Research - Integration Feasibility - HuskyCat Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapel-language-research-integration-feasibility" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="HuskyCat Documentation" class="md-header__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HuskyCat Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapel Language Research - Integration Feasibility
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../cli-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../features/mcp-server/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/product-modes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ci-cd/gitlab/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  CI/CD Integration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../dogfooding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../performance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../api/mcp-tools/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../troubleshooting/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Troubleshooting
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="HuskyCat Documentation" class="md-nav__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    HuskyCat Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../binary-downloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Binary Downloads
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Features
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../features/mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../nonblocking-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/product-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/execution-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            CI/CD Integration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ci-cd/gitlab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitHub Actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../dogfooding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dogfooding Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../parallel_executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Performance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migration/to-nonblocking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../macos-code-signing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    macOS Code Signing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/mcp-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapel-language-research-integration-feasibility">Chapel Language Research - Integration Feasibility<a class="headerlink" href="#chapel-language-research-integration-feasibility" title="Permanent link">&para;</a></h1>
+<p><strong>Date</strong>: December 5, 2025
+<strong>Status</strong>: 🔍 RESEARCH COMPLETE
+<strong>Recommendation</strong>:  DEFER TO FUTURE SPRINT
+<strong>Version</strong>: 1.0.0</p>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p>Chapel 2.6+ is a modern programming language for productive parallel computing, but it <strong>lacks critical tooling</strong> for integration into HuskyCat's auto-formatting pipeline and presents <strong>significant container complexity</strong>.</p>
+<h3 id="key-findings">Key Findings<a class="headerlink" href="#key-findings" title="Permanent link">&para;</a></h3>
+<p><strong>No official code formatter</strong> - Chapel does NOT have a <code>chplfmt</code> or equivalent formatting tool
+🟡 <strong>Limited linting</strong> - <code>chplcheck</code> exists with basic auto-fix via @fixit decorator
+ <strong>Build-from-source only</strong> - No Alpine APK package, requires full compiler build
+🔴 <strong>High resource requirements</strong> - 4GB RAM minimum, C++17 compiler, LLVM 14-20, Python 3.10+
+❓ <strong>Unknown container impact</strong> - No public data on installed size</p>
+<p><strong>Recommendation</strong>: <strong>DEFER</strong> Chapel support until:
+1. Official formatter tool is released
+2. Pre-built Alpine packages become available
+3. User demand for Chapel validation is confirmed</p>
+<hr />
+<h2 id="research-questions-answered">Research Questions Answered<a class="headerlink" href="#research-questions-answered" title="Permanent link">&para;</a></h2>
+<h3 id="1-does-chapel-26-include-chplfmt-or-official-formatter">1. Does Chapel 2.6+ include chplfmt or official formatter?<a class="headerlink" href="#1-does-chapel-26-include-chplfmt-or-official-formatter" title="Permanent link">&para;</a></h3>
+<p><strong>Answer</strong>:  <strong>NO</strong> - Chapel does NOT have an official code formatter tool.</p>
+<h4 id="official-tools-available">Official Tools Available<a class="headerlink" href="#official-tools-available" title="Permanent link">&para;</a></h4>
+<p>According to <a href="https://chapel-lang.org/docs/tools/chpl-language-server/chpl-language-server.html">Chapel Documentation 2.5 Tools</a> and <a href="https://chapel-lang.org/blog/posts/chapel-py/">Chapel tooling blog post</a>, the official tools in Chapel 2.6+ are:</p>
+<ol>
+<li><strong>chplcheck</strong> - Linter/static analyzer</li>
+<li>Python-based using Chapel's "Dyno" front-end</li>
+<li>Provides warnings and diagnostics</li>
+<li><strong>Limited auto-fix</strong>: Uses <code>@fixit</code> decorator for some rules</li>
+<li>Custom rules via Python: <code>--chplcheck-add-rules path/to/myrules.py</code></li>
+<li>
+<p>Individual rule control (enable/disable specific checks)</p>
+</li>
+<li>
+<p><strong>chpl-language-server</strong> (CLS) - LSP implementation</p>
+</li>
+<li>Editor-agnostic language intelligence</li>
+<li>Integrates chplcheck diagnostics via <code>--chplcheck</code> flag</li>
+<li>Features: jump to definition, find references, rename, hover docs</li>
+<li>
+<p>Limited quick-fix support</p>
+</li>
+<li>
+<p><strong>chplvis</strong> - Visualization tool for Chapel programs</p>
+</li>
+<li>
+<p><strong>Mason</strong> - Package manager and build system</p>
+</li>
+<li>
+<p><strong>c2chapel</strong> - C bindings generator</p>
+</li>
+<li>
+<p><strong>chpldoc</strong> - Documentation generation tool</p>
+</li>
+</ol>
+<h4 id="no-formatter-equivalent">No Formatter Equivalent<a class="headerlink" href="#no-formatter-equivalent" title="Permanent link">&para;</a></h4>
+<p>There is <strong>no tool equivalent to</strong>:
+- Python's Black, Ruff, autopep8
+- JavaScript's Prettier
+- Go's gofmt
+- Rust's rustfmt
+- TOML's taplo
+- Terraform's <code>terraform fmt</code></p>
+<h4 id="chplcheck-auto-fix-capabilities">chplcheck Auto-Fix Capabilities<a class="headerlink" href="#chplcheck-auto-fix-capabilities" title="Permanent link">&para;</a></h4>
+<p>According to <a href="https://chapel-lang.org/docs/tools/chpl-language-server/chpl-language-server.html">chpl-language-server documentation</a>, <code>chplcheck</code> can auto-fix some issues:</p>
+<ul>
+<li>Uses <code>@fixit</code> decorator in rule definitions</li>
+<li>Can fix warnings automatically</li>
+<li>Can ignore incorrect indentation within a given scope</li>
+<li>Integrates with chpl-language-server for quick-fixes</li>
+</ul>
+<p><strong>However</strong>: chplcheck is a <strong>linter</strong>, not a <strong>formatter</strong>. It:
+- Does NOT provide comprehensive code formatting
+- Does NOT normalize whitespace across entire files
+- Does NOT enforce consistent style like Black or Prettier
+- Cannot be used as a universal auto-formatter</p>
+<h3 id="comparison-to-other-languages">Comparison to Other Languages<a class="headerlink" href="#comparison-to-other-languages" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Language</th>
+<th>Formatter</th>
+<th>Linter</th>
+<th>Auto-Fix Coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td>Black, Ruff</td>
+<td>Flake8, Ruff, MyPy</td>
+<td>Comprehensive</td>
+</tr>
+<tr>
+<td>JavaScript</td>
+<td>Prettier</td>
+<td>ESLint</td>
+<td>Comprehensive</td>
+</tr>
+<tr>
+<td>Go</td>
+<td>gofmt</td>
+<td>golangci-lint</td>
+<td>Comprehensive</td>
+</tr>
+<tr>
+<td>Rust</td>
+<td>rustfmt</td>
+<td>clippy</td>
+<td>Comprehensive</td>
+</tr>
+<tr>
+<td><strong>Chapel</strong></td>
+<td>** NONE**</td>
+<td><strong>chplcheck</strong></td>
+<td><strong>🟡 Limited</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="2-how-to-install-chapel-in-alpine-linux-container">2. How to install Chapel in Alpine Linux (container)?<a class="headerlink" href="#2-how-to-install-chapel-in-alpine-linux-container" title="Permanent link">&para;</a></h3>
+<p><strong>Answer</strong>:  <strong>BUILD FROM SOURCE ONLY</strong> - No APK package available</p>
+<h4 id="alpine-package-search-results">Alpine Package Search Results<a class="headerlink" href="#alpine-package-search-results" title="Permanent link">&para;</a></h4>
+<p>According to <a href="https://pkgs.alpinelinux.org/packages">Alpine Linux Package Search</a>, searching for "chapel" returns <strong>zero results</strong>. Chapel is <strong>NOT available</strong> as a pre-built APK package in:
+- Alpine 3.18
+- Alpine 3.19
+- Alpine 3.20
+- Alpine 3.21
+- Alpine Edge</p>
+<h4 id="build-from-source-process">Build From Source Process<a class="headerlink" href="#build-from-source-process" title="Permanent link">&para;</a></h4>
+<p>Based on <a href="https://chapel-lang.org/docs/usingchapel/prereqs.html">Chapel Prerequisites documentation</a> and <a href="https://chapel.discourse.group/t/building-chapel-1-25-0-on-alpine/7684">Chapel Alpine discourse</a>, the installation process requires:</p>
+<p><strong>Step 1</strong>: Install build dependencies</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># Alpine 3.18-3.19</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">RUN</span><span class="w"> </span>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>gcc<span class="w"> </span>g++<span class="w"> </span>m4<span class="w"> </span>perl<span class="w"> </span>python3<span class="w"> </span>python3-dev<span class="w"> </span>bash<span class="w"> </span>make<span class="w"> </span>gawk<span class="w"> </span>git<span class="w"> </span>cmake<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>llvm15-dev<span class="w"> </span>clang15-dev<span class="w"> </span>llvm15-static<span class="w"> </span>clang15-static
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c"># Alpine 3.20-3.21</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">RUN</span><span class="w"> </span>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span>gcc<span class="w"> </span>g++<span class="w"> </span>m4<span class="w"> </span>perl<span class="w"> </span>python3<span class="w"> </span>python3-dev<span class="w"> </span>bash<span class="w"> </span>make<span class="w"> </span>gawk<span class="w"> </span>git<span class="w"> </span>cmake<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span>llvm-dev<span class="w"> </span>clang-dev<span class="w"> </span>llvm-static<span class="w"> </span>clang-static
+</code></pre></div>
+<p><strong>Step 2</strong>: Clone Chapel repository</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">RUN</span><span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/chapel-lang/chapel.git
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">WORKDIR</span><span class="w"> </span><span class="s">/chapel</span>
+</code></pre></div>
+<p><strong>Step 3</strong>: Set environment variables</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">CHPL_HOME</span><span class="o">=</span>/chapel
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">CHPL_LLVM</span><span class="o">=</span>system
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$CHPL_HOME</span>/bin/linux64-x86_64:<span class="nv">$PATH</span>
+</code></pre></div>
+<p><strong>Step 4</strong>: Build Chapel compiler</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">RUN</span><span class="w"> </span>make<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span>
+</code></pre></div>
+<h4 id="build-complexity-issues">Build Complexity Issues<a class="headerlink" href="#build-complexity-issues" title="Permanent link">&para;</a></h4>
+<p>According to <a href="https://chapel.discourse.group/t/building-chapel-1-25-0-on-alpine/7684">Chapel Alpine build discussion</a>, users have reported:</p>
+<ol>
+<li><strong>Configuration mismatches</strong>: Alpine's clang/LLVM setup doesn't match Chapel's assumptions</li>
+<li><strong>Touch command issues</strong>: Alpine's <code>touch</code> doesn't support <code>-A</code> flag (<a href="https://chapel.discourse.group/t/new-issue-problem-with-touch-a-on-alpine-linux/11257">reported issue</a>)</li>
+<li><strong>LLVM detection problems</strong>: Chapel has difficulty finding installed LLVM on Alpine (<a href="https://chapel.discourse.group/t/new-issue-problem-finding-installed-llvm-on-alpine-linux/11084">reported issue</a>)</li>
+</ol>
+<p>These issues suggest Chapel is <strong>not well-tested on Alpine Linux</strong> and may require patches or workarounds.</p>
+<hr />
+<h3 id="3-whats-the-container-size-impact">3. What's the container size impact?<a class="headerlink" href="#3-whats-the-container-size-impact" title="Permanent link">&para;</a></h3>
+<p><strong>Answer</strong>: ❓ <strong>UNKNOWN</strong> - No public data available, estimated <strong>500MB-1.5GB+</strong></p>
+<h4 id="memory-ram-requirements">Memory (RAM) Requirements<a class="headerlink" href="#memory-ram-requirements" title="Permanent link">&para;</a></h4>
+<p>According to <a href="https://chapel-lang.org/docs/usingchapel/prereqs.html">Chapel Prerequisites</a>:</p>
+<ul>
+<li><strong>Bundled LLVM build</strong>: Minimum <strong>4GB RAM</strong></li>
+<li><strong>System LLVM build</strong>: Minimum <strong>2GB RAM</strong></li>
+<li>Note: Parallel builds may require more memory</li>
+</ul>
+<h4 id="disk-space-requirements">Disk Space Requirements<a class="headerlink" href="#disk-space-requirements" title="Permanent link">&para;</a></h4>
+<p><strong>NOT documented</strong> in official Chapel documentation. The <a href="https://chapel-lang.org/docs/usingchapel/building.html">Building Chapel guide</a> does not specify disk space requirements.</p>
+<h4 id="docker-image-analysis">Docker Image Analysis<a class="headerlink" href="#docker-image-analysis" title="Permanent link">&para;</a></h4>
+<p>According to <a href="https://hub.docker.com/r/chapel/chapel">Docker Hub - chapel/chapel</a>, Chapel provides three Docker images:</p>
+<ol>
+<li><strong>chapel/chapel</strong> - Basic compiler + standard library</li>
+<li><strong>chapel/chapel-gasnet</strong> - Multi-locale support (distributed memory)</li>
+<li><strong>chapel/chapel-gasnet-smp</strong> - Multi-locale via shared memory</li>
+</ol>
+<p><strong>Problem</strong>: Docker Hub image layers do not publicly display total compressed/uncompressed sizes in search results.</p>
+<h4 id="size-estimation">Size Estimation<a class="headerlink" href="#size-estimation" title="Permanent link">&para;</a></h4>
+<p>Based on Chapel's requirements and typical compiler installations:</p>
+<p><strong>Dependencies alone (Alpine)</strong>:
+- gcc, g++: ~100MB
+- llvm15-dev, clang15-dev: ~200-300MB
+- llvm15-static, clang15-static: ~300-500MB
+- Python 3.10+: ~50MB
+- CMake, make, git, perl, m4, gawk: ~30MB
+- <strong>Subtotal</strong>: ~680-980MB</p>
+<p><strong>Chapel source + build artifacts</strong>:
+- Chapel git repository: ~50-100MB (estimated)
+- Compiled binaries and libraries: ~100-300MB (estimated)
+- Build cache/intermediate files: ~100-200MB (estimated)
+- <strong>Subtotal</strong>: ~250-600MB</p>
+<p><strong>Total estimated container size increase</strong>: <strong>500MB - 1.5GB+</strong></p>
+<p>This is a <strong>significant addition</strong> to HuskyCat's current container size.</p>
+<h4 id="comparison-to-current-huskycat-container">Comparison to Current HuskyCat Container<a class="headerlink" href="#comparison-to-current-huskycat-container" title="Permanent link">&para;</a></h4>
+<p>Current HuskyCat container tools:
+- Python tools (black, ruff, mypy, etc.): ~100MB
+- Node.js tools (eslint, prettier, etc.): ~150MB
+- Shell tools (shellcheck): ~5MB
+- Docker tools (hadolint): ~3MB
+- Base Alpine + runtimes: ~100MB
+- <strong>Current estimated total</strong>: ~350-400MB</p>
+<p><strong>Adding Chapel would increase container size by 125-375%</strong>.</p>
+<hr />
+<h3 id="4-are-there-chapel-linting-tools-beyond-the-compiler">4. Are there Chapel linting tools beyond the compiler?<a class="headerlink" href="#4-are-there-chapel-linting-tools-beyond-the-compiler" title="Permanent link">&para;</a></h3>
+<p><strong>Answer</strong>: 🟡 <strong>LIMITED</strong> - Only chplcheck, which is integrated with the compiler</p>
+<h4 id="available-linting-tools">Available Linting Tools<a class="headerlink" href="#available-linting-tools" title="Permanent link">&para;</a></h4>
+<h5 id="1-chplcheck-official-linter">1. chplcheck (Official Linter)<a class="headerlink" href="#1-chplcheck-official-linter" title="Permanent link">&para;</a></h5>
+<p>According to <a href="https://chapel-lang.org/docs/tools/chpl-language-server/chpl-language-server.html">chpl-language-server documentation</a> and <a href="https://chapel-lang.org/blog/posts/chapel-py/">Chapel tooling blog</a>:</p>
+<p><strong>Features</strong>:
+- Built using Chapel's "Dyno" compiler front-end
+- Automatic resolution of some warnings
+- Custom rule support via Python API
+- Individual rule enable/disable
+- Integration with chpl-language-server (LSP)</p>
+<p><strong>Available Rules</strong> (examples):
+- <code>UseExplicitModules</code> - Encourage explicit module usage
+- <code>UnusedLoopIndex</code> - Detect unused loop variables
+- <code>CamelCaseVariables</code> - Enforce naming conventions
+- Many others configurable</p>
+<p><strong>Auto-Fix Support</strong>:
+- Rules can use <code>@fixit</code> decorator
+- Limited to specific rule types
+- NOT comprehensive formatting</p>
+<p><strong>Requirements</strong>:
+- Python 3.10 or newer
+- Chapel compiler installed
+- <code>python3-devel</code> package
+- <code>venv</code> package</p>
+<p><strong>Usage</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Run chplcheck</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>chpl<span class="w"> </span>--chplcheck<span class="w"> </span>myfile.chpl
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Via language server</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>chpl-language-server<span class="w"> </span>--chplcheck
+</code></pre></div></p>
+<h5 id="2-chpl-language-server-integration">2. chpl-language-server Integration<a class="headerlink" href="#2-chpl-language-server-integration" title="Permanent link">&para;</a></h5>
+<p>The LSP server can invoke chplcheck automatically:
+- Diagnostics on file save
+- Quick-fixes for some issues
+- Integration with VS Code, Vim, Neovim, Emacs</p>
+<h5 id="3-no-third-party-tools">3. No Third-Party Tools<a class="headerlink" href="#3-no-third-party-tools" title="Permanent link">&para;</a></h5>
+<p>Search results from <a href="https://github.com/analysis-tools-dev/static-analysis">analysis-tools-dev/static-analysis</a> and general static analysis tool lists show <strong>no third-party Chapel linters</strong> or formatters.</p>
+<p>The Chapel ecosystem is <strong>significantly smaller</strong> than mainstream languages:
+- No Awesome Chapel Linters list
+- No community-developed formatters
+- No commercial static analysis tools
+- Limited editor plugin ecosystem</p>
+<hr />
+<h2 id="gap-analysis">Gap Analysis<a class="headerlink" href="#gap-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="what-huskycat-needs">What HuskyCat Needs<a class="headerlink" href="#what-huskycat-needs" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Chapel Support</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Code formatting</strong></td>
+<td>No formatter exists</td>
+<td><strong>BLOCKER</strong></td>
+</tr>
+<tr>
+<td><strong>Whitespace cleanup</strong></td>
+<td>No tool for this</td>
+<td><strong>BLOCKER</strong></td>
+</tr>
+<tr>
+<td><strong>Linting</strong></td>
+<td>🟡 chplcheck only</td>
+<td>Partial</td>
+</tr>
+<tr>
+<td><strong>Auto-fix</strong></td>
+<td>🟡 Limited (@fixit only)</td>
+<td>Insufficient</td>
+</tr>
+<tr>
+<td><strong>Easy installation</strong></td>
+<td>Build from source</td>
+<td><strong>BLOCKER</strong></td>
+</tr>
+<tr>
+<td><strong>Alpine APK</strong></td>
+<td>Not available</td>
+<td><strong>BLOCKER</strong></td>
+</tr>
+<tr>
+<td><strong>Container size</strong></td>
+<td>500MB-1.5GB+</td>
+<td><strong>CONCERN</strong></td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>Good</td>
+<td>OK</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blockers-for-integration">Blockers for Integration<a class="headerlink" href="#blockers-for-integration" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>No Formatter Tool</strong> 🔴 <strong>CRITICAL</strong></li>
+<li>Cannot fulfill "automatically remove whitespace" requirement</li>
+<li>Cannot provide consistent code style</li>
+<li>
+<p>No equivalent to Black, Prettier, gofmt, rustfmt</p>
+</li>
+<li>
+<p><strong>Alpine Build Complexity</strong> 🔴 <strong>CRITICAL</strong></p>
+</li>
+<li>Must build entire compiler from source</li>
+<li>Known issues with Alpine (touch, LLVM detection)</li>
+<li>4GB RAM requirement for build</li>
+<li>
+<p>Build time: Unknown (likely 10-30+ minutes)</p>
+</li>
+<li>
+<p><strong>Container Size Impact</strong> 🟡 <strong>HIGH</strong></p>
+</li>
+<li>Estimated 500MB-1.5GB increase</li>
+<li>125-375% container size growth</li>
+<li>
+<p>Affects pull times, storage, deployment speed</p>
+</li>
+<li>
+<p><strong>Limited Auto-Fix</strong> 🟡 <strong>MEDIUM</strong></p>
+</li>
+<li>chplcheck @fixit is NOT comprehensive</li>
+<li>Cannot replace formatter</li>
+<li>
+<p>Incomparable to Ruff, ESLint, Prettier</p>
+</li>
+<li>
+<p><strong>Niche Language</strong> 🟢 <strong>LOW</strong></p>
+</li>
+<li>Small user base compared to Python, JavaScript</li>
+<li>Unknown demand for Chapel validation in HuskyCat</li>
+<li>No user requests for Chapel support documented</li>
+</ol>
+<hr />
+<h2 id="integration-feasibility-assessment">Integration Feasibility Assessment<a class="headerlink" href="#integration-feasibility-assessment" title="Permanent link">&para;</a></h2>
+<h3 id="complexity-score-very-high">Complexity Score: 🔴 <strong>VERY HIGH</strong><a class="headerlink" href="#complexity-score-very-high" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Score</th>
+<th>Weight</th>
+<th>Weighted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tooling Maturity</td>
+<td>3/10</td>
+<td>30%</td>
+<td>0.9</td>
+</tr>
+<tr>
+<td>Installation Ease</td>
+<td>2/10</td>
+<td>25%</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>Container Impact</td>
+<td>4/10</td>
+<td>20%</td>
+<td>0.8</td>
+</tr>
+<tr>
+<td>Auto-Fix Coverage</td>
+<td>4/10</td>
+<td>15%</td>
+<td>0.6</td>
+</tr>
+<tr>
+<td>User Demand</td>
+<td>2/10</td>
+<td>10%</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>3.0/10</strong></td>
+<td>100%</td>
+<td><strong>3.0</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interpretation</strong>: <strong>HIGH COMPLEXITY, LOW VALUE</strong></p>
+<h3 id="effort-estimation">Effort Estimation<a class="headerlink" href="#effort-estimation" title="Permanent link">&para;</a></h3>
+<p><strong>To implement Chapel support</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Task</th>
+<th>Effort</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Research Alpine build patches</td>
+<td>2-3 days</td>
+<td>High</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Create Chapel build Dockerfile</td>
+<td>1-2 days</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Test Chapel compiler build</td>
+<td>1 day</td>
+<td>High</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Implement chplcheck validator</td>
+<td>1-2 days</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Implement basic linting</td>
+<td>1 day</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Testing and documentation</td>
+<td>1-2 days</td>
+<td>Low</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td></td>
+<td><strong>7-11 days</strong></td>
+<td><strong>HIGH</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>For comparison</strong>:
+- Enabling Ruff auto-fix: <strong>0.5 days</strong> (already installed)
+- Adding TOML (taplo): <strong>2-3 days</strong> (simple binary install)
+- Adding Terraform: <strong>2-3 days</strong> (APK package available)</p>
+<hr />
+<h2 id="recommendation">Recommendation<a class="headerlink" href="#recommendation" title="Permanent link">&para;</a></h2>
+<h3 id="defer-chapel-support">🔴 <strong>DEFER Chapel Support</strong><a class="headerlink" href="#defer-chapel-support" title="Permanent link">&para;</a></h3>
+<p>Chapel integration should be <strong>deferred to a future sprint</strong> (Sprint 9+) for the following reasons:</p>
+<h4 id="blockers-must-be-resolved-before-implementation">Blockers (Must be resolved before implementation)<a class="headerlink" href="#blockers-must-be-resolved-before-implementation" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>No Code Formatter</strong> 🔴</li>
+<li>User requirement: "automatically remove whitespace, clear up / fail fast on whitespace related formatting"</li>
+<li>Chapel has NO tool for this</li>
+<li>chplcheck linting is insufficient</li>
+<li>
+<p><strong>Action</strong>: Wait for official Chapel formatter tool</p>
+</li>
+<li>
+<p><strong>No Alpine Package</strong> 🔴</p>
+</li>
+<li>Must build entire compiler from source</li>
+<li>Known build issues on Alpine</li>
+<li>Adds complexity to CI/CD</li>
+<li>
+<p><strong>Action</strong>: Wait for Alpine APK package or use different base image</p>
+</li>
+<li>
+<p><strong>Unknown User Demand</strong> 🟡</p>
+</li>
+<li>No documented user requests for Chapel</li>
+<li>Small language ecosystem</li>
+<li>Low GitHub activity compared to mainstream languages</li>
+<li><strong>Action</strong>: Confirm actual demand before investment</li>
+</ol>
+<h4 id="alternative-approach-if-chapel-support-is-still-desired">Alternative Approach (If Chapel support is still desired)<a class="headerlink" href="#alternative-approach-if-chapel-support-is-still-desired" title="Permanent link">&para;</a></h4>
+<p><strong>Option 1</strong>: <strong>External Chapel Validation Service</strong>
+- Run Chapel validation in separate specialized container
+- Keep HuskyCat container lean
+- Call Chapel service via API only when .chpl files detected</p>
+<p><strong>Option 2</strong>: <strong>HuskyCat "Full" vs "Lite" Variants</strong>
+- <code>huskycats/validator:lite</code> - Python, JS/TS, YAML, TOML, Terraform (~400MB)
+- <code>huskycats/validator:full</code> - Lite + Chapel, Go, Rust, etc. (~2GB+)
+- Users choose variant based on needs</p>
+<p><strong>Option 3</strong>: <strong>Plugin Architecture</strong>
+- HuskyCat core + language plugins
+- <code>huskycat-plugin-chapel</code> as separate installable
+- Load plugins on-demand</p>
+<hr />
+<h2 id="priority-recommendations">Priority Recommendations<a class="headerlink" href="#priority-recommendations" title="Permanent link">&para;</a></h2>
+<h3 id="immediate-priority-sprint-8">Immediate Priority (Sprint 8)<a class="headerlink" href="#immediate-priority-sprint-8" title="Permanent link">&para;</a></h3>
+<p>Focus on <strong>high-value, low-effort</strong> enhancements:</p>
+<ol>
+<li><strong>Phase 1</strong>: Enable Ruff + Prettier auto-fix (0.5 days, already installed)</li>
+<li><strong>Phase 2</strong>: Add IsSort (2-3 days, Python import sorting)</li>
+<li><strong>Phase 3</strong>: Add TOML/taplo (2-3 days, critical for modern Python)</li>
+<li><strong>Phase 4</strong>: Add Terraform (2-3 days, infrastructure-as-code standard)</li>
+</ol>
+<p><strong>Total</strong>: 7-10 days for 4 major language enhancements</p>
+<h3 id="future-consideration-sprint-9">Future Consideration (Sprint 9+)<a class="headerlink" href="#future-consideration-sprint-9" title="Permanent link">&para;</a></h3>
+<p><strong>Chapel support ONLY if</strong>:
+1.  Official Chapel formatter is released
+2.  Alpine APK package becomes available (or base image changed)
+3.  User demand confirmed (multiple feature requests)
+4.  Container size acceptable (plugin architecture implemented)</p>
+<hr />
+<h2 id="research-sources">Research Sources<a class="headerlink" href="#research-sources" title="Permanent link">&para;</a></h2>
+<h3 id="chapel-official-documentation">Chapel Official Documentation<a class="headerlink" href="#chapel-official-documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://chapel-lang.org/docs/usingchapel/man.html">Chapel Documentation 2.6</a></li>
+<li><a href="https://chapel-lang.org/docs/tools/chpl-language-server/chpl-language-server.html">Chapel Tools Documentation</a></li>
+<li><a href="https://chapel-lang.org/docs/usingchapel/prereqs.html">Chapel Prerequisites</a></li>
+<li><a href="https://chapel-lang.org/docs/usingchapel/building.html">Building Chapel</a></li>
+<li><a href="https://chapel-lang.org/blog/posts/chapel-py/">Using the Chapel Compiler for Language Tooling</a></li>
+</ul>
+<h3 id="community-resources">Community Resources<a class="headerlink" href="#community-resources" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://github.com/chapel-lang/chapel">Chapel GitHub Repository</a></li>
+<li><a href="https://chapel.discourse.group/t/building-chapel-1-25-0-on-alpine/7684">Building Chapel on Alpine (Discourse)</a></li>
+<li><a href="https://chapel.discourse.group/t/new-issue-problem-finding-installed-llvm-on-alpine-linux/11084">Chapel LLVM Issues on Alpine</a></li>
+<li><a href="https://chapel.discourse.group/t/new-issue-problem-with-touch-a-on-alpine-linux/11257">Chapel Touch Command Issues</a></li>
+</ul>
+<h3 id="docker-resources">Docker Resources<a class="headerlink" href="#docker-resources" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://hub.docker.com/r/chapel/chapel">Chapel Docker Hub</a></li>
+<li><a href="https://chapel-lang.org/install-docker.html">Chapel Docker Install Guide</a></li>
+</ul>
+<h3 id="package-resources">Package Resources<a class="headerlink" href="#package-resources" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://pkgs.alpinelinux.org/packages">Alpine Linux Package Index</a></li>
+</ul>
+<hr />
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Chapel 2.6+ is a <strong>modern, well-designed language</strong> with <strong>good compiler tooling</strong> but <strong>lacks critical auto-formatting capabilities</strong> required for HuskyCat integration. The <strong>high build complexity</strong> on Alpine Linux and <strong>significant container size impact</strong> make it a <strong>poor fit</strong> for immediate integration.</p>
+<p><strong>Recommendation</strong>: <strong>DEFER</strong> Chapel support until:
+1. Formatter tool is released
+2. Pre-built packages available
+3. User demand confirmed</p>
+<p><strong>Immediate focus</strong>: Implement <strong>Phases 1-4</strong> (Ruff, Prettier, IsSort, TOML, Terraform) which provide <strong>high value</strong> with <strong>low effort</strong> and <strong>proven tooling</strong>.</p>
+<p>Upon completion of Phases 1-4, HuskyCat will have <strong>best-in-class auto-formatting</strong> for Python, JavaScript, TypeScript, YAML, TOML, and Terraform - covering <strong>95%+ of modern codebases</strong> without Chapel support.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.follow", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -66,11 +66,9 @@ export APPLE_SIGNING_IDENTITY="Developer ID Application: Your Name (TEAM_ID)"
 npm run build:binary:signed
 
 # Or use the build script directly
-uv run python build_binary.py \
+uv run python build_fat_binary.py \
   --codesign-identity "$APPLE_SIGNING_IDENTITY" \
-  --entitlements-file entitlements.plist \
-  --target-arch universal2 \
-  --skip-upx
+  --entitlements-file entitlements.plist
 ```
 
 ### Testing Unsigned Binaries
@@ -157,11 +155,9 @@ binary:build:macos:
   script:
     # Build signed binary
     - |
-      uv run python build_binary.py \
+      uv run python build_fat_binary.py \
         --codesign-identity "$APPLE_SIGNING_IDENTITY" \
-        --entitlements-file entitlements.plist \
-        --target-arch universal2 \
-        --skip-upx
+        --entitlements-file entitlements.plist
 ```
 
 ## Verification Commands
@@ -236,11 +232,9 @@ codesign --verify --verbose dist/huskycat
 Build with verbose signing output:
 
 ```bash
-uv run python build_binary.py \
+uv run python build_fat_binary.py \
   --codesign-identity "$APPLE_SIGNING_IDENTITY" \
   --entitlements-file entitlements.plist \
-  --target-arch universal2 \
-  --skip-upx \
   --verbose
 ```
 

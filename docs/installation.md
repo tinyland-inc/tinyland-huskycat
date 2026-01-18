@@ -1,13 +1,36 @@
 # Installation Guide
 
-## Quick Install (Recommended)
+## One-Line Installer (Recommended)
 
-Download the pre-built binary for your platform and install with a single command.
+The easiest way to install HuskyCat is with the automated installer:
+
+```bash
+curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+```
+
+This downloads the correct binary for your platform, verifies checksums, and installs to `~/.local/bin`.
+
+### With Claude Code Integration
+
+To automatically register HuskyCat as an MCP server with Claude Code:
+
+```bash
+HUSKYCAT_WITH_CLAUDE=1 curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+```
+
+**Options:**
+- `HUSKYCAT_WITH_CLAUDE=1` - Register MCP server with Claude Code
+- `HUSKYCAT_SCOPE=user|project|local` - MCP registration scope (default: user)
+- `HUSKYCAT_VERSION=2.0.0` - Install specific version (default: latest)
+
+## Manual Binary Download
+
+If you prefer to download manually:
 
 ### Linux (amd64)
 
 ```bash
-curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64' -o huskycat
+curl -L 'https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
@@ -15,7 +38,7 @@ chmod +x huskycat
 ### Linux (ARM64)
 
 ```bash
-curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64' -o huskycat
+curl -L 'https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
@@ -23,7 +46,7 @@ chmod +x huskycat
 ### macOS (ARM64 - M1/M2/M3/M4)
 
 ```bash
-curl -L 'https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64' -o huskycat
+curl -L 'https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64' -o huskycat
 chmod +x huskycat
 ./huskycat install
 ```
@@ -321,8 +344,8 @@ huskycat setup-hooks --force
 
 ```bash
 # Clone repository
-git clone https://gitlab.com/jsullivan2/huskycats-bates.git
-cd huskycats-bates
+git clone https://gitlab.com/tinyland/ai/huskycat.git
+cd huskycat
 
 # Install dependencies
 uv sync --dev
@@ -330,9 +353,16 @@ uv sync --dev
 # Build binary
 npm run build:binary
 
-# Install
-./dist/huskycat install
+# Install (with optional Claude Code integration)
+./dist/huskycat install --with-claude --scope user
 ```
+
+**Install Command Options:**
+- `--with-claude` - Register MCP server with Claude Code
+- `--scope user|project|local` - MCP registration scope
+- `--verify` - Verify MCP connection after registration
+- `--bin-dir /path` - Custom installation directory
+- `--no-hooks` - Skip git hooks setup
 
 ### Container-Based (No Installation)
 

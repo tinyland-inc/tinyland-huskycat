@@ -1,0 +1,363 @@
+# SPDX-License-Identifier: Apache-2.0
+# macOS PKG Installer Build and Code Signing
+#
+# Creates signed and notarized macOS PKG installer
+# Requires Apple Developer ID certificates and notarization credentials
+#
+# Required CI/CD Variables:
+#   APPLE_CERTIFICATE_BASE64        - Developer ID Application cert (.p12, base64)
+#   APPLE_INSTALLER_CERTIFICATE_BASE64 - Developer ID Installer cert (.p12, base64)
+#   APPLE_CERTIFICATE_PASSWORD      - Certificate password
+#   APPLE_DEVELOPER_ID_APPLICATION  - "Developer ID Application: Name (TEAMID)"
+#   APPLE_DEVELOPER_ID_INSTALLER    - "Developer ID Installer: Name (TEAMID)"
+#   APPLE_DEVELOPER_ID_CA_G2        - G2 intermediate cert (base64, optional)
+#   APPLE_ID                        - Apple ID email
+#   APPLE_NOTARIZE_PASSWORD         - App-specific password
+#   APPLE_TEAM_ID                   - Team ID
+#
+# Usage:
+#   include:
+#     - local: '/.gitlab/ci/macos-pkg.yml'
+
+variables:
+  PKG_IDENTIFIER: "ai.tinyland.huskycat"
+  PKG_INSTALL_LOCATION: "/"
+
+# macOS SaaS runner template
+.macos_saas_runners:
+  tags:
+    - saas-macos-medium-m1
+  image: macos-14-xcode-15
+
+# Code signing setup template
+.keychain_setup:
+  before_script:
+    - echo "🔐 Setting up temporary keychain for code signing..."
+    # Create temporary keychain
+    - KEYCHAIN_NAME="signing-$CI_JOB_ID.keychain-db"
+    - KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+    - security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+    - security set-keychain-settings "$KEYCHAIN_NAME"
+    - security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+    - security default-keychain -s "$KEYCHAIN_NAME"
+
+    # Add to search list with SystemRootCertificates
+    - |
+      LOGIN_KEYCHAIN="$HOME/Library/Keychains/login.keychain-db"
+      security list-keychains -d user -s "$KEYCHAIN_NAME" "$LOGIN_KEYCHAIN" /System/Library/Keychains/SystemRootCertificates.keychain
+
+    # Import Developer ID CA G2 intermediate (if provided)
+    - |
+      if [ -n "$APPLE_DEVELOPER_ID_CA_G2" ]; then
+        echo "Importing Developer ID CA G2..."
+        echo "$APPLE_DEVELOPER_ID_CA_G2" | base64 -d > DeveloperIDG2CA.cer
+        security import DeveloperIDG2CA.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign -T /usr/bin/productsign -T /usr/bin/pkgbuild -A
+        rm DeveloperIDG2CA.cer
+      fi
+
+    # Import Application certificate
+    - |
+      if [ -n "$APPLE_CERTIFICATE_BASE64" ]; then
+        echo "Importing Application certificate..."
+        echo "$APPLE_CERTIFICATE_BASE64" | base64 -d > certificate.p12
+        security import certificate.p12 -k "$KEYCHAIN_NAME" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign -A
+        rm certificate.p12
+      fi
+
+    # Import Installer certificate
+    - |
+      if [ -n "$APPLE_INSTALLER_CERTIFICATE_BASE64" ]; then
+        echo "Importing Installer certificate..."
+        echo "$APPLE_INSTALLER_CERTIFICATE_BASE64" | base64 -d > installer.p12
+        security import installer.p12 -k "$KEYCHAIN_NAME" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/productsign -T /usr/bin/pkgbuild -A
+        rm installer.p12
+      fi
+
+    # Set partition list for headless access
+    - security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+
+    # Verify certificates
+    - security find-identity -v -p codesigning "$KEYCHAIN_NAME"
+    - echo "✅ Keychain setup complete"
+
+  after_script:
+    - |
+      if [ -n "$KEYCHAIN_NAME" ]; then
+        security delete-keychain "$KEYCHAIN_NAME" || true
+      fi
+
+# Sign macOS binary
+sign:darwin-arm64:
+  extends:
+    - .macos_saas_runners
+    - .keychain_setup
+  stage: sign
+  needs:
+    - job: build:binary:darwin-arm64
+      artifacts: true
+  script:
+    - echo "🍎 Signing macOS ARM64 binary..."
+
+    # Verify binary exists
+    - ls -la dist/bin/
+
+    # Sign binary with hardened runtime
+    - |
+      codesign --force \
+        --options runtime \
+        --sign "$APPLE_DEVELOPER_ID_APPLICATION" \
+        --keychain "$KEYCHAIN_NAME" \
+        --timestamp \
+        dist/bin/huskycat-darwin-arm64
+
+    # Verify signature
+    - codesign --verify --verbose=2 dist/bin/huskycat-darwin-arm64
+    - codesign -dv --verbose=4 dist/bin/huskycat-darwin-arm64
+
+    # Create zip for notarization
+    - ditto -c -k --keepParent dist/bin/huskycat-darwin-arm64 huskycat-darwin-arm64.zip
+
+    # Submit for notarization
+    - |
+      if [ -n "$APPLE_ID" ]; then
+        echo "Submitting for notarization..."
+        SUBMISSION_OUTPUT=$(xcrun notarytool submit huskycat-darwin-arm64.zip \
+          --apple-id "$APPLE_ID" \
+          --password "$APPLE_NOTARIZE_PASSWORD" \
+          --team-id "$APPLE_TEAM_ID" \
+          --wait 2>&1) || true
+
+        echo "$SUBMISSION_OUTPUT"
+
+        # Check for failure
+        if echo "$SUBMISSION_OUTPUT" | grep -q "status: Invalid"; then
+          SUBMISSION_ID=$(echo "$SUBMISSION_OUTPUT" | grep "id:" | head -1 | awk '{print $2}')
+          echo "Notarization failed, fetching log..."
+          xcrun notarytool log "$SUBMISSION_ID" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_NOTARIZE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            notarization-log.json || true
+          cat notarization-log.json || true
+          exit 1
+        fi
+      fi
+
+    - rm huskycat-darwin-arm64.zip
+    - echo "✅ macOS binary signed and notarized"
+  artifacts:
+    paths:
+      - dist/bin/huskycat-darwin-arm64
+      - notarization-log.json
+    expire_in: 1 month
+    when: always
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+# Build macOS PKG installer
+package:macos-pkg:
+  extends:
+    - .macos_saas_runners
+    - .keychain_setup
+  stage: package
+  needs:
+    - job: sign:darwin-arm64
+      artifacts: true
+  variables:
+    PKG_VERSION: ${CI_COMMIT_TAG:-2.0.0}
+  script:
+    - echo "📦 Building macOS PKG installer..."
+
+    # Create PKG directory structure
+    - mkdir -p pkg-root/usr/local/bin
+    - mkdir -p pkg-root/usr/local/share/huskycat
+
+    # Copy signed binary
+    - cp dist/bin/huskycat-darwin-arm64 pkg-root/usr/local/bin/huskycat
+    - chmod +x pkg-root/usr/local/bin/huskycat
+
+    # Copy resources
+    - cp README.md pkg-root/usr/local/share/huskycat/
+    - cp LICENSE pkg-root/usr/local/share/huskycat/
+
+    # Create component PKG
+    - |
+      pkgbuild \
+        --root pkg-root \
+        --identifier "${PKG_IDENTIFIER}" \
+        --version "${PKG_VERSION#v}" \
+        --install-location "${PKG_INSTALL_LOCATION}" \
+        huskycat-component.pkg
+
+    # Create distribution.xml
+    - |
+      cat > distribution.xml << 'EOF'
+      <?xml version="1.0" encoding="utf-8" standalone="no"?>
+      <installer-gui-script minSpecVersion="1">
+          <title>HuskyCat</title>
+          <organization>ai.tinyland</organization>
+          <domains enable_localSystem="true"/>
+          <options customize="never" require-scripts="true" rootVolumeOnly="true"/>
+          <welcome file="welcome.html"/>
+          <readme file="readme.html"/>
+          <license file="license.html"/>
+          <conclusion file="conclusion.html"/>
+          <choices-outline>
+              <line choice="default">
+                  <line choice="ai.tinyland.huskycat"/>
+              </line>
+          </choices-outline>
+          <choice id="default"/>
+          <choice id="ai.tinyland.huskycat" visible="false">
+              <pkg-ref id="ai.tinyland.huskycat"/>
+          </choice>
+          <pkg-ref id="ai.tinyland.huskycat" version="0" onConclusion="none">huskycat-component.pkg</pkg-ref>
+      </installer-gui-script>
+      EOF
+
+    # Create resources directory
+    - mkdir -p resources
+    - |
+      cat > resources/welcome.html << 'EOF'
+      <!DOCTYPE html>
+      <html>
+      <head><title>Welcome</title></head>
+      <body>
+      <h1>Welcome to HuskyCat</h1>
+      <p>Universal Code Validation Platform</p>
+      <p>This installer will install HuskyCat to /usr/local/bin</p>
+      </body>
+      </html>
+      EOF
+
+    - |
+      cat > resources/readme.html << 'EOF'
+      <!DOCTYPE html>
+      <html>
+      <head><title>README</title></head>
+      <body>
+      <h1>HuskyCat</h1>
+      <p>AI-powered linting and formatting for all your code.</p>
+      <h2>Usage</h2>
+      <pre>huskycat validate .</pre>
+      </body>
+      </html>
+      EOF
+
+    - cp LICENSE resources/license.html || echo "<pre>$(cat LICENSE)</pre>" > resources/license.html
+
+    - |
+      cat > resources/conclusion.html << 'EOF'
+      <!DOCTYPE html>
+      <html>
+      <head><title>Complete</title></head>
+      <body>
+      <h1>Installation Complete</h1>
+      <p>HuskyCat has been installed to /usr/local/bin/huskycat</p>
+      <p>Run <code>huskycat --help</code> to get started.</p>
+      </body>
+      </html>
+      EOF
+
+    # Build product PKG
+    - |
+      productbuild \
+        --distribution distribution.xml \
+        --resources resources \
+        --package-path . \
+        HuskyCat-${PKG_VERSION#v}-unsigned.pkg
+
+    # Sign PKG with Developer ID Installer
+    - |
+      if [ -n "$APPLE_DEVELOPER_ID_INSTALLER" ]; then
+        echo "Signing PKG..."
+        productsign \
+          --sign "$APPLE_DEVELOPER_ID_INSTALLER" \
+          --keychain "$KEYCHAIN_NAME" \
+          HuskyCat-${PKG_VERSION#v}-unsigned.pkg \
+          HuskyCat-${PKG_VERSION#v}.pkg
+        pkgutil --check-signature HuskyCat-${PKG_VERSION#v}.pkg
+      else
+        mv HuskyCat-${PKG_VERSION#v}-unsigned.pkg HuskyCat-${PKG_VERSION#v}.pkg
+      fi
+
+    # Notarize PKG
+    - |
+      if [ -n "$APPLE_ID" ]; then
+        echo "Notarizing PKG..."
+        SUBMISSION_OUTPUT=$(xcrun notarytool submit HuskyCat-${PKG_VERSION#v}.pkg \
+          --apple-id "$APPLE_ID" \
+          --password "$APPLE_NOTARIZE_PASSWORD" \
+          --team-id "$APPLE_TEAM_ID" \
+          --wait 2>&1) || true
+
+        echo "$SUBMISSION_OUTPUT"
+
+        if echo "$SUBMISSION_OUTPUT" | grep -q "status: Invalid"; then
+          SUBMISSION_ID=$(echo "$SUBMISSION_OUTPUT" | grep "id:" | head -1 | awk '{print $2}')
+          xcrun notarytool log "$SUBMISSION_ID" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_NOTARIZE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            pkg-notarization-log.json || true
+          cat pkg-notarization-log.json || true
+          exit 1
+        fi
+
+        # Staple the notarization ticket
+        xcrun stapler staple HuskyCat-${PKG_VERSION#v}.pkg
+        xcrun stapler validate HuskyCat-${PKG_VERSION#v}.pkg
+      fi
+
+    # Move to artifacts
+    - mkdir -p dist/macos
+    - mv HuskyCat-${PKG_VERSION#v}.pkg dist/macos/
+    - ls -la dist/macos/
+
+    - echo "✅ macOS PKG installer created and signed"
+  artifacts:
+    paths:
+      - dist/macos/*.pkg
+      - pkg-notarization-log.json
+    expire_in: 1 month
+    when: always
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+# Universal macOS binary (fat binary)
+build:binary:darwin-universal:
+  extends: .macos_saas_runners
+  stage: build
+  needs:
+    - job: build:binary:darwin-arm64
+      artifacts: true
+    - job: build:binary:darwin-amd64
+      artifacts: true
+      optional: true
+  script:
+    - echo "🍎 Creating universal macOS binary..."
+    # Check if both architectures are available
+    - |
+      if [ -f dist/bin/huskycat-darwin-arm64 ] && [ -f dist/bin/huskycat-darwin-amd64 ]; then
+        lipo -create \
+          dist/bin/huskycat-darwin-arm64 \
+          dist/bin/huskycat-darwin-amd64 \
+          -output dist/bin/huskycat-darwin-universal
+        lipo -info dist/bin/huskycat-darwin-universal
+      else
+        echo "Only ARM64 available, using as universal"
+        cp dist/bin/huskycat-darwin-arm64 dist/bin/huskycat-darwin-universal
+      fi
+  artifacts:
+    paths:
+      - dist/bin/huskycat-darwin-universal
+    expire_in: 1 month
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual

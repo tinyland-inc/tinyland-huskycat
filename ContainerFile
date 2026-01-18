@@ -61,7 +61,7 @@ RUN npm install -g \
 # RUN go install github.com/securecodewarrior/sast-scan@latest
 
 # Create empty go bin directory for multi-stage copy
-RUN mkdir -p /go/bin
+RUN mkdir -p /go/bi
 
 # Install security tools
 RUN pip3 install --no-cache-dir --break-system-packages \

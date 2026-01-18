@@ -42,7 +42,7 @@ if [ ! -f "dist/huskycat" ]; then
     if [ -f ".venv/bin/activate" ]; then
         source .venv/bin/activate
     fi
-    pyinstaller huskycat.spec --clean
+    pyinstaller build/specs/huskycat.spec --clean
 fi
 
 # Verify binary exists

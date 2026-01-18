@@ -52,6 +52,8 @@ class HuskyCatFactory:
             "bootstrap": f"{base_package}.commands.bootstrap.BootstrapCommand",
             "clean": f"{base_package}.commands.clean.CleanCommand",
             "status": f"{base_package}.commands.status.StatusCommand",
+            "history": f"{base_package}.commands.history.HistoryCommand",
+            "tasks": f"{base_package}.commands.tasks.TasksCommand",
         }
 
         for name, class_path in command_modules.items():

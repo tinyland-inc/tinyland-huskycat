@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# HuskyCat Tray Application Autostart Entry
+# Install to: ~/.config/autostart/
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=HuskyCat Tray
+GenericName=Validation Status Tray
+Comment=System tray indicator for HuskyCat validation status
+Exec=huskycat-tray
+Icon=huskycat
+Categories=Development;Utility;
+Terminal=false
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=5
+Hidden=false
+NoDisplay=true

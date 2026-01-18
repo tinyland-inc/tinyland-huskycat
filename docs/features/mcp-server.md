@@ -8,30 +8,60 @@ The Model Context Protocol (MCP) is an open standard that allows AI assistants l
 
 ## Quick Setup
 
-### 1. Build HuskyCat
+### Option 1: Automatic Registration (Recommended)
+
+Install HuskyCat with automatic Claude Code integration:
 
 ```bash
-git clone <repository>
-cd huskycats-bates
+HUSKYCAT_WITH_CLAUDE=1 curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+```
+
+This automatically:
+1. Downloads and installs the HuskyCat binary
+2. Registers the MCP server with Claude Code
+3. Verifies the installation
+
+### Option 2: Manual Registration
+
+If HuskyCat is already installed, register manually:
+
+```bash
+# Using Claude CLI
+claude mcp add huskycat -- huskycat mcp-server
+
+# Or with explicit scope
+claude mcp add huskycat --scope user -- huskycat mcp-server
+```
+
+### Option 3: Build from Source
+
+```bash
+git clone https://gitlab.com/tinyland/ai/huskycat.git
+cd huskycat
 npm install
 uv sync --dev
 
 # Build container (required for validation)
 npm run container:build
 
-# Build binary entry point  
+# Build binary entry point
 npm run build:binary
+
+# Install with Claude Code integration
+./dist/huskycat install --with-claude
 ```
 
-### 2. Configure Claude Code MCP
+### MCP Configuration Reference
 
-Add to Claude Code MCP configuration:
+The MCP server configuration in `.mcp.json` or `~/.claude/.mcp.json`:
+
 ```json
 {
   "mcpServers": {
     "huskycat": {
-      "command": "/path/to/huskycat",
-      "args": ["mcp-server"]
+      "command": "huskycat",
+      "args": ["mcp-server"],
+      "type": "stdio"
     }
   }
 }

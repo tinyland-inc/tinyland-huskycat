@@ -106,6 +106,7 @@ Mode is auto-detected based on environment:
 - **`src/huskycat/core/factory.py`** → Command factory pattern
 - **`src/huskycat/unified_validation.py`** → Validation engine
 - **`src/huskycat/mcp_server.py`** → MCP stdio protocol
+- **`src/huskycat/integrations/`** → External tool integrations (RemoteJuggler)
 - **`huskycat_main.py`** → Binary entry point wrapper
 
 ## Tool Architecture
@@ -268,10 +269,11 @@ huskycat mcp-server
 claude mcp add huskycat -- huskycat mcp-server
 ```
 
-**MCP Tools Exposed**:
+**MCP Tools Exposed** (28 total):
 - `validate` - Validate files/directories
 - `validate_staged` - Validate git staged files
 - `validate_black`, `validate_mypy`, etc. - Individual tool validators
+- `juggler_*` - Git identity tools (when RemoteJuggler available)
 
 ### Global MCP Ecosystem (from crush-dots)
 
@@ -294,6 +296,48 @@ HuskyCat's MCP server is part of a broader MCP ecosystem deployed by the `crush-
 - flow-nexus (cloud-based, not needed locally)
 - claude-flow stable (outdated, superseded by alpha)
 - agentic-payments (not needed for development)
+
+### RemoteJuggler Integration
+
+HuskyCat integrates with [RemoteJuggler](https://gitlab.com/tinyland/ai/gitlab-switcher) for git identity management. When RemoteJuggler is available, HuskyCat exposes 6 additional MCP tools for identity switching.
+
+**Integration Location**: `src/huskycat/integrations/remote_juggler.py`
+
+**RemoteJuggler MCP Tools** (exposed as `juggler_*`):
+- `juggler_list_identities` - List all configured git identities
+- `juggler_detect_identity` - Detect the appropriate identity for a repository
+- `juggler_switch` - Switch to a different git identity
+- `juggler_status` - Get current git identity status
+- `juggler_validate` - Validate SSH/API credentials for current identity
+- `juggler_gpg_status` - Get GPG signing status for current identity
+
+**Configuration**: `~/.huskycat/integrations/remote-juggler.yaml`
+
+```yaml
+version: "1.0"
+enabled: true
+binary_path: "~/.local/bin/remote-juggler"  # or auto-detect
+integration_mode: "cli"  # cli | mcp | config
+
+hooks:
+  pre_commit:
+    detect_identity: true
+    warn_on_mismatch: true
+    auto_switch: false
+  pre_push:
+    validate_gpg: true
+    validate_credentials: true
+
+mcp:
+  proxy_tools: true
+  tool_prefix: "juggler_"
+```
+
+**Git Hooks Integration**:
+- Pre-commit: Detects expected identity and warns on mismatch
+- Pre-push: Validates GPG signing and credentials
+
+**Total MCP Tools**: 28 (22 HuskyCat + 6 RemoteJuggler)
 
 ## Repository Standards
 
@@ -373,6 +417,8 @@ def detect_mode() -> ProductMode:
 - **Multi-Arch Support**: amd64 and arm64 container builds passing
 - **Test Suite**: Unit tests passing, E2E tests operational
 - **CI Pipeline**: 22/22 jobs passing
+- **MCP Tools**: 28 tools (22 validators + 6 RemoteJuggler identity tools)
+- **Desktop Integration**: Icons and .desktop files created in `assets/`
 
 ## Remember
 

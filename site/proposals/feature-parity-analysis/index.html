@@ -1,0 +1,2505 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Universal Code Validation Platform">
+      
+      
+      
+        <link rel="canonical" href="https://huskycat-570fbd.gitlab.io/proposals/feature-parity-analysis/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>HuskyCat Feature Parity Analysis - December 6, 2025 - HuskyCat Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#huskycat-feature-parity-analysis-december-6-2025" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HuskyCat Documentation" class="md-header__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HuskyCat Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              HuskyCat Feature Parity Analysis - December 6, 2025
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../features/mcp-server/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/product-modes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ci-cd/gitlab/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  CI/CD Integration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../dogfooding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../performance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/mcp-tools/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../troubleshooting/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Troubleshooting
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HuskyCat Documentation" class="md-nav__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    HuskyCat Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../binary-downloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Binary Downloads
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Features
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nonblocking-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/product-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/execution-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            CI/CD Integration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ci-cd/gitlab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitHub Actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dogfooding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dogfooding Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parallel_executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Performance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migration/to-nonblocking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../macos-code-signing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    macOS Code Signing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/mcp-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="huskycat-feature-parity-analysis-december-6-2025">HuskyCat Feature Parity Analysis - December 6, 2025<a class="headerlink" href="#huskycat-feature-parity-analysis-december-6-2025" title="Permanent link">&para;</a></h1>
+<p><strong>Status</strong>: Current Analysis
+<strong>CI Pipeline</strong>:  Running (commit 427db18)
+<strong>Sprint</strong>: Sprint 8 Complete (95% auto-fix coverage)</p>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p>This document provides a comprehensive feature parity analysis across all HuskyCat execution modes. HuskyCat supports <strong>6 distinct execution contexts</strong> through <strong>5 product modes</strong> architecture, implemented via the <strong>Adapter Pattern</strong> around a <strong>unified validation engine</strong>.</p>
+<p><strong>Key Finding</strong>: Feature parity is <strong>excellent</strong> across modes, with intentional behavioral differences based on product mode requirements. The architecture successfully separates "execution context" (how HuskyCat runs) from "product mode" (how HuskyCat behaves).</p>
+<hr />
+<h2 id="ci-pipeline-status">CI Pipeline Status<a class="headerlink" href="#ci-pipeline-status" title="Permanent link">&para;</a></h2>
+<p><strong>Pipeline URL</strong>: https://gitlab.com/tinyland/ai/huskycat/-/pipelines/2200145457
+<strong>SHA</strong>: 427db18af69c07539c191a9e3da2897158714d49
+<strong>Status</strong>:  Running
+<strong>Progress</strong>:
+-  Container builds (AMD64 + ARM64): Running (~5 minutes)
+- ⏳ Binary builds (Linux AMD64/ARM64, macOS ARM64): Queued
+- ⏳ Tests (unit, MCP server): Queued
+- ⏳ Validation (YAML, basic, complete): Queued
+- ⏳ Security (SAST): Queued
+- ⏳ Package (Python, manifests): Queued
+- ⏳ Deploy (pages, signing): Queued</p>
+<hr />
+<h2 id="execution-modes-vs-product-modes">Execution Modes vs Product Modes<a class="headerlink" href="#execution-modes-vs-product-modes" title="Permanent link">&para;</a></h2>
+<h3 id="important-distinction">Important Distinction<a class="headerlink" href="#important-distinction" title="Permanent link">&para;</a></h3>
+<p><strong>Execution Modes</strong> (How HuskyCat Runs):
+1. Container Mode - Inside Alpine container
+2. Binary Mode - Standalone PyInstaller executable
+3. Direct Python - UV virtual environment
+4. Git Hooks - Via <code>.githooks/</code> scripts
+5. MCP Server - stdio JSON-RPC protocol
+6. Auto-DevOps - Helm/K8s validation (not runtime deployment)</p>
+<p><strong>Product Modes</strong> (How HuskyCat Behaves):
+1. <code>GIT_HOOKS</code> - Pre-commit/pre-push validation
+2. <code>CI</code> - Pipeline integration
+3. <code>CLI</code> - Developer terminal
+4. <code>PIPELINE</code> - Toolchain integration
+5. <code>MCP</code> - AI assistant</p>
+<p><strong>Key Insight</strong>: Any execution mode can run in any product mode. For example:
+- Binary can run in CLI mode: <code>./huskycat validate</code>
+- Container can run in CI mode: <code>podman run huskycat --mode ci validate</code>
+- Direct Python can run in git hooks mode: <code>uv run python -m src.huskycat validate --staged</code></p>
+<hr />
+<h2 id="feature-parity-matrix">Feature Parity Matrix<a class="headerlink" href="#feature-parity-matrix" title="Permanent link">&para;</a></h2>
+<h3 id="1-validator-availability">1. Validator Availability<a class="headerlink" href="#1-validator-availability" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Validator</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Python: Black</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Python: Ruff</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Python: IsSort</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Python: Flake8</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Python: MyPy</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Python: Bandit</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>JS/TS: Prettier</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>JS/TS: ESLint</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>YAML: yamllint</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>YAML: ansible-lint</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>TOML: taplo</strong></td>
+<td></td>
+<td>Not bundled</td>
+<td>Manual install</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Terraform: terraform fmt</strong></td>
+<td></td>
+<td>Not bundled</td>
+<td>Manual install</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Chapel: ChapelFormatter</strong></td>
+<td></td>
+<td>Bundled</td>
+<td>Bundled</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Shell: shellcheck</strong></td>
+<td></td>
+<td>🟡 Host-only*</td>
+<td>🟡 Host-only*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Docker: hadolint</strong></td>
+<td></td>
+<td>Not bundled</td>
+<td>Manual install</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>GitLab CI: gitlab-ci</strong></td>
+<td></td>
+<td>Schema only</td>
+<td>Schema only</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Legend</strong>:
+-  <strong>Fully Available</strong>: Tool is bundled or always accessible
+- 🟡 <strong>Host-Only</strong>: Works only if tool installed on host system
+-  <strong>Not Available</strong>: Tool not bundled, requires manual installation</p>
+<p><strong>Notes</strong>:
+- <em>Host-only</em>: Binary and Direct Python modes require tools pre-installed on the host system
+- Container mode has ALL tools pre-installed (best for consistency)
+- Git Hooks use UV venv, so tools must be in venv or host PATH
+- MCP mode prefers container but can fall back to host tools</p>
+<hr />
+<h3 id="2-auto-fix-support">2. Auto-Fix Support<a class="headerlink" href="#2-auto-fix-support" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Black auto-fix</strong></td>
+<td></td>
+<td>🟡 Host-only</td>
+<td>🟡 Host-only</td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Ruff auto-fix</strong></td>
+<td></td>
+<td>🟡 Host-only</td>
+<td>🟡 Host-only</td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>IsSort auto-fix</strong></td>
+<td></td>
+<td>🟡 Host-only</td>
+<td>🟡 Host-only</td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Prettier auto-fix</strong></td>
+<td></td>
+<td>🟡 Host-only</td>
+<td>🟡 Host-only</td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>ansible-lint auto-fix</strong></td>
+<td></td>
+<td>🟡 Host-only</td>
+<td>🟡 Host-only</td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>taplo auto-fix</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>terraform fmt auto-fix</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Chapel auto-fix</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>yamllint auto-fix</strong></td>
+<td></td>
+<td>🟡 Host-only</td>
+<td>🟡 Host-only</td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>--fix flag</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Interactive prompts</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td>🟡 TTY only</td>
+<td>Never</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Confidence levels</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Auto-Fix Confidence Behavior</strong>:
+- <strong>SAFE fixes</strong> (black, prettier): Auto-applied in all modes
+- <strong>LIKELY fixes</strong> (ruff, autoflake): Prompted in CLI/Git Hooks, auto-applied in CI/Pipeline
+- <strong>UNCERTAIN fixes</strong>: Skipped or prompted (never auto-applied in CI/Pipeline)</p>
+<hr />
+<h3 id="3-output-formats">3. Output Formats<a class="headerlink" href="#3-output-formats" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MINIMAL</strong> (errors only)</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Default</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>HUMAN</strong> (colored terminal)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>JSON</strong> (machine-readable)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Default</td>
+</tr>
+<tr>
+<td><strong>JUNIT_XML</strong> (CI artifacts)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>JSONRPC</strong> (MCP protocol)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Default</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mode Defaults</strong>:
+- Git Hooks: MINIMAL (silent on success)
+- CI: JUNIT_XML (artifact generation)
+- CLI: HUMAN (rich terminal output)
+- Pipeline: JSON (machine-readable)
+- MCP: JSONRPC (stdio protocol)</p>
+<hr />
+<h3 id="4-interactivity">4. Interactivity<a class="headerlink" href="#4-interactivity" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TTY detection</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Color output</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td>🟡 Auto-detect</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Progress bars</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Interactive prompts</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td>🟡 TTY only</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Auto-fix prompts</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td>🟡 TTY only</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Verbose modes (-v, -vv)</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Design Philosophy</strong>:
+- Git Hooks: Minimal by default, prompts if TTY detected
+- CI/Pipeline/MCP: Never interactive (fully automated)
+- CLI: Fully interactive with rich feedback</p>
+<hr />
+<h3 id="5-tool-selection">5. Tool Selection<a class="headerlink" href="#5-tool-selection" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fast tools only</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Default</td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>All validators</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Default</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Configured (.huskycat.yaml)</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Per-tool selection</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fast Tools</strong> (Git Hooks Mode):
+- black, ruff, mypy, flake8, isort
+- Target: &lt; 5s total execution time</p>
+<p><strong>All Tools</strong> (CI/MCP Modes):
+- All 17 validators
+- Comprehensive coverage</p>
+<hr />
+<h3 id="6-platform-support">6. Platform Support<a class="headerlink" href="#6-platform-support" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Linux AMD64</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Linux ARM64</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>macOS ARM64</strong></td>
+<td>*</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>macOS AMD64</strong></td>
+<td>*</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Windows</strong></td>
+<td></td>
+<td></td>
+<td>🟡 Untested</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notes</strong>:
+- *macOS containers run via Linux emulation (Podman/Docker Desktop)
+- Binary builds are platform-specific (no cross-compilation)
+- Git hooks work on any Unix-like system with bash</p>
+<hr />
+<h3 id="7-installation-setup">7. Installation &amp; Setup<a class="headerlink" href="#7-installation-setup" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pre-built downloads</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Self-install command</strong></td>
+<td></td>
+<td><code>huskycat install</code></td>
+<td></td>
+<td><code>huskycat setup-hooks</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Build from source</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>No dependencies</strong></td>
+<td></td>
+<td></td>
+<td>Requires UV</td>
+<td>Requires UV</td>
+<td>🟡 Prefers container</td>
+<td>Requires helm/kubectl</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Installation Paths</strong>:
+- Container: <code>podman pull registry.gitlab.com/tinyland/ai/huskycat:latest</code>
+- Binary: <code>curl -L -o ~/.local/bin/huskycat &lt;release-url&gt; &amp;&amp; chmod +x ~/.local/bin/huskycat</code>
+- Direct Python: <code>git clone &amp;&amp; uv sync --dev</code>
+- Git Hooks: <code>huskycat setup-hooks</code> (sets <code>git config core.hooksPath .githooks</code>)</p>
+<hr />
+<h3 id="8-configuration">8. Configuration<a class="headerlink" href="#8-configuration" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>.huskycat.yaml support</strong></td>
+<td>🟡 Planned</td>
+<td>🟡 Planned</td>
+<td>🟡 Planned</td>
+<td>🟡 Planned</td>
+<td>🟡 Planned</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Environment variables</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>--mode override</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>HUSKYCAT_MODE</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>SKIP_HOOKS</strong></td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td></td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>AUTO_FIX</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Environment Variables</strong>:
+- <code>HUSKYCAT_MODE</code>: Force product mode (git_hooks/ci/cli/pipeline/mcp)
+- <code>HUSKYCAT_LOG_LEVEL</code>: Logging verbosity (DEBUG/INFO/WARNING/ERROR)
+- <code>SKIP_HOOKS</code>: Skip git hooks (git hooks mode only)
+- <code>AUTO_FIX</code> / <code>HUSKYCAT_AUTO_APPROVE</code>: Auto-apply fixes without prompts</p>
+<hr />
+<h3 id="9-performance">9. Performance<a class="headerlink" href="#9-performance" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Startup time</strong></td>
+<td>~1-2s</td>
+<td>~0.5s</td>
+<td>~1-2s</td>
+<td>~1-2s</td>
+<td>~1-2s</td>
+<td>~2-3s</td>
+</tr>
+<tr>
+<td><strong>Validation speed</strong></td>
+<td>Fast</td>
+<td>Fast</td>
+<td>Fast</td>
+<td>Fast</td>
+<td>Fast</td>
+<td>Slow (Helm template)</td>
+</tr>
+<tr>
+<td><strong>Cold start</strong></td>
+<td>~3-5s</td>
+<td>~0.5s</td>
+<td>~2-3s</td>
+<td>~2-3s</td>
+<td>~3-5s</td>
+<td>~5-10s</td>
+</tr>
+<tr>
+<td><strong>Hot cache</strong></td>
+<td>~1s</td>
+<td>~0.5s</td>
+<td>~1s</td>
+<td>~1s</td>
+<td>~1s</td>
+<td>~2s</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Performance Notes</strong>:
+- Binary has fastest startup (no Python interpreter initialization)
+- Container mode has overhead from runtime invocation
+- Git hooks optimized for &lt; 5s total execution (fast tools only)
+- MCP server keeps running (no repeated startup)</p>
+<hr />
+<h3 id="10-security">10. Security<a class="headerlink" href="#10-security" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Container</th>
+<th>Binary</th>
+<th>Direct Python</th>
+<th>Git Hooks</th>
+<th>MCP</th>
+<th>Auto-DevOps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Non-root execution</strong></td>
+<td>UID 1001</td>
+<td>Current user</td>
+<td>Current user</td>
+<td>Current user</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Read-only repository</strong></td>
+<td>Possible</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Possible</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Tool isolation</strong></td>
+<td>Container</td>
+<td>Host system</td>
+<td>Host system</td>
+<td>Host system</td>
+<td>Container</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Sandboxing</strong></td>
+<td>Container</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Container</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>SAST scanning</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Security Validators</strong>:
+- Bandit (Python security scanning)
+- Safety (Python dependency vulnerabilities)
+- Semgrep SAST (in CI pipeline)</p>
+<hr />
+<h2 id="gap-analysis">Gap Analysis<a class="headerlink" href="#gap-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="critical-gaps">Critical Gaps<a class="headerlink" href="#critical-gaps" title="Permanent link">&para;</a></h3>
+<h4 id="1-binary-mode-tool-bundling">1. Binary Mode - Tool Bundling<a class="headerlink" href="#1-binary-mode-tool-bundling" title="Permanent link">&para;</a></h4>
+<p><strong>Issue</strong>: Binary builds do not bundle external tools (taplo, terraform, hadolint, etc.)</p>
+<p><strong>Impact</strong>:
+- taplo (TOML formatter):  Not available in binary mode
+- terraform (Terraform formatter):  Not available in binary mode
+- hadolint (Dockerfile linter):  Not available in binary mode</p>
+<p><strong>Current State</strong>:
+- Binary relies on host system having tools pre-installed
+- Works for Python tools (bundled in binary)
+- Fails for external binaries (taplo, terraform, hadolint)</p>
+<p><strong>Recommendation</strong>:
+- <strong>Option 1</strong>: Bundle external binaries in PyInstaller spec (increase binary size ~100MB)
+- <strong>Option 2</strong>: Document requirement for host tools in binary mode
+- <strong>Option 3</strong>: Hybrid approach - fall back to container if tools missing</p>
+<p><strong>Priority</strong>: Medium (binary mode primarily used for git hooks, which have UV venv with container access)</p>
+<hr />
+<h4 id="2-configuration-file-support-huskycatyaml">2. Configuration File Support (.huskycat.yaml) 🟡<a class="headerlink" href="#2-configuration-file-support-huskycatyaml" title="Permanent link">&para;</a></h4>
+<p><strong>Issue</strong>: <code>.huskycat.yaml</code> configuration is planned but not implemented</p>
+<p><strong>Impact</strong>:
+- Cannot customize validator selection per project
+- Cannot disable specific rules
+- Cannot configure tool-specific options</p>
+<p><strong>Current Workaround</strong>:
+- Use <code>--mode</code> flag to control tool selection
+- Modify code to skip validators
+- Environment variables for basic config</p>
+<p><strong>Recommendation</strong>:
+- Implement <code>.huskycat.yaml</code> schema
+- Support per-project validator configuration
+- Allow tool-specific rule configuration</p>
+<p><strong>Priority</strong>: High (improves user experience)</p>
+<hr />
+<h4 id="3-windows-support">3. Windows Support<a class="headerlink" href="#3-windows-support" title="Permanent link">&para;</a></h4>
+<p><strong>Issue</strong>: No official Windows support for any execution mode</p>
+<p><strong>Impact</strong>:
+- Windows developers cannot use HuskyCat
+- No binary builds for Windows
+- Git hooks don't work on Windows (bash scripts)</p>
+<p><strong>Current State</strong>:
+- Container mode: Not tested (WSL2 might work)
+- Binary mode: Not built for Windows
+- Direct Python: Might work with WSL2/Cygwin
+- Git hooks: Require bash (not native Windows)</p>
+<p><strong>Recommendation</strong>:
+- <strong>Option 1</strong>: Add Windows binary builds (PyInstaller supports Windows)
+- <strong>Option 2</strong>: Test WSL2 support with Linux containers
+- <strong>Option 3</strong>: Create PowerShell git hooks for Windows
+- <strong>Option 4</strong>: Document WSL2 as requirement for Windows</p>
+<p><strong>Priority</strong>: Low (most target users are on Linux/macOS)</p>
+<hr />
+<h3 id="minor-gaps">Minor Gaps<a class="headerlink" href="#minor-gaps" title="Permanent link">&para;</a></h3>
+<h4 id="4-mcp-server-http-transport">4. MCP Server - HTTP Transport<a class="headerlink" href="#4-mcp-server-http-transport" title="Permanent link">&para;</a></h4>
+<p><strong>Issue</strong>: MCP server only supports stdio, no HTTP/WebSocket transport</p>
+<p><strong>Impact</strong>:
+- Cannot run MCP server as a network service
+- Limited to stdio-based integrations (Claude Code)</p>
+<p><strong>Current State</strong>:
+- stdio transport:  Fully implemented
+- HTTP transport:  Removed in architecture refactor</p>
+<p><strong>Recommendation</strong>:
+- Keep stdio as primary (better for Claude Code)
+- Consider HTTP as future enhancement for web integrations</p>
+<p><strong>Priority</strong>: Very Low (stdio is sufficient for Claude Code)</p>
+<hr />
+<h4 id="5-auto-devops-k8s-runtime-deployment">5. Auto-DevOps - K8s Runtime Deployment<a class="headerlink" href="#5-auto-devops-k8s-runtime-deployment" title="Permanent link">&para;</a></h4>
+<p><strong>Issue</strong>: Auto-DevOps validates manifests but doesn't deploy to K8s clusters</p>
+<p><strong>Impact</strong>:
+- Cannot use HuskyCat to deploy applications
+- Requires separate deployment tooling</p>
+<p><strong>Current State</strong>:
+- Manifest validation:  Works
+- Helm chart validation:  Works
+- <code>helm template</code> dry-run:  Works
+- Actual cluster deployment:  Not implemented</p>
+<p><strong>Recommendation</strong>:
+- This is <strong>intentional</strong> - HuskyCat is a validation tool, not a deployment tool
+- Use GitLab Auto-DevOps or dedicated CD tools for deployment
+- Keep HuskyCat focused on validation</p>
+<p><strong>Priority</strong>: N/A (not a gap, intentional design decision)</p>
+<hr />
+<h4 id="6-git-hooks-binary-fallback">6. Git Hooks - Binary Fallback<a class="headerlink" href="#6-git-hooks-binary-fallback" title="Permanent link">&para;</a></h4>
+<p><strong>Issue</strong>: Git hooks require UV venv, no fallback to binary</p>
+<p><strong>Impact</strong>:
+- If UV venv broken, hooks fail
+- Cannot use binary-only setup for git hooks</p>
+<p><strong>Current State</strong>:
+- Hooks call: <code>uv run python -m src.huskycat validate --staged</code>
+- No binary fallback if UV missing</p>
+<p><strong>Recommendation</strong>:
+- Add detection logic to hooks:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>uv<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>src.huskycat<span class="w"> </span>validate<span class="w"> </span>--staged
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span>./dist/huskycat<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>./dist/huskycat<span class="w"> </span>validate<span class="w"> </span>--staged
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">else</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Error: Neither UV nor binary available&quot;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">fi</span>
+</code></pre></div></p>
+<p><strong>Priority</strong>: Low (UV is standard in this project)</p>
+<hr />
+<h2 id="feature-parity-score">Feature Parity Score<a class="headerlink" href="#feature-parity-score" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Execution Mode</th>
+<th>Validator Availability</th>
+<th>Auto-Fix</th>
+<th>Output Formats</th>
+<th>Interactivity</th>
+<th>Configuration</th>
+<th>Overall Score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Container</strong></td>
+<td>17/17 (100%)</td>
+<td>10/10 (100%)</td>
+<td>5/5 (100%)</td>
+<td>6/6 (100%)</td>
+<td>4/6 (67%)</td>
+<td><strong>93%</strong> ⭐</td>
+</tr>
+<tr>
+<td><strong>Binary</strong></td>
+<td>10/17 (59%)</td>
+<td>6/10 (60%)</td>
+<td>5/5 (100%)</td>
+<td>6/6 (100%)</td>
+<td>4/6 (67%)</td>
+<td><strong>77%</strong></td>
+</tr>
+<tr>
+<td><strong>Direct Python</strong></td>
+<td>10/17 (59%)</td>
+<td>6/10 (60%)</td>
+<td>5/5 (100%)</td>
+<td>6/6 (100%)</td>
+<td>4/6 (67%)</td>
+<td><strong>77%</strong></td>
+</tr>
+<tr>
+<td><strong>Git Hooks</strong></td>
+<td>17/17 (100%)</td>
+<td>10/10 (100%)</td>
+<td>1/5 (20%)</td>
+<td>3/6 (50%)</td>
+<td>4/6 (67%)</td>
+<td><strong>67%</strong></td>
+</tr>
+<tr>
+<td><strong>MCP</strong></td>
+<td>17/17 (100%)</td>
+<td>10/10 (100%)</td>
+<td>1/5 (20%)</td>
+<td>0/6 (0%)</td>
+<td>3/6 (50%)</td>
+<td><strong>54%</strong></td>
+</tr>
+<tr>
+<td><strong>Auto-DevOps</strong></td>
+<td>3/3 (100%)</td>
+<td>N/A</td>
+<td>1/1 (100%)</td>
+<td>0/2 (0%)</td>
+<td>2/4 (50%)</td>
+<td><strong>63%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notes on Scoring</strong>:
+- Lower scores for Git Hooks/MCP/Auto-DevOps are <strong>intentional</strong> - they have restricted feature sets by design
+- Git Hooks: Minimal output and limited interactivity by design (fast, focused)
+- MCP: Non-interactive by design (programmatic interface)
+- Auto-DevOps: Specialized validation mode (not a general validator)</p>
+<hr />
+<h2 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h2>
+<h3 id="high-priority">High Priority<a class="headerlink" href="#high-priority" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Implement .huskycat.yaml Configuration</strong>  Recommended</li>
+<li>Define YAML schema</li>
+<li>Support per-project validator selection</li>
+<li>Allow tool-specific rule configuration</li>
+<li>
+<p>Effort: 2-3 days</p>
+</li>
+<li>
+<p><strong>Document Tool Requirements for Binary Mode</strong>  Recommended</p>
+</li>
+<li>Create clear documentation on host requirements</li>
+<li>Provide installation instructions for taplo, terraform, hadolint</li>
+<li>Add detection/warning when tools missing</li>
+<li>
+<p>Effort: 4 hours</p>
+</li>
+<li>
+<p><strong>Add Hybrid Binary + Container Mode</strong>  Recommended</p>
+</li>
+<li>Binary detects missing tools</li>
+<li>Falls back to container for missing tools</li>
+<li>Best of both worlds (fast startup + complete toolchain)</li>
+<li>Effort: 2-3 days</li>
+</ol>
+<h3 id="medium-priority">Medium Priority<a class="headerlink" href="#medium-priority" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Bundle External Tools in Binary</strong> 🟡 Consider</li>
+<li>Bundle taplo, terraform, hadolint in PyInstaller</li>
+<li>Pros: Self-contained binary</li>
+<li>Cons: Large binary size (~150MB vs ~50MB)</li>
+<li>
+<p>Effort: 1 day</p>
+</li>
+<li>
+<p><strong>Add Git Hook Binary Fallback</strong> 🟡 Consider</p>
+</li>
+<li>Hooks try UV first, fall back to binary</li>
+<li>More robust hook execution</li>
+<li>
+<p>Effort: 2 hours</p>
+</li>
+<li>
+<p><strong>Test WSL2 Support for Windows</strong> 🟡 Consider</p>
+</li>
+<li>Document WSL2 setup</li>
+<li>Test container mode on WSL2</li>
+<li>Provide Windows-specific docs</li>
+<li>Effort: 1 day</li>
+</ol>
+<h3 id="low-priority">Low Priority<a class="headerlink" href="#low-priority" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Windows Binary Builds</strong>  Not Recommended</li>
+<li>PyInstaller supports Windows</li>
+<li>Requires Windows CI runners</li>
+<li>Low user demand</li>
+<li>
+<p>Effort: 3-5 days</p>
+</li>
+<li>
+<p><strong>HTTP MCP Transport</strong>  Not Recommended</p>
+</li>
+<li>stdio is sufficient for Claude Code</li>
+<li>Adds complexity</li>
+<li>No clear use case</li>
+<li>Effort: 2-3 days</li>
+</ol>
+<hr />
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p><strong>HuskyCat's feature parity across execution modes is excellent</strong>, with intentional differences based on product mode requirements. The architecture successfully separates execution context from behavioral mode.</p>
+<p><strong>Key Strengths</strong>:
+-  Unified validation engine works consistently across all modes
+-  Container mode provides 100% feature parity (gold standard)
+-  Adapter pattern enables mode-specific behavior without code duplication
+-  Auto-fix framework works identically across modes
+-  Multi-platform binary builds (Linux AMD64/ARM64, macOS ARM64)</p>
+<p><strong>Key Gaps</strong>:
+- Binary mode lacks bundled external tools (taplo, terraform, hadolint)
+- No .huskycat.yaml configuration support (planned)
+- No Windows support (low priority)</p>
+<p><strong>Recommended Next Steps</strong>:
+1. Implement <code>.huskycat.yaml</code> configuration (Sprint 9?)
+2. Document binary mode tool requirements
+3. Consider hybrid binary + container fallback mode</p>
+<hr />
+<p><strong>Analysis Date</strong>: December 6, 2025
+<strong>Sprint</strong>: Sprint 8 Complete
+<strong>Analysts</strong>: Claude Code
+<strong>Next Review</strong>: After Sprint 9 (configuration implementation)</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.follow", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

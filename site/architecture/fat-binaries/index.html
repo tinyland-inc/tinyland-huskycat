@@ -1,0 +1,1249 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Universal Code Validation Platform" name="description"/>
+<link href="https://huskycat-570fbd.gitlab.io/architecture/fat-binaries/" rel="canonical"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.18" name="generator"/>
+<title>HuskyCat Fat Binary Architecture - HuskyCat Documentation</title>
+<link href="../../assets/stylesheets/main.7e37652d.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="blue" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#huskycat-fat-binary-architecture">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="HuskyCat Documentation" class="md-header__button md-logo" data-md-component="logo" href="../.." title="HuskyCat Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            HuskyCat Documentation
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              HuskyCat Fat Binary Architecture
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../installation/">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../cli-reference/">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../features/mcp-server/">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../product-modes/">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../ci-cd/gitlab/">
+          
+  
+  
+    
+  
+  CI/CD Integration
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../dogfooding/">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../performance/">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../api/mcp-tools/">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../troubleshooting/">
+        
+  
+  
+    
+  
+  Troubleshooting
+
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="HuskyCat Documentation" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="HuskyCat Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    HuskyCat Documentation
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
+    Home
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../installation/">
+<span class="md-ellipsis">
+    Installation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../binary-downloads/">
+<span class="md-ellipsis">
+    Binary Downloads
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../configuration/">
+<span class="md-ellipsis">
+    Configuration
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli-reference/">
+<span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Features
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../features/mcp-server/">
+<span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../nonblocking-hooks/">
+<span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Architecture
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../product-modes/">
+<span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../execution-models/">
+<span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            CI/CD Integration
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ci-cd/gitlab/">
+<span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../github-actions/">
+<span class="md-ellipsis">
+    GitHub Actions
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Development
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../dogfooding/">
+<span class="md-ellipsis">
+    Dogfooding Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../parallel_executor/">
+<span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+<span class="md-ellipsis">
+    Advanced
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_8_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_8">
+<span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../performance/">
+<span class="md-ellipsis">
+    Performance
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../migration/to-nonblocking/">
+<span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../macos-code-signing/">
+<span class="md-ellipsis">
+    macOS Code Signing
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_9_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_9">
+<span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/mcp-tools/">
+<span class="md-ellipsis">
+    MCP Tools
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../troubleshooting/">
+<span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="huskycat-fat-binary-architecture">HuskyCat Fat Binary Architecture<a class="headerlink" href="#huskycat-fat-binary-architecture" title="Permanent link">¶</a></h1>
+<p><strong>Comprehensive, Code-Verified Documentation</strong></p>
+<p>Last verified: 2025-12-12
+Code references: All line numbers verified against current codebase</p>
+<hr/>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#architecture-diagram">Architecture Diagram</a></li>
+<li><a href="#build-pipeline">Build Pipeline</a></li>
+<li><a href="#runtime-tool-extraction">Runtime Tool Extraction</a></li>
+<li><a href="#tool-versions">Tool Versions</a></li>
+<li><a href="#code-implementation">Code Implementation</a></li>
+<li><a href="#platform-support">Platform Support</a></li>
+<li><a href="#usage-examples">Usage Examples</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+<hr/>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>HuskyCat fat binaries are <strong>self-contained executables</strong> that bundle:
+- Python runtime and interpreter
+- HuskyCat application code
+- Validation tool binaries (shellcheck, hadolint, taplo)
+- Chapel formatter implementation</p>
+<p><strong>Key Benefits:</strong>
+- ✅ Zero dependencies (no container runtime required)
+- ✅ Fast startup (~100-500ms)
+- ✅ Portable across machines
+- ✅ Version-locked tools (consistent validation)</p>
+<p><strong>File Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/huskycat_main.py:1-51</code></p>
+<hr/>
+<h2 id="architecture-diagram">Architecture Diagram<a class="headerlink" href="#architecture-diagram" title="Permanent link">¶</a></h2>
+<pre class="mermaid"><code>graph TD
+    A[HuskyCat Fat Binary&lt;br/&gt;150-250MB] --&gt; B[Python Runtime&lt;br/&gt;~40MB]
+    A --&gt; C[HuskyCat Code&lt;br/&gt;~5MB]
+    A --&gt; D[Embedded Tools&lt;br/&gt;~100-150MB]
+    A --&gt; E[Formatters&lt;br/&gt;~5MB]
+
+    D --&gt; D1[shellcheck v0.10.0&lt;br/&gt;10-15MB]
+    D --&gt; D2[hadolint v2.12.0&lt;br/&gt;5-8MB]
+    D --&gt; D3[taplo v0.9.3&lt;br/&gt;3-5MB]
+    D --&gt; D4[versions.txt&lt;br/&gt;metadata]
+
+    E --&gt; E1[Chapel formatter&lt;br/&gt;Python implementation]
+
+    F[First Run] --&gt; G{Check ~/.huskycat/tools/.version}
+    G --&gt;|Different/Missing| H[Extract Tools]
+    G --&gt;|Match| I[Use Cached Tools]
+    H --&gt; J[~/.huskycat/tools/shellcheck&lt;br/&gt;~/.huskycat/tools/hadolint&lt;br/&gt;~/.huskycat/tools/taplo&lt;br/&gt;~/.huskycat/tools/.version]
+    I --&gt; K[Run Validation]
+    J --&gt; K</code></pre>
+<p><strong>Binary Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>huskycat (fat binary)
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>├── _internal/                  # PyInstaller bundle structure
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>│   ├── base_library.zip       # Python stdlib (~15MB)
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>│   ├── tools/                 # Embedded validation tools
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>│   │   ├── shellcheck         # Embedded binary
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>│   │   ├── hadolint          # Embedded binary
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>│   │   ├── taplo             # Embedded binary
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>│   │   └── versions.txt      # Tool version manifest
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>│   ├── huskycat/             # Application code
+<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>│   │   ├── __main__.py
+<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>│   │   ├── core/
+<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>│   │   ├── formatters/
+<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>│   │   └── unified_validation.py
+<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>│   └── python3.11.so         # Python interpreter
+<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>└── huskycat                  # Executable entry point
+</code></pre></div>
+<p><strong>Code Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/build_fat_binary.py:148-232</code></p>
+<hr/>
+<h2 id="build-pipeline">Build Pipeline<a class="headerlink" href="#build-pipeline" title="Permanent link">¶</a></h2>
+<h3 id="stage-1-tool-download">Stage 1: Tool Download<a class="headerlink" href="#stage-1-tool-download" title="Permanent link">¶</a></h3>
+<p><strong>Job:</strong> <code>download:tools:&lt;platform&gt;</code>
+<strong>File:</strong> <code>.gitlab/ci/download-tools.yml:5-61</code></p>
+<p>Downloads platform-specific binaries from GitHub releases:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nt">download:tools:linux-amd64</span><span class="p">:</span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build</span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python:3.11-slim</span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python3 scripts/download_tools.py --platform linux-amd64 --output-dir dist/tools/linux-amd64</span>
+<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+<a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dist/tools/linux-amd64/</span>
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">    </span><span class="nt">expire_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1 day</span>
+</code></pre></div>
+<p><strong>Output Structure:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>dist/tools/
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>├── linux-amd64/
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>│   ├── shellcheck     (10-15MB)
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>│   ├── hadolint       (5-8MB)
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>│   ├── taplo          (3-5MB)
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>│   └── versions.txt
+<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>├── linux-arm64/
+<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>├── darwin-arm64/
+<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>└── darwin-amd64/
+</code></pre></div></p>
+<p><strong>Code Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/scripts/download_tools.py:202-264</code></p>
+<h3 id="stage-2-binary-build">Stage 2: Binary Build<a class="headerlink" href="#stage-2-binary-build" title="Permanent link">¶</a></h3>
+<p><strong>Job:</strong> <code>build:binary:&lt;platform&gt;</code>
+<strong>File:</strong> <code>.gitlab/ci/build.yml:6-179</code></p>
+<p>Builds fat binary using PyInstaller with embedded tools:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># CI build command (verified from .gitlab/ci/build.yml:32-37)</span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>uv<span class="w"> </span>run<span class="w"> </span>pyinstaller<span class="w"> </span>--onefile<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">  </span>--name<span class="w"> </span>huskycat-linux-amd64<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">  </span>--add-binary<span class="w"> </span><span class="s2">"dist/tools/linux-amd64/shellcheck:tools/"</span><span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">  </span>--add-binary<span class="w"> </span><span class="s2">"dist/tools/linux-amd64/hadolint:tools/"</span><span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">  </span>--add-binary<span class="w"> </span><span class="s2">"dist/tools/linux-amd64/taplo:tools/"</span><span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">  </span>huskycat_main.py
+</code></pre></div>
+<p><strong>PyInstaller Configuration:</strong>
+- Entry point: <code>huskycat_main.py</code> (line 32)
+- Tools embedded to <code>tools/</code> directory in bundle (lines 34-36)
+- Binary name format: <code>huskycat-{platform}</code> (line 33)
+- UPX compression on Linux (optional, line 41)</p>
+<p><strong>Size Verification:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># From .gitlab/ci/build.yml:47-54</span>
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="nv">SIZE_MB</span><span class="o">=</span><span class="k">$(</span>du<span class="w"> </span>-m<span class="w"> </span>dist/bin/huskycat-linux-amd64<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="k">)</span>
+<a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$SIZE_MB</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">250</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"WARNING: Binary size (</span><span class="si">${</span><span class="nv">SIZE_MB</span><span class="si">}</span><span class="s2">MB) exceeds 250MB target"</span>
+<a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="k">fi</span>
+</code></pre></div></p>
+<p><strong>Code Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/build.yml:24-54</code></p>
+<h3 id="stage-3-verification">Stage 3: Verification<a class="headerlink" href="#stage-3-verification" title="Permanent link">¶</a></h3>
+<p><strong>Job:</strong> <code>verify:binary-size</code>
+<strong>File:</strong> <code>.gitlab/ci/build.yml:199-272</code></p>
+<p>Validates all built binaries:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1"># Checks performed (lines 218-258):</span>
+<a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>-<span class="w"> </span>Binary<span class="w"> </span>file<span class="w"> </span>exists
+<a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>-<span class="w"> </span>Size<span class="w"> </span>&lt;<span class="o">=</span><span class="w"> </span>250MB<span class="w"> </span><span class="o">(</span>warning<span class="w"> </span>threshold<span class="o">)</span>
+<a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a>-<span class="w"> </span>Executable<span class="w"> </span>permission<span class="w"> </span><span class="nb">set</span>
+<a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a>-<span class="w"> </span>Valid<span class="w"> </span>ELF<span class="w"> </span><span class="o">(</span>Linux<span class="o">)</span><span class="w"> </span>or<span class="w"> </span>Mach-O<span class="w"> </span><span class="o">(</span>macOS<span class="o">)</span><span class="w"> </span>format
+</code></pre></div>
+<p><strong>Code Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/build.yml:216-258</code></p>
+<hr/>
+<h2 id="runtime-tool-extraction">Runtime Tool Extraction<a class="headerlink" href="#runtime-tool-extraction" title="Permanent link">¶</a></h2>
+<h3 id="extraction-flow">Extraction Flow<a class="headerlink" href="#extraction-flow" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant B as Binary Startup
+    participant TE as ToolExtractor
+    participant FS as Filesystem
+    participant V as Validator
+
+    B-&gt;&gt;TE: Import tool_extractor
+    TE-&gt;&gt;TE: Check sys.frozen (line 26)
+    TE-&gt;&gt;FS: Check ~/.huskycat/tools/.version (line 83)
+    TE-&gt;&gt;TE: get_bundle_version() (line 39)
+    TE-&gt;&gt;TE: needs_extraction() (line 89)
+
+    alt Version mismatch or missing
+        TE-&gt;&gt;FS: Create ~/.huskycat/tools/ (line 118)
+        TE-&gt;&gt;TE: Count tools (line 121)
+        TE-&gt;&gt;FS: Copy from sys._MEIPASS/tools/ (lines 128-140)
+        TE-&gt;&gt;FS: chmod 0o755 (line 140)
+        TE-&gt;&gt;FS: Write .version file (lines 143-145)
+    end
+
+    TE-&gt;&gt;FS: Add ~/.huskycat/tools to PATH (lines 154-162)
+    B-&gt;&gt;V: Continue validation</code></pre>
+<h3 id="implementation-details">Implementation Details<a class="headerlink" href="#implementation-details" title="Permanent link">¶</a></h3>
+<p><strong>Tool Extractor Class</strong>
+<strong>File:</strong> <code>src/huskycat/core/tool_extractor.py:20-203</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">ToolExtractor</span><span class="p">:</span>
+<a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="w">    </span><span class="sd">"""Extract and manage embedded validation tools."""</span>
+<a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a>
+<a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a>        <span class="c1"># Detect if running from PyInstaller bundle (line 26)</span>
+<a href="#__codelineno-6-6" id="__codelineno-6-6" name="__codelineno-6-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">is_bundled</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"frozen"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"_MEIPASS"</span><span class="p">)</span>
+<a href="#__codelineno-6-7" id="__codelineno-6-7" name="__codelineno-6-7"></a>
+<a href="#__codelineno-6-8" id="__codelineno-6-8" name="__codelineno-6-8"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bundled</span><span class="p">:</span>
+<a href="#__codelineno-6-9" id="__codelineno-6-9" name="__codelineno-6-9"></a>            <span class="c1"># Running from bundle - tools are in _MEIPASS/tools (line 30)</span>
+<a href="#__codelineno-6-10" id="__codelineno-6-10" name="__codelineno-6-10"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tools_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_MEIPASS</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"tools"</span>
+<a href="#__codelineno-6-11" id="__codelineno-6-11" name="__codelineno-6-11"></a>
+<a href="#__codelineno-6-12" id="__codelineno-6-12" name="__codelineno-6-12"></a>        <span class="c1"># User's tool cache directory (line 36)</span>
+<a href="#__codelineno-6-13" id="__codelineno-6-13" name="__codelineno-6-13"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">".huskycat"</span> <span class="o">/</span> <span class="s2">"tools"</span>
+<a href="#__codelineno-6-14" id="__codelineno-6-14" name="__codelineno-6-14"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">version_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">/</span> <span class="s2">".version"</span>
+</code></pre></div>
+<p><strong>Version Tracking</strong>
+<strong>File:</strong> <code>src/huskycat/core/tool_extractor.py:39-88</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_bundle_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w">    </span><span class="sd">"""Get version identifier for bundled tools. (line 39)"""</span>
+<a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a>    <span class="c1"># Check for versions.txt in bundle (line 49)</span>
+<a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a>    <span class="n">version_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tools_dir</span> <span class="o">/</span> <span class="s2">"versions.txt"</span>
+<a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a>    <span class="k">if</span> <span class="n">version_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">version_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a>            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+<a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a>                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Bundle Version:"</span><span class="p">):</span>
+<a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a>                    <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># (line 54)</span>
+<a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a>
+<a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a>    <span class="c1"># Fallback: compute hash of tool directory (line 57)</span>
+<a href="#__codelineno-7-12" id="__codelineno-7-12" name="__codelineno-7-12"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_tools_hash</span><span class="p">()</span>
+<a href="#__codelineno-7-13" id="__codelineno-7-13" name="__codelineno-7-13"></a>
+<a href="#__codelineno-7-14" id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="k">def</span><span class="w"> </span><span class="nf">needs_extraction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a href="#__codelineno-7-15" id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="w">    </span><span class="sd">"""Check if tools need to be extracted. (line 89)"""</span>
+<a href="#__codelineno-7-16" id="__codelineno-7-16" name="__codelineno-7-16"></a>    <span class="n">bundle_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bundle_version</span><span class="p">()</span>
+<a href="#__codelineno-7-17" id="__codelineno-7-17" name="__codelineno-7-17"></a>    <span class="n">cached_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cached_version</span><span class="p">()</span>
+<a href="#__codelineno-7-18" id="__codelineno-7-18" name="__codelineno-7-18"></a>
+<a href="#__codelineno-7-19" id="__codelineno-7-19" name="__codelineno-7-19"></a>    <span class="c1"># Extract if versions don't match or cache doesn't exist (line 102)</span>
+<a href="#__codelineno-7-20" id="__codelineno-7-20" name="__codelineno-7-20"></a>    <span class="k">return</span> <span class="n">bundle_version</span> <span class="o">!=</span> <span class="n">cached_version</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Extraction Process</strong>
+<strong>File:</strong> <code>src/huskycat/core/tool_extractor.py:104-153</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="w">    </span><span class="sd">"""Extract embedded tools to cache directory with progress feedback. (line 105)"""</span>
+<a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a>    <span class="c1"># Create cache directory (line 118)</span>
+<a href="#__codelineno-8-4" id="__codelineno-8-4" name="__codelineno-8-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a href="#__codelineno-8-5" id="__codelineno-8-5" name="__codelineno-8-5"></a>
+<a href="#__codelineno-8-6" id="__codelineno-8-6" name="__codelineno-8-6"></a>    <span class="c1"># Count tools for progress display (lines 121-122)</span>
+<a href="#__codelineno-8-7" id="__codelineno-8-7" name="__codelineno-8-7"></a>    <span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tools_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()]</span>
+<a href="#__codelineno-8-8" id="__codelineno-8-8" name="__codelineno-8-8"></a>    <span class="n">tool_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tools</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"versions.txt"</span><span class="p">])</span>
+<a href="#__codelineno-8-9" id="__codelineno-8-9" name="__codelineno-8-9"></a>
+<a href="#__codelineno-8-10" id="__codelineno-8-10" name="__codelineno-8-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Extracting </span><span class="si">{</span><span class="n">tool_count</span><span class="si">}</span><span class="s2"> validation tools to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>  <span class="c1"># (line 124)</span>
+<a href="#__codelineno-8-11" id="__codelineno-8-11" name="__codelineno-8-11"></a>
+<a href="#__codelineno-8-12" id="__codelineno-8-12" name="__codelineno-8-12"></a>    <span class="c1"># Copy each tool with progress display (lines 127-140)</span>
+<a href="#__codelineno-8-13" id="__codelineno-8-13" name="__codelineno-8-13"></a>    <span class="k">for</span> <span class="n">tool_file</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">:</span>
+<a href="#__codelineno-8-14" id="__codelineno-8-14" name="__codelineno-8-14"></a>        <span class="k">if</span> <span class="n">tool_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+<a href="#__codelineno-8-15" id="__codelineno-8-15" name="__codelineno-8-15"></a>            <span class="n">dest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">/</span> <span class="n">tool_file</span><span class="o">.</span><span class="n">name</span>
+<a href="#__codelineno-8-16" id="__codelineno-8-16" name="__codelineno-8-16"></a>
+<a href="#__codelineno-8-17" id="__codelineno-8-17" name="__codelineno-8-17"></a>            <span class="c1"># Show progress for actual tools (lines 132-134)</span>
+<a href="#__codelineno-8-18" id="__codelineno-8-18" name="__codelineno-8-18"></a>            <span class="k">if</span> <span class="n">tool_file</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"versions.txt"</span><span class="p">:</span>
+<a href="#__codelineno-8-19" id="__codelineno-8-19" name="__codelineno-8-19"></a>                <span class="n">size_mb</span> <span class="o">=</span> <span class="n">tool_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+<a href="#__codelineno-8-20" id="__codelineno-8-20" name="__codelineno-8-20"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  • </span><span class="si">{</span><span class="n">tool_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">size_mb</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB)"</span><span class="p">)</span>
+<a href="#__codelineno-8-21" id="__codelineno-8-21" name="__codelineno-8-21"></a>
+<a href="#__codelineno-8-22" id="__codelineno-8-22" name="__codelineno-8-22"></a>            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">tool_file</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+<a href="#__codelineno-8-23" id="__codelineno-8-23" name="__codelineno-8-23"></a>
+<a href="#__codelineno-8-24" id="__codelineno-8-24" name="__codelineno-8-24"></a>            <span class="c1"># Ensure executable (Unix) (lines 139-140)</span>
+<a href="#__codelineno-8-25" id="__codelineno-8-25" name="__codelineno-8-25"></a>            <span class="k">if</span> <span class="n">tool_file</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"versions.txt"</span><span class="p">:</span>
+<a href="#__codelineno-8-26" id="__codelineno-8-26" name="__codelineno-8-26"></a>                <span class="n">dest</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o755</span><span class="p">)</span>
+<a href="#__codelineno-8-27" id="__codelineno-8-27" name="__codelineno-8-27"></a>
+<a href="#__codelineno-8-28" id="__codelineno-8-28" name="__codelineno-8-28"></a>    <span class="c1"># Write version marker (lines 143-145)</span>
+<a href="#__codelineno-8-29" id="__codelineno-8-29" name="__codelineno-8-29"></a>    <span class="n">bundle_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bundle_version</span><span class="p">()</span>
+<a href="#__codelineno-8-30" id="__codelineno-8-30" name="__codelineno-8-30"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">version_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a href="#__codelineno-8-31" id="__codelineno-8-31" name="__codelineno-8-31"></a>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bundle_version</span> <span class="ow">or</span> <span class="s2">"unknown"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Auto-extraction on Import</strong>
+<strong>File:</strong> <code>src/huskycat/core/tool_extractor.py:239-242</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="c1"># Auto-extract on module import for bundled executables</span>
+<a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"frozen"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+<a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a>    <span class="c1"># Running from bundle - ensure tools on startup</span>
+<a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a>    <span class="n">ensure_tools</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Cache Directory Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a>~/.huskycat/
+<a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a>└── tools/
+<a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a>    ├── .version          # Bundle version marker (e.g., "1.0.0")
+<a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a>    ├── shellcheck        # Extracted executable (755 permissions)
+<a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a>    ├── hadolint          # Extracted executable (755 permissions)
+<a href="#__codelineno-10-6" id="__codelineno-10-6" name="__codelineno-10-6"></a>    ├── taplo             # Extracted executable (755 permissions)
+<a href="#__codelineno-10-7" id="__codelineno-10-7" name="__codelineno-10-7"></a>    └── versions.txt      # Tool version manifest
+</code></pre></div>
+<p><strong>Code Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/tool_extractor.py:1-243</code></p>
+<hr/>
+<h2 id="tool-versions">Tool Versions<a class="headerlink" href="#tool-versions" title="Permanent link">¶</a></h2>
+<p><strong>Source:</strong> <code>scripts/download_tools.py:107-112</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="n">TOOL_VERSIONS</span> <span class="o">=</span> <span class="p">{</span>
+<a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a>    <span class="s2">"shellcheck"</span><span class="p">:</span> <span class="s2">"0.10.0"</span><span class="p">,</span>
+<a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a>    <span class="s2">"hadolint"</span><span class="p">:</span> <span class="s2">"2.12.0"</span><span class="p">,</span>
+<a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a>    <span class="s2">"taplo"</span><span class="p">:</span> <span class="s2">"0.9.3"</span><span class="p">,</span>
+<a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a>    <span class="s2">"bundle_version"</span><span class="p">:</span> <span class="s2">"1.0.0"</span><span class="p">,</span>  <span class="c1"># HuskyCat tool bundle version</span>
+<a href="#__codelineno-11-6" id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Download URLs:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>shellcheck</td>
+<td>0.10.0</td>
+<td>https://github.com/koalaman/shellcheck/releases/download/v0.10.0/</td>
+</tr>
+<tr>
+<td>hadolint</td>
+<td>2.12.0</td>
+<td>https://github.com/hadolint/hadolint/releases/download/v2.12.0/</td>
+</tr>
+<tr>
+<td>taplo</td>
+<td>0.9.3</td>
+<td>https://github.com/tamasfe/taplo/releases/download/0.9.3/</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Version Manifest Format:</strong></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a>HuskyCat Tool Bundle
+<a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a>Platform: linux-amd64
+<a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a>Bundle Version: 1.0.0
+<a href="#__codelineno-12-4" id="__codelineno-12-4" name="__codelineno-12-4"></a>
+<a href="#__codelineno-12-5" id="__codelineno-12-5" name="__codelineno-12-5"></a>Tool Versions:
+<a href="#__codelineno-12-6" id="__codelineno-12-6" name="__codelineno-12-6"></a>  hadolint: 2.12.0
+<a href="#__codelineno-12-7" id="__codelineno-12-7" name="__codelineno-12-7"></a>  shellcheck: 0.10.0
+<a href="#__codelineno-12-8" id="__codelineno-12-8" name="__codelineno-12-8"></a>  taplo: 0.9.3
+</code></pre></div>
+<p><strong>Code Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/scripts/download_tools.py:47-112, 295-314</code></p>
+<hr/>
+<h2 id="code-implementation">Code Implementation<a class="headerlink" href="#code-implementation" title="Permanent link">¶</a></h2>
+<h3 id="binary-entry-point">Binary Entry Point<a class="headerlink" href="#binary-entry-point" title="Permanent link">¶</a></h3>
+<p><strong>File:</strong> <code>huskycat_main.py:1-51</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="ch">#!/usr/bin/env python3</span>
+<a href="#__codelineno-13-2" id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="sd">"""HuskyCat - Universal Code Validation Platform</span>
+<a href="#__codelineno-13-3" id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="sd">Main entry point for PyInstaller binary</span>
+<a href="#__codelineno-13-4" id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="sd">"""</span>
+<a href="#__codelineno-13-5" id="__codelineno-13-5" name="__codelineno-13-5"></a>
+<a href="#__codelineno-13-6" id="__codelineno-13-6" name="__codelineno-13-6"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<a href="#__codelineno-13-7" id="__codelineno-13-7" name="__codelineno-13-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a href="#__codelineno-13-8" id="__codelineno-13-8" name="__codelineno-13-8"></a>
+<a href="#__codelineno-13-9" id="__codelineno-13-9" name="__codelineno-13-9"></a><span class="c1"># PyInstaller frozen mode detection (line 12)</span>
+<a href="#__codelineno-13-10" id="__codelineno-13-10" name="__codelineno-13-10"></a><span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"frozen"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"_MEIPASS"</span><span class="p">):</span>
+<a href="#__codelineno-13-11" id="__codelineno-13-11" name="__codelineno-13-11"></a>    <span class="c1"># Running from PyInstaller bundle (line 14)</span>
+<a href="#__codelineno-13-12" id="__codelineno-13-12" name="__codelineno-13-12"></a>    <span class="n">bundle_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_MEIPASS</span><span class="p">)</span>
+<a href="#__codelineno-13-13" id="__codelineno-13-13" name="__codelineno-13-13"></a>    <span class="n">src_dir</span> <span class="o">=</span> <span class="n">bundle_dir</span> <span class="o">/</span> <span class="s2">"src"</span>
+<a href="#__codelineno-13-14" id="__codelineno-13-14" name="__codelineno-13-14"></a>
+<a href="#__codelineno-13-15" id="__codelineno-13-15" name="__codelineno-13-15"></a>    <span class="c1"># Verify bundle structure (line 18)</span>
+<a href="#__codelineno-13-16" id="__codelineno-13-16" name="__codelineno-13-16"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">src_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a href="#__codelineno-13-17" id="__codelineno-13-17" name="__codelineno-13-17"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: Bundle structure invalid - src not found in </span><span class="si">{</span><span class="n">bundle_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+<a href="#__codelineno-13-18" id="__codelineno-13-18" name="__codelineno-13-18"></a>              <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+<a href="#__codelineno-13-19" id="__codelineno-13-19" name="__codelineno-13-19"></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a href="#__codelineno-13-20" id="__codelineno-13-20" name="__codelineno-13-20"></a>
+<a href="#__codelineno-13-21" id="__codelineno-13-21" name="__codelineno-13-21"></a>    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">src_dir</span><span class="p">))</span>  <span class="c1"># (line 22)</span>
+<a href="#__codelineno-13-22" id="__codelineno-13-22" name="__codelineno-13-22"></a>
+<a href="#__codelineno-13-23" id="__codelineno-13-23" name="__codelineno-13-23"></a>    <span class="c1"># Set environment marker for frozen mode (line 25)</span>
+<a href="#__codelineno-13-24" id="__codelineno-13-24" name="__codelineno-13-24"></a>    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"HUSKYCAT_FROZEN"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"1"</span>
+<a href="#__codelineno-13-25" id="__codelineno-13-25" name="__codelineno-13-25"></a><span class="k">else</span><span class="p">:</span>
+<a href="#__codelineno-13-26" id="__codelineno-13-26" name="__codelineno-13-26"></a>    <span class="c1"># Running from source (lines 27-35)</span>
+<a href="#__codelineno-13-27" id="__codelineno-13-27" name="__codelineno-13-27"></a>    <span class="n">repo_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+<a href="#__codelineno-13-28" id="__codelineno-13-28" name="__codelineno-13-28"></a>    <span class="n">src_dir</span> <span class="o">=</span> <span class="n">repo_dir</span> <span class="o">/</span> <span class="s2">"src"</span>
+<a href="#__codelineno-13-29" id="__codelineno-13-29" name="__codelineno-13-29"></a>    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">src_dir</span><span class="p">))</span>
+<a href="#__codelineno-13-30" id="__codelineno-13-30" name="__codelineno-13-30"></a>
+<a href="#__codelineno-13-31" id="__codelineno-13-31" name="__codelineno-13-31"></a><span class="c1"># Import must be after path setup (line 38)</span>
+<a href="#__codelineno-13-32" id="__codelineno-13-32" name="__codelineno-13-32"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.huskycat.__main__</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span>
+<a href="#__codelineno-13-33" id="__codelineno-13-33" name="__codelineno-13-33"></a>
+<a href="#__codelineno-13-34" id="__codelineno-13-34" name="__codelineno-13-34"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+<a href="#__codelineno-13-35" id="__codelineno-13-35" name="__codelineno-13-35"></a>    <span class="k">try</span><span class="p">:</span>
+<a href="#__codelineno-13-36" id="__codelineno-13-36" name="__codelineno-13-36"></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>  <span class="c1"># (line 42)</span>
+<a href="#__codelineno-13-37" id="__codelineno-13-37" name="__codelineno-13-37"></a>    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+<a href="#__codelineno-13-38" id="__codelineno-13-38" name="__codelineno-13-38"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Interrupted by user"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+<a href="#__codelineno-13-39" id="__codelineno-13-39" name="__codelineno-13-39"></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">130</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Key Points:</strong>
+- Detects PyInstaller bundle via <code>sys.frozen</code> and <code>sys._MEIPASS</code> (line 12)
+- Sets up Python path to find bundled source code (line 22)
+- Marks frozen mode with environment variable (line 25)
+- Imports main() after path configuration (line 38)</p>
+<h3 id="tool-resolution-in-validators">Tool Resolution in Validators<a class="headerlink" href="#tool-resolution-in-validators" title="Permanent link">¶</a></h3>
+<p><strong>File:</strong> <code>src/huskycat/unified_validation.py:127-160</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">_get_execution_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a href="#__codelineno-14-2" id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="w">    </span><span class="sd">"""Detect execution mode for tool resolution. (line 127)</span>
+<a href="#__codelineno-14-3" id="__codelineno-14-3" name="__codelineno-14-3"></a>
+<a href="#__codelineno-14-4" id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="sd">    Returns:</span>
+<a href="#__codelineno-14-5" id="__codelineno-14-5" name="__codelineno-14-5"></a><span class="sd">        - "bundled": PyInstaller bundle with extracted tools</span>
+<a href="#__codelineno-14-6" id="__codelineno-14-6" name="__codelineno-14-6"></a><span class="sd">        - "local": Tools in system PATH</span>
+<a href="#__codelineno-14-7" id="__codelineno-14-7" name="__codelineno-14-7"></a><span class="sd">        - "container": Running inside container</span>
+<a href="#__codelineno-14-8" id="__codelineno-14-8" name="__codelineno-14-8"></a><span class="sd">    """</span>
+<a href="#__codelineno-14-9" id="__codelineno-14-9" name="__codelineno-14-9"></a>    <span class="c1"># Check if in container (line 129)</span>
+<a href="#__codelineno-14-10" id="__codelineno-14-10" name="__codelineno-14-10"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running_in_container</span><span class="p">():</span>
+<a href="#__codelineno-14-11" id="__codelineno-14-11" name="__codelineno-14-11"></a>        <span class="k">return</span> <span class="s2">"container"</span>
+<a href="#__codelineno-14-12" id="__codelineno-14-12" name="__codelineno-14-12"></a>
+<a href="#__codelineno-14-13" id="__codelineno-14-13" name="__codelineno-14-13"></a>    <span class="c1"># Check if bundled (PyInstaller) (line 130)</span>
+<a href="#__codelineno-14-14" id="__codelineno-14-14" name="__codelineno-14-14"></a>    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">'frozen'</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+<a href="#__codelineno-14-15" id="__codelineno-14-15" name="__codelineno-14-15"></a>        <span class="n">bundled_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">".huskycat"</span> <span class="o">/</span> <span class="s2">"tools"</span>  <span class="c1"># (line 131)</span>
+<a href="#__codelineno-14-16" id="__codelineno-14-16" name="__codelineno-14-16"></a>        <span class="k">if</span> <span class="n">bundled_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a href="#__codelineno-14-17" id="__codelineno-14-17" name="__codelineno-14-17"></a>            <span class="k">return</span> <span class="s2">"bundled"</span>
+<a href="#__codelineno-14-18" id="__codelineno-14-18" name="__codelineno-14-18"></a>
+<a href="#__codelineno-14-19" id="__codelineno-14-19" name="__codelineno-14-19"></a>    <span class="c1"># Default to local (line 134)</span>
+<a href="#__codelineno-14-20" id="__codelineno-14-20" name="__codelineno-14-20"></a>    <span class="k">return</span> <span class="s2">"local"</span>
+</code></pre></div>
+<p><strong>Tool Path Resolution:</strong>
+<strong>File:</strong> <code>src/huskycat/unified_validation.py:150-160</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-15-1" id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">_get_bundled_tool_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<a href="#__codelineno-15-2" id="__codelineno-15-2" name="__codelineno-15-2"></a><span class="w">    </span><span class="sd">"""Get path to bundled tool if available. (line 150)"""</span>
+<a href="#__codelineno-15-3" id="__codelineno-15-3" name="__codelineno-15-3"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">'frozen'</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+<a href="#__codelineno-15-4" id="__codelineno-15-4" name="__codelineno-15-4"></a>        <span class="k">return</span> <span class="kc">None</span>
+<a href="#__codelineno-15-5" id="__codelineno-15-5" name="__codelineno-15-5"></a>
+<a href="#__codelineno-15-6" id="__codelineno-15-6" name="__codelineno-15-6"></a>    <span class="n">bundled_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">".huskycat"</span> <span class="o">/</span> <span class="s2">"tools"</span>  <span class="c1"># (line 153)</span>
+<a href="#__codelineno-15-7" id="__codelineno-15-7" name="__codelineno-15-7"></a>    <span class="n">tool_path</span> <span class="o">=</span> <span class="n">bundled_dir</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+<a href="#__codelineno-15-8" id="__codelineno-15-8" name="__codelineno-15-8"></a>
+<a href="#__codelineno-15-9" id="__codelineno-15-9" name="__codelineno-15-9"></a>    <span class="k">if</span> <span class="n">tool_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">tool_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
+<a href="#__codelineno-15-10" id="__codelineno-15-10" name="__codelineno-15-10"></a>        <span class="k">return</span> <span class="n">tool_path</span>
+<a href="#__codelineno-15-11" id="__codelineno-15-11" name="__codelineno-15-11"></a>
+<a href="#__codelineno-15-12" id="__codelineno-15-12" name="__codelineno-15-12"></a>    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+<hr/>
+<h2 id="platform-support">Platform Support<a class="headerlink" href="#platform-support" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Binary Name</th>
+<th>Size Range</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>linux-amd64</td>
+<td>huskycat-linux-amd64</td>
+<td>150-200MB</td>
+<td>✅ Supported</td>
+<td>UPX compressed</td>
+</tr>
+<tr>
+<td>linux-arm64</td>
+<td>huskycat-linux-arm64</td>
+<td>150-200MB</td>
+<td>✅ Supported</td>
+<td>UPX compressed</td>
+</tr>
+<tr>
+<td>darwin-arm64</td>
+<td>huskycat-darwin-arm64</td>
+<td>180-220MB</td>
+<td>✅ Supported</td>
+<td>No UPX (code signing)</td>
+</tr>
+<tr>
+<td>darwin-amd64</td>
+<td>huskycat-darwin-amd64</td>
+<td>180-220MB</td>
+<td>🚧 Planned</td>
+<td>Requires Intel runner</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Size Target:</strong> ≤ 250MB per binary
+<strong>Warning Threshold:</strong> &gt; 250MB triggers CI warning
+<strong>Hard Limit:</strong> None (informational only)</p>
+<p><strong>Code Reference:</strong> <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/build.yml:47-54, 109-116, 162-170</code></p>
+<h3 id="platform-specific-notes">Platform-Specific Notes<a class="headerlink" href="#platform-specific-notes" title="Permanent link">¶</a></h3>
+<p><strong>Linux (amd64/arm64):</strong>
+- UPX compression enabled (<code>.gitlab/ci/build.yml:41, 103</code>)
+- Reduces size by ~30%
+- Rocky Linux 10 base image
+- ELF binary format</p>
+<p><strong>macOS (arm64):</strong>
+- No UPX compression (breaks code signing)
+- Mach-O binary format
+- Requires notarization for distribution
+- macOS 14 runner (Apple Silicon)</p>
+<p><strong>macOS (amd64):</strong>
+- Currently not built (GitLab SaaS lacks Intel runners)
+- Can be built locally or with custom runners
+- Same configuration as darwin-arm64</p>
+<hr/>
+<h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">¶</a></h2>
+<h3 id="download-and-install">Download and Install<a class="headerlink" href="#download-and-install" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-16-1" id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="c1"># Download binary for your platform</span>
+<a href="#__codelineno-16-2" id="__codelineno-16-2" name="__codelineno-16-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>huskycat<span class="w"> </span>https://releases.huskycat.io/latest/huskycat-linux-amd64
+<a href="#__codelineno-16-3" id="__codelineno-16-3" name="__codelineno-16-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
+<a href="#__codelineno-16-4" id="__codelineno-16-4" name="__codelineno-16-4"></a>
+<a href="#__codelineno-16-5" id="__codelineno-16-5" name="__codelineno-16-5"></a><span class="c1"># First run extracts tools</span>
+<a href="#__codelineno-16-6" id="__codelineno-16-6" name="__codelineno-16-6"></a>./huskycat<span class="w"> </span>--help
+<a href="#__codelineno-16-7" id="__codelineno-16-7" name="__codelineno-16-7"></a><span class="c1"># Output:</span>
+<a href="#__codelineno-16-8" id="__codelineno-16-8" name="__codelineno-16-8"></a><span class="c1"># Extracting 3 validation tools to /home/user/.huskycat/tools...</span>
+<a href="#__codelineno-16-9" id="__codelineno-16-9" name="__codelineno-16-9"></a><span class="c1">#   • shellcheck (10.2 MB)</span>
+<a href="#__codelineno-16-10" id="__codelineno-16-10" name="__codelineno-16-10"></a><span class="c1">#   • hadolint (5.3 MB)</span>
+<a href="#__codelineno-16-11" id="__codelineno-16-11" name="__codelineno-16-11"></a><span class="c1">#   • taplo (3.8 MB)</span>
+<a href="#__codelineno-16-12" id="__codelineno-16-12" name="__codelineno-16-12"></a><span class="c1"># ✓ Tools extracted successfully</span>
+<a href="#__codelineno-16-13" id="__codelineno-16-13" name="__codelineno-16-13"></a><span class="c1">#</span>
+<a href="#__codelineno-16-14" id="__codelineno-16-14" name="__codelineno-16-14"></a><span class="c1"># [Help text follows...]</span>
+<a href="#__codelineno-16-15" id="__codelineno-16-15" name="__codelineno-16-15"></a>
+<a href="#__codelineno-16-16" id="__codelineno-16-16" name="__codelineno-16-16"></a><span class="c1"># Subsequent runs use cached tools (instant)</span>
+<a href="#__codelineno-16-17" id="__codelineno-16-17" name="__codelineno-16-17"></a>./huskycat<span class="w"> </span>validate<span class="w"> </span>--staged
+</code></pre></div>
+<h3 id="check-tool-status">Check Tool Status<a class="headerlink" href="#check-tool-status" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-17-1" id="__codelineno-17-1" name="__codelineno-17-1"></a>./huskycat<span class="w"> </span>status
+<a href="#__codelineno-17-2" id="__codelineno-17-2" name="__codelineno-17-2"></a>
+<a href="#__codelineno-17-3" id="__codelineno-17-3" name="__codelineno-17-3"></a><span class="c1"># Output shows bundled tools:</span>
+<a href="#__codelineno-17-4" id="__codelineno-17-4" name="__codelineno-17-4"></a><span class="c1"># HuskyCat Configuration Status</span>
+<a href="#__codelineno-17-5" id="__codelineno-17-5" name="__codelineno-17-5"></a><span class="c1">#</span>
+<a href="#__codelineno-17-6" id="__codelineno-17-6" name="__codelineno-17-6"></a><span class="c1"># Execution Mode: bundled</span>
+<a href="#__codelineno-17-7" id="__codelineno-17-7" name="__codelineno-17-7"></a><span class="c1"># Tools Location: /home/user/.huskycat/tools</span>
+<a href="#__codelineno-17-8" id="__codelineno-17-8" name="__codelineno-17-8"></a><span class="c1"># Bundle Version: 1.0.0</span>
+<a href="#__codelineno-17-9" id="__codelineno-17-9" name="__codelineno-17-9"></a><span class="c1">#</span>
+<a href="#__codelineno-17-10" id="__codelineno-17-10" name="__codelineno-17-10"></a><span class="c1"># Available Tools:</span>
+<a href="#__codelineno-17-11" id="__codelineno-17-11" name="__codelineno-17-11"></a><span class="c1">#   ✓ shellcheck 0.10.0 (bundled)</span>
+<a href="#__codelineno-17-12" id="__codelineno-17-12" name="__codelineno-17-12"></a><span class="c1">#   ✓ hadolint 2.12.0 (bundled)</span>
+<a href="#__codelineno-17-13" id="__codelineno-17-13" name="__codelineno-17-13"></a><span class="c1">#   ✓ taplo 0.9.3 (bundled)</span>
+</code></pre></div>
+<h3 id="force-re-extraction">Force Re-extraction<a class="headerlink" href="#force-re-extraction" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-18-1" id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="c1"># Remove cached tools to force re-extraction</span>
+<a href="#__codelineno-18-2" id="__codelineno-18-2" name="__codelineno-18-2"></a>rm<span class="w"> </span>-rf<span class="w"> </span>~/.huskycat/tools/
+<a href="#__codelineno-18-3" id="__codelineno-18-3" name="__codelineno-18-3"></a>
+<a href="#__codelineno-18-4" id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="c1"># Next run will extract again</span>
+<a href="#__codelineno-18-5" id="__codelineno-18-5" name="__codelineno-18-5"></a>./huskycat<span class="w"> </span>validate<span class="w"> </span>.
+</code></pre></div>
+<h3 id="local-development-build">Local Development Build<a class="headerlink" href="#local-development-build" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-19-1" id="__codelineno-19-1" name="__codelineno-19-1"></a><span class="c1"># Download tools for current platform</span>
+<a href="#__codelineno-19-2" id="__codelineno-19-2" name="__codelineno-19-2"></a>python<span class="w"> </span>scripts/download_tools.py<span class="w"> </span>--platform<span class="w"> </span>auto
+<a href="#__codelineno-19-3" id="__codelineno-19-3" name="__codelineno-19-3"></a>
+<a href="#__codelineno-19-4" id="__codelineno-19-4" name="__codelineno-19-4"></a><span class="c1"># Build fat binary</span>
+<a href="#__codelineno-19-5" id="__codelineno-19-5" name="__codelineno-19-5"></a>python<span class="w"> </span>build_fat_binary.py<span class="w"> </span>--platform<span class="w"> </span>auto
+<a href="#__codelineno-19-6" id="__codelineno-19-6" name="__codelineno-19-6"></a>
+<a href="#__codelineno-19-7" id="__codelineno-19-7" name="__codelineno-19-7"></a><span class="c1"># Test binary</span>
+<a href="#__codelineno-19-8" id="__codelineno-19-8" name="__codelineno-19-8"></a>./dist/<span class="k">$(</span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import platform; print(f"{platform.system().lower()}-{platform.machine()}")'</span><span class="k">)</span>/huskycat<span class="w"> </span>--version
+</code></pre></div>
+<hr/>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
+<h3 id="issue-bundle-structure-invalid-src-not-found">Issue: "Bundle structure invalid - src not found"<a class="headerlink" href="#issue-bundle-structure-invalid-src-not-found" title="Permanent link">¶</a></h3>
+<p><strong>Symptoms:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-20-1" id="__codelineno-20-1" name="__codelineno-20-1"></a>Error: Bundle structure invalid - src not found in /tmp/_MEI123456
+</code></pre></div></p>
+<p><strong>Cause:</strong> PyInstaller bundle missing source code</p>
+<p><strong>Solution:</strong>
+1. Check PyInstaller spec includes <code>datas</code> for src: <code>build_fat_binary.py:175-177</code>
+2. Verify build command: <code>.gitlab/ci/build.yml:32-37</code>
+3. Rebuild binary: <code>python build_fat_binary.py --platform linux-amd64</code></p>
+<h3 id="issue-tools-not-extracting">Issue: Tools not extracting<a class="headerlink" href="#issue-tools-not-extracting" title="Permanent link">¶</a></h3>
+<p><strong>Symptoms:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-21-1" id="__codelineno-21-1" name="__codelineno-21-1"></a>RuntimeError: Bundled tool shellcheck not found
+</code></pre></div></p>
+<p><strong>Cause:</strong> Extraction failed or bundle missing tools</p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-22-1" id="__codelineno-22-1" name="__codelineno-22-1"></a><span class="c1"># Check if bundle has tools embedded</span>
+<a href="#__codelineno-22-2" id="__codelineno-22-2" name="__codelineno-22-2"></a>unzip<span class="w"> </span>-l<span class="w"> </span>dist/linux-amd64/huskycat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>tools/
+<a href="#__codelineno-22-3" id="__codelineno-22-3" name="__codelineno-22-3"></a><span class="c1"># Should show:</span>
+<a href="#__codelineno-22-4" id="__codelineno-22-4" name="__codelineno-22-4"></a><span class="c1">#   12345678  tools/shellcheck</span>
+<a href="#__codelineno-22-5" id="__codelineno-22-5" name="__codelineno-22-5"></a><span class="c1">#   5678901   tools/hadolint</span>
+<a href="#__codelineno-22-6" id="__codelineno-22-6" name="__codelineno-22-6"></a><span class="c1">#   3456789   tools/taplo</span>
+<a href="#__codelineno-22-7" id="__codelineno-22-7" name="__codelineno-22-7"></a><span class="c1">#   123       tools/versions.txt</span>
+<a href="#__codelineno-22-8" id="__codelineno-22-8" name="__codelineno-22-8"></a>
+<a href="#__codelineno-22-9" id="__codelineno-22-9" name="__codelineno-22-9"></a><span class="c1"># Check cache directory</span>
+<a href="#__codelineno-22-10" id="__codelineno-22-10" name="__codelineno-22-10"></a>ls<span class="w"> </span>-lah<span class="w"> </span>~/.huskycat/tools/
+<a href="#__codelineno-22-11" id="__codelineno-22-11" name="__codelineno-22-11"></a><span class="c1"># Should show extracted tools or be empty if extraction pending</span>
+<a href="#__codelineno-22-12" id="__codelineno-22-12" name="__codelineno-22-12"></a>
+<a href="#__codelineno-22-13" id="__codelineno-22-13" name="__codelineno-22-13"></a><span class="c1"># Check extraction logs</span>
+<a href="#__codelineno-22-14" id="__codelineno-22-14" name="__codelineno-22-14"></a>./huskycat<span class="w"> </span>--help<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">"Extracting"</span>
+</code></pre></div></p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Missing tools in bundle:</strong> Rebuild with tools
+   <div class="highlight"><pre><span></span><code><a href="#__codelineno-23-1" id="__codelineno-23-1" name="__codelineno-23-1"></a>python<span class="w"> </span>scripts/download_tools.py<span class="w"> </span>--platform<span class="w"> </span>linux-amd64
+<a href="#__codelineno-23-2" id="__codelineno-23-2" name="__codelineno-23-2"></a>python<span class="w"> </span>build_fat_binary.py<span class="w"> </span>--platform<span class="w"> </span>linux-amd64
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Extraction permission denied:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-24-1" id="__codelineno-24-1" name="__codelineno-24-1"></a><span class="c1"># Ensure home directory writable</span>
+<a href="#__codelineno-24-2" id="__codelineno-24-2" name="__codelineno-24-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.huskycat/tools
+<a href="#__codelineno-24-3" id="__codelineno-24-3" name="__codelineno-24-3"></a>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>~/.huskycat/tools
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Corrupted cache:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-25-1" id="__codelineno-25-1" name="__codelineno-25-1"></a>rm<span class="w"> </span>-rf<span class="w"> </span>~/.huskycat/tools/
+<a href="#__codelineno-25-2" id="__codelineno-25-2" name="__codelineno-25-2"></a>./huskycat<span class="w"> </span>--help<span class="w">  </span><span class="c1"># Re-extracts</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="issue-binary-size-exceeds-250mb">Issue: Binary size exceeds 250MB<a class="headerlink" href="#issue-binary-size-exceeds-250mb" title="Permanent link">¶</a></h3>
+<p><strong>Symptoms:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-26-1" id="__codelineno-26-1" name="__codelineno-26-1"></a>WARNING: Binary size (275MB) exceeds 250MB target
+</code></pre></div></p>
+<p><strong>Cause:</strong> Large Python dependencies or unoptimized build</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Enable UPX compression (Linux only):</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-27-1" id="__codelineno-27-1" name="__codelineno-27-1"></a><span class="c1"># Check UPX in build.yml:41</span>
+<a href="#__codelineno-27-2" id="__codelineno-27-2" name="__codelineno-27-2"></a>upx<span class="w"> </span>--best<span class="w"> </span>--lzma<span class="w"> </span>dist/bin/huskycat-linux-amd64
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Exclude unnecessary Python modules:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-28-1" id="__codelineno-28-1" name="__codelineno-28-1"></a><span class="c1"># In build_fat_binary.py:194-202</span>
+<a href="#__codelineno-28-2" id="__codelineno-28-2" name="__codelineno-28-2"></a><span class="n">excludes</span><span class="o">=</span><span class="p">[</span>
+<a href="#__codelineno-28-3" id="__codelineno-28-3" name="__codelineno-28-3"></a>    <span class="s1">'tkinter'</span><span class="p">,</span> <span class="s1">'PIL'</span><span class="p">,</span> <span class="s1">'matplotlib'</span><span class="p">,</span>
+<a href="#__codelineno-28-4" id="__codelineno-28-4" name="__codelineno-28-4"></a>    <span class="s1">'numpy'</span><span class="p">,</span> <span class="s1">'pandas'</span><span class="p">,</span> <span class="s1">'scipy'</span><span class="p">,</span> <span class="s1">'IPython'</span><span class="p">,</span>
+<a href="#__codelineno-28-5" id="__codelineno-28-5" name="__codelineno-28-5"></a>    <span class="c1"># Add more as needed</span>
+<a href="#__codelineno-28-6" id="__codelineno-28-6" name="__codelineno-28-6"></a><span class="p">]</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Strip debug symbols:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-29-1" id="__codelineno-29-1" name="__codelineno-29-1"></a>strip<span class="w"> </span>dist/bin/huskycat-linux-amd64
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="issue-shellcheck-command-not-found-despite-bundled-mode">Issue: "shellcheck: command not found" despite bundled mode<a class="headerlink" href="#issue-shellcheck-command-not-found-despite-bundled-mode" title="Permanent link">¶</a></h3>
+<p><strong>Symptoms:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-30-1" id="__codelineno-30-1" name="__codelineno-30-1"></a>Tool shellcheck not found in PATH
+</code></pre></div></p>
+<p><strong>Cause:</strong> PATH not updated with cache directory</p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-31-1" id="__codelineno-31-1" name="__codelineno-31-1"></a><span class="c1"># Check PATH setup in tool_extractor.py:154-162</span>
+<a href="#__codelineno-31-2" id="__codelineno-31-2" name="__codelineno-31-2"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
+<a href="#__codelineno-31-3" id="__codelineno-31-3" name="__codelineno-31-3"></a><span class="s2">import sys</span>
+<a href="#__codelineno-31-4" id="__codelineno-31-4" name="__codelineno-31-4"></a><span class="s2">if getattr(sys, 'frozen', False):</span>
+<a href="#__codelineno-31-5" id="__codelineno-31-5" name="__codelineno-31-5"></a><span class="s2">    from pathlib import Path</span>
+<a href="#__codelineno-31-6" id="__codelineno-31-6" name="__codelineno-31-6"></a><span class="s2">    print(Path.home() / '.huskycat' / 'tools')</span>
+<a href="#__codelineno-31-7" id="__codelineno-31-7" name="__codelineno-31-7"></a><span class="s2">"</span>
+</code></pre></div></p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-32-1" id="__codelineno-32-1" name="__codelineno-32-1"></a><span class="c1"># Ensure setup_path() is called after extraction</span>
+<a href="#__codelineno-32-2" id="__codelineno-32-2" name="__codelineno-32-2"></a><span class="c1"># File: src/huskycat/core/tool_extractor.py:154-162</span>
+<a href="#__codelineno-32-3" id="__codelineno-32-3" name="__codelineno-32-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">setup_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a href="#__codelineno-32-4" id="__codelineno-32-4" name="__codelineno-32-4"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a href="#__codelineno-32-5" id="__codelineno-32-5" name="__codelineno-32-5"></a>        <span class="n">path_var</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"PATH"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+<a href="#__codelineno-32-6" id="__codelineno-32-6" name="__codelineno-32-6"></a>        <span class="n">cache_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">)</span>
+<a href="#__codelineno-32-7" id="__codelineno-32-7" name="__codelineno-32-7"></a>        <span class="k">if</span> <span class="n">cache_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path_var</span><span class="p">:</span>
+<a href="#__codelineno-32-8" id="__codelineno-32-8" name="__codelineno-32-8"></a>            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"PATH"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cache_str</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="si">}{</span><span class="n">path_var</span><span class="si">}</span><span class="s2">"</span>
+</code></pre></div></p>
+<h3 id="issue-binary-wont-execute-on-macos-damaged-error">Issue: Binary won't execute on macOS ("damaged" error)<a class="headerlink" href="#issue-binary-wont-execute-on-macos-damaged-error" title="Permanent link">¶</a></h3>
+<p><strong>Symptoms:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-33-1" id="__codelineno-33-1" name="__codelineno-33-1"></a>"huskycat" is damaged and can't be opened. You should move it to the Trash.
+</code></pre></div></p>
+<p><strong>Cause:</strong> macOS Gatekeeper quarantine on unsigned binary</p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-34-1" id="__codelineno-34-1" name="__codelineno-34-1"></a><span class="c1"># Remove quarantine attribute</span>
+<a href="#__codelineno-34-2" id="__codelineno-34-2" name="__codelineno-34-2"></a>xattr<span class="w"> </span>-d<span class="w"> </span>com.apple.quarantine<span class="w"> </span>./huskycat
+<a href="#__codelineno-34-3" id="__codelineno-34-3" name="__codelineno-34-3"></a>
+<a href="#__codelineno-34-4" id="__codelineno-34-4" name="__codelineno-34-4"></a><span class="c1"># Or allow unsigned apps (less secure)</span>
+<a href="#__codelineno-34-5" id="__codelineno-34-5" name="__codelineno-34-5"></a>spctl<span class="w"> </span>--add<span class="w"> </span>./huskycat
+</code></pre></div></p>
+<p><strong>For signed binaries:</strong> Check code signing in <code>.gitlab/ci/sign-macos.yml</code></p>
+<hr/>
+<h2 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="/.gitlab/ci/build.yml">GitLab CI Build Pipeline</a> - Complete build configuration</li>
+<li><a href="/scripts/download_tools.py">Tool Download Script</a> - Tool download implementation</li>
+<li><a href="/src/huskycat/core/tool_extractor.py">Tool Extractor</a> - Runtime extraction logic</li>
+<li><a href="/huskycat_main.py">Binary Entry Point</a> - PyInstaller bootstrap code</li>
+</ul>
+<hr/>
+<h2 id="appendix-build-performance">Appendix: Build Performance<a class="headerlink" href="#appendix-build-performance" title="Permanent link">¶</a></h2>
+<p><strong>Measured on GitLab SaaS Runners:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Platform</th>
+<th>Duration</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>download:tools:linux-amd64</td>
+<td>Any</td>
+<td>~2 min</td>
+<td>Parallel with other platforms</td>
+</tr>
+<tr>
+<td>download:tools:linux-arm64</td>
+<td>Any</td>
+<td>~2 min</td>
+<td>Parallel with other platforms</td>
+</tr>
+<tr>
+<td>download:tools:darwin-arm64</td>
+<td>Any</td>
+<td>~2 min</td>
+<td>Parallel with other platforms</td>
+</tr>
+<tr>
+<td>build:binary:linux-amd64</td>
+<td>rockylinux/rockylinux:10</td>
+<td>~8 min</td>
+<td>PyInstaller + UPX</td>
+</tr>
+<tr>
+<td>build:binary:linux-arm64</td>
+<td>rockylinux/rockylinux:10 (ARM)</td>
+<td>~10 min</td>
+<td>Slower ARM runner</td>
+</tr>
+<tr>
+<td>build:binary:darwin-arm64</td>
+<td>macOS 14 (M1)</td>
+<td>~6 min</td>
+<td>No UPX</td>
+</tr>
+<tr>
+<td>verify:binary-size</td>
+<td>alpine:latest</td>
+<td>~30 sec</td>
+<td>Waits for all builds</td>
+</tr>
+<tr>
+<td>checksums:generate</td>
+<td>alpine:latest</td>
+<td>~15 sec</td>
+<td>SHA256 computation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total Pipeline Time:</strong> ~18-22 minutes for full multi-platform build</p>
+<p><strong>Critical Path:</strong> download → verify → build → checksums</p>
+<hr/>
+<p><strong>Document Version:</strong> 1.0
+<strong>Last Updated:</strong> 2025-12-12
+<strong>Code Version:</strong> HuskyCat 2.0.0 (commit: 1f5146b)</p>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.follow", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+</body>
+</html>

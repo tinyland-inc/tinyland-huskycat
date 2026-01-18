@@ -1,0 +1,48 @@
+#!/bin/bash
+# SPDX-License-Identifier: Apache-2.0
+# HuskyCat PKG post-install script
+# Runs after files are copied
+
+set -e
+
+echo "HuskyCat Post-Install Setup"
+echo "==========================="
+
+INSTALL_DIR="/usr/local/bin"
+HUSKYCAT_BIN="$INSTALL_DIR/huskycat"
+
+# Ensure binary is executable
+if [ -f "$HUSKYCAT_BIN" ]; then
+    chmod +x "$HUSKYCAT_BIN"
+    echo "Binary installed: $HUSKYCAT_BIN"
+else
+    echo "Warning: Binary not found at expected location"
+fi
+
+# Create config directory if it doesn't exist
+HUSKYCAT_CONFIG="$HOME/.huskycat"
+if [ ! -d "$HUSKYCAT_CONFIG" ]; then
+    mkdir -p "$HUSKYCAT_CONFIG"
+    echo "Created config directory: $HUSKYCAT_CONFIG"
+fi
+
+# Verify installation
+if command -v huskycat &> /dev/null; then
+    VERSION=$(huskycat --version 2>/dev/null || echo "installed")
+    echo ""
+    echo "HuskyCat $VERSION installed successfully!"
+    echo ""
+    echo "Quick Start:"
+    echo "  huskycat status        # Check installation"
+    echo "  huskycat setup-hooks   # Install git hooks"
+    echo "  huskycat validate      # Validate current directory"
+    echo ""
+    echo "For MCP integration with Claude Code:"
+    echo "  huskycat bootstrap     # Configure MCP server"
+    echo ""
+else
+    echo "Warning: huskycat command not found in PATH"
+    echo "You may need to add $INSTALL_DIR to your PATH"
+fi
+
+exit 0

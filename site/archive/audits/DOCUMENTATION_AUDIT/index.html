@@ -1,0 +1,871 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Universal Code Validation Platform" name="description"/>
+<link href="https://huskycat-570fbd.gitlab.io/archive/audits/DOCUMENTATION_AUDIT/" rel="canonical"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.18" name="generator"/>
+<title>HuskyCat Documentation Audit &amp; Cleanup Plan - HuskyCat Documentation</title>
+<link href="../../../assets/stylesheets/main.7e37652d.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="blue" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#huskycat-documentation-audit-cleanup-plan">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="HuskyCat Documentation" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="HuskyCat Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            HuskyCat Documentation
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              HuskyCat Documentation Audit &amp; Cleanup Plan
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../installation/">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../cli-reference/">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../features/mcp-server/">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../architecture/product-modes/">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../ci-cd/gitlab/">
+          
+  
+  
+    
+  
+  CI/CD Integration
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../dogfooding/">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../performance/">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../api/mcp-tools/">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../troubleshooting/">
+        
+  
+  
+    
+  
+  Troubleshooting
+
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="HuskyCat Documentation" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="HuskyCat Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    HuskyCat Documentation
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+<span class="md-ellipsis">
+    Home
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../installation/">
+<span class="md-ellipsis">
+    Installation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../binary-downloads/">
+<span class="md-ellipsis">
+    Binary Downloads
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../configuration/">
+<span class="md-ellipsis">
+    Configuration
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../cli-reference/">
+<span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Features
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../features/mcp-server/">
+<span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../nonblocking-hooks/">
+<span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Architecture
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../architecture/product-modes/">
+<span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../architecture/execution-models/">
+<span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            CI/CD Integration
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ci-cd/gitlab/">
+<span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../github-actions/">
+<span class="md-ellipsis">
+    GitHub Actions
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Development
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../dogfooding/">
+<span class="md-ellipsis">
+    Dogfooding Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../parallel_executor/">
+<span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+<span class="md-ellipsis">
+    Advanced
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_8_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_8">
+<span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../performance/">
+<span class="md-ellipsis">
+    Performance
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../migration/to-nonblocking/">
+<span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../macos-code-signing/">
+<span class="md-ellipsis">
+    macOS Code Signing
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_9_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_9">
+<span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../api/mcp-tools/">
+<span class="md-ellipsis">
+    MCP Tools
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../troubleshooting/">
+<span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="huskycat-documentation-audit-cleanup-plan">HuskyCat Documentation Audit &amp; Cleanup Plan<a class="headerlink" href="#huskycat-documentation-audit-cleanup-plan" title="Permanent link">¶</a></h1>
+<p><strong>Date</strong>: 2025-12-08
+<strong>Scope</strong>: All 65 markdown files in docs/
+<strong>Goal</strong>: Ensure every sentence is backed by actual code, Mermaid charts match reality</p>
+<hr/>
+<h2 id="current-state-65-markdown-files">Current State: 65 Markdown Files<a class="headerlink" href="#current-state-65-markdown-files" title="Permanent link">¶</a></h2>
+<h3 id="keep-core-documentation-18-files">✅ KEEP - Core Documentation (18 files)<a class="headerlink" href="#keep-core-documentation-18-files" title="Permanent link">¶</a></h3>
+<p><strong>User-Facing:</strong>
+- docs/installation.md ✅ (VERIFIED - updated in beta sprint)
+- docs/binary-downloads.md ✅ (VERIFIED - updated in beta sprint)
+- docs/BETA_TESTING.md ✅ (NEW - beta sprint)
+- docs/troubleshooting.md ⚠️ (needs verification)
+- docs/configuration.md ⚠️ (needs verification)
+- docs/cli-reference.md ⚠️ (needs verification)</p>
+<p><strong>Architecture:</strong>
+- docs/architecture/execution-models.md ⚠️ (needs code reference verification)
+- docs/architecture/product-modes.md ⚠️ (needs code reference verification)
+- docs/dogfooding.md ✅ (VERIFIED in Sprint 11)
+- docs/nonblocking-hooks.md ⚠️ (needs verification)</p>
+<p><strong>Developer:</strong>
+- docs/index.md ⚠️ (MkDocs home, needs verification)
+- docs/SPRINT_PLAN.md ⚠️ (current plan, verify vs reality)
+- docs/future-roadmap.md ⚠️ (needs verification)</p>
+<p><strong>API:</strong>
+- docs/api/mcp-tools.md ⚠️ (needs code verification)
+- docs/mcp-tool-api.md ⚠️ (DUPLICATE? check vs api/mcp-tools.md)</p>
+<p><strong>User Guide:</strong>
+- docs/user-guide/getting-started.md ⚠️ (needs verification)
+- docs/user-guide/binary-gitops-installation.md ⚠️ (needs verification)</p>
+<p><strong>Recent Additions:</strong>
+- docs/AGENT_REVIEW_FINDINGS.md ✅ (NEW - beta sprint)
+- docs/BETA_TESTING_READINESS.md ✅ (NEW - beta sprint)</p>
+<hr/>
+<h2 id="archive-sprint-completion-summaries-20-files">🗑️ ARCHIVE - Sprint Completion Summaries (20 files)<a class="headerlink" href="#archive-sprint-completion-summaries-20-files" title="Permanent link">¶</a></h2>
+<p><strong>Sprint Summaries (Root):</strong>
+- [ ] docs/SPRINT10_CLEANUP_SUMMARY.md → archive/sprints/
+- [ ] docs/SPRINT10_PLAN_VS_REALITY.md → archive/sprints/
+- [ ] docs/SPRINT10_TEST_COVERAGE_COMPLETE.md → archive/sprints/
+- [ ] docs/SPRINT10_TEST_COVERAGE_PLAN.md → archive/sprints/
+- [ ] docs/SPRINT11_DOGFOODING_BINARY_BOOTSTRAP.md → archive/sprints/ (keep reference in current docs)
+- [ ] docs/PHASE1_INTEGRATION_COMPLETE.md → archive/sprints/
+- [ ] docs/CURRENT_STATUS.md → archive/sprints/ (outdated)</p>
+<p><strong>Proposals - Completed Sprints:</strong>
+- [ ] docs/proposals/phase-1-implementation-complete.md → archive/sprints/
+- [ ] docs/proposals/phase-2-implementation-complete.md → archive/sprints/
+- [ ] docs/proposals/phase-3-implementation-complete.md → archive/sprints/
+- [ ] docs/proposals/phase-4-sprint-8-complete.md → archive/sprints/
+- [ ] docs/proposals/sprint-9a-phase-1-implementation-summary.md → archive/sprints/
+- [ ] docs/proposals/sprint-9a-phase-2-implementation-summary.md → archive/sprints/
+- [ ] docs/proposals/sprint-9a-session-summary.md → archive/sprints/
+- [ ] docs/proposals/sprint-9b-implementation-summary.md → archive/sprints/
+- [ ] docs/proposals/sprint-10-architectural-refactor.md → archive/sprints/</p>
+<p><strong>Chapel Formatter (6 files - completed feature):</strong>
+- [ ] docs/proposals/chapel-formatter-design.md → archive/chapel/
+- [ ] docs/proposals/chapel-formatter-final-summary.md → archive/chapel/
+- [ ] docs/proposals/chapel-formatter-implementation-complete.md → archive/chapel/
+- [ ] docs/proposals/chapel-formatter-sprint-plan.md → archive/chapel/
+- [ ] docs/proposals/chapel-future-enhancements.md → archive/chapel/
+- [ ] docs/proposals/chapel-language-research.md → archive/chapel/</p>
+<p><strong>LLM Docs (2 files - completed):</strong>
+- [ ] docs/proposals/llm-docs-implementation-summary.md → archive/proposals-completed/
+- [ ] docs/proposals/llm-friendly-docs-ci.md → archive/proposals-completed/</p>
+<hr/>
+<h2 id="merge-redundant-documentation-8-files">🔀 MERGE - Redundant Documentation (8 files)<a class="headerlink" href="#merge-redundant-documentation-8-files" title="Permanent link">¶</a></h2>
+<h3 id="fat-binary-docs-3-files-1">Fat Binary Docs (3 files → 1)<a class="headerlink" href="#fat-binary-docs-3-files-1" title="Permanent link">¶</a></h3>
+<p><strong>Merge into</strong>: <code>docs/architecture/fat-binaries.md</code> (NEW)</p>
+<p>Source files:
+- docs/FAT_BINARY_ARCHITECTURE.md
+- docs/fat-binary-builds.md
+- docs/EMBEDDED_TOOLS_MIGRATION.md</p>
+<p><strong>Action</strong>: Create comprehensive fat-binaries.md covering:
+- Architecture overview
+- Build process (.gitlab/ci/build.yml references)
+- Tool embedding (shellcheck, hadolint, taplo)
+- Tool extraction (src/huskycat/core/tool_extractor.py)
+- Platform support</p>
+<h3 id="tui-docs-3-files-1">TUI Docs (3 files → 1)<a class="headerlink" href="#tui-docs-3-files-1" title="Permanent link">¶</a></h3>
+<p><strong>Merge into</strong>: <code>docs/architecture/tui.md</code> (NEW)</p>
+<p>Source files:
+- docs/TUI_INTEGRATION.md
+- docs/tui_framework.md
+- docs/tui_implementation_summary.md</p>
+<p><strong>Action</strong>: Create comprehensive tui.md covering:
+- TUI framework (src/huskycat/core/tui.py references)
+- Rich integration
+- Progress tracking
+- Non-TTY graceful degradation</p>
+<h3 id="ci-pipeline-docs-2-files-1">CI Pipeline Docs (2 files → 1)<a class="headerlink" href="#ci-pipeline-docs-2-files-1" title="Permanent link">¶</a></h3>
+<p><strong>Merge into</strong>: <code>docs/ci-cd/gitlab.md</code> (NEW, create ci-cd/ subdir)</p>
+<p>Source files:
+- docs/ci-pipeline-architecture.md
+- docs/ci-pipeline-fat-binary-status.md</p>
+<p><strong>Action</strong>: Create docs/ci-cd/gitlab.md covering:
+- Pipeline architecture
+- Binary build jobs
+- Multi-platform support
+- Artifact management</p>
+<hr/>
+<h2 id="verify-needs-code-reference-checks-12-files">⚠️ VERIFY - Needs Code Reference Checks (12 files)<a class="headerlink" href="#verify-needs-code-reference-checks-12-files" title="Permanent link">¶</a></h2>
+<h3 id="high-priority-user-facing">High Priority - User Facing<a class="headerlink" href="#high-priority-user-facing" title="Permanent link">¶</a></h3>
+<p><strong>docs/troubleshooting.md</strong>:
+- [ ] Verify all error messages exist in actual code
+- [ ] Confirm solutions work with current codebase
+- [ ] Check file paths are correct</p>
+<p><strong>docs/configuration.md</strong>:
+- [ ] Verify .huskycat.yaml schema matches code
+- [ ] Check all config options are implemented
+- [ ] Validate example configs work</p>
+<p><strong>docs/cli-reference.md</strong>:
+- [ ] Verify all commands exist in src/huskycat/commands/
+- [ ] Check all flags are implemented
+- [ ] Validate example outputs are current</p>
+<h3 id="medium-priority-architecture">Medium Priority - Architecture<a class="headerlink" href="#medium-priority-architecture" title="Permanent link">¶</a></h3>
+<p><strong>docs/architecture/execution-models.md</strong>:
+- [ ] Verify line numbers: <code>unified_validation.py:85-170</code> (file is 2146 lines!)
+- [ ] Check Mermaid diagram matches actual execution flow
+- [ ] Validate code examples compile and run</p>
+<p><strong>docs/architecture/product-modes.md</strong>:
+- [ ] Verify 5 modes vs actual 6 adapters (git_hooks_nonblocking.py exists!)
+- [ ] Check adapter code references
+- [ ] Validate mode detection logic matches code</p>
+<p><strong>docs/architecture/simplified-architecture.md</strong>:
+- [ ] Verify Mermaid diagram represents current architecture
+- [ ] Check component relationships are accurate
+- [ ] Update if outdated</p>
+<h3 id="low-priority-technical">Low Priority - Technical<a class="headerlink" href="#low-priority-technical" title="Permanent link">¶</a></h3>
+<p><strong>docs/parallel_executor.md</strong>:
+- [ ] Verify references to src/huskycat/core/parallel_executor.py
+- [ ] Check example code works</p>
+<p><strong>docs/process_manager_integration.md</strong>:
+- [ ] Verify ProcessManager implementation details
+- [ ] Check code references</p>
+<p><strong>docs/performance.md</strong>:
+- [ ] Verify benchmark numbers are current
+- [ ] Check performance claims against actual timings</p>
+<p><strong>docs/migration/to-nonblocking.md</strong>:
+- [ ] Verify migration steps work
+- [ ] Check code examples are current</p>
+<p><strong>docs/features/mcp-server.md</strong>:
+- [ ] Verify MCP server implementation
+- [ ] Check protocol details vs src/huskycat/mcp_server.py</p>
+<p><strong>docs/api/mcp-tools.md vs docs/mcp-tool-api.md</strong>:
+- [ ] DUPLICATE CHECK - merge if same content</p>
+<hr/>
+<h2 id="active-proposals-keep-in-proposals-7-files">🚧 ACTIVE PROPOSALS (Keep in proposals/) (7 files)<a class="headerlink" href="#active-proposals-keep-in-proposals-7-files" title="Permanent link">¶</a></h2>
+<p><strong>Keep - Active Planning:</strong>
+- docs/proposals/auto-format-comprehensive-review.md
+- docs/proposals/auto-format-implementation-plan.md
+- docs/proposals/documentation-overhaul-2025.md
+- docs/proposals/e2e-ci-testing-strategy.md
+- docs/proposals/feature-parity-analysis.md
+- docs/proposals/git-tracked-hooks.md
+- docs/proposals/gitops-binary-bootstrap-plan.md</p>
+<p><strong>Note</strong>: These are forward-looking proposals, not historical summaries</p>
+<hr/>
+<h2 id="special-cases">🔍 SPECIAL CASES<a class="headerlink" href="#special-cases" title="Permanent link">¶</a></h2>
+<h3 id="docsembedded_tool_executionmd">docs/EMBEDDED_TOOL_EXECUTION.md<a class="headerlink" href="#docsembedded_tool_executionmd" title="Permanent link">¶</a></h3>
+<p><strong>Status</strong>: Unclear - check if redundant with FAT_BINARY_ARCHITECTURE.md
+<strong>Action</strong>: Review and either merge or archive</p>
+<h3 id="docsquick_start_nonblockingmd">docs/QUICK_START_NONBLOCKING.md<a class="headerlink" href="#docsquick_start_nonblockingmd" title="Permanent link">¶</a></h3>
+<p><strong>Status</strong>: May be redundant with docs/nonblocking-hooks.md
+<strong>Action</strong>: Review and merge if duplicate</p>
+<h3 id="docsgitlab-auto-devops-completemd">docs/gitlab-auto-devops-complete.md<a class="headerlink" href="#docsgitlab-auto-devops-completemd" title="Permanent link">¶</a></h3>
+<p><strong>Status</strong>: Completion summary - archive?
+<strong>Action</strong>: Review and decide archive vs keep</p>
+<h3 id="docsgithub-actionsmd">docs/github-actions.md<a class="headerlink" href="#docsgithub-actionsmd" title="Permanent link">¶</a></h3>
+<p><strong>Status</strong>: Future feature (not implemented)
+<strong>Action</strong>: Keep in proposals/ or mark as "planned"</p>
+<h3 id="docsmacos-code-signingmd">docs/macos-code-signing.md<a class="headerlink" href="#docsmacos-code-signingmd" title="Permanent link">¶</a></h3>
+<p><strong>Status</strong>: Important for macOS distribution
+<strong>Action</strong>: Keep but verify against actual signing process</p>
+<hr/>
+<h2 id="mermaid-diagram-verification">📊 MERMAID DIAGRAM VERIFICATION<a class="headerlink" href="#mermaid-diagram-verification" title="Permanent link">¶</a></h2>
+<h3 id="priority-1-core-architecture-diagrams">Priority 1: Core Architecture Diagrams<a class="headerlink" href="#priority-1-core-architecture-diagrams" title="Permanent link">¶</a></h3>
+<p><strong>docs/architecture/execution-models.md</strong> - Execution flow diagram
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>Current diagram shows:
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>  Binary → Container → UV Development
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>Verify against:
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>  - src/huskycat/unified_validation.py execution routing
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>  - src/huskycat/core/tool_extractor.py bundled vs local detection
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>  - huskycat_main.py frozen mode detection
+</code></pre></div></p>
+<p><strong>docs/architecture/product-modes.md</strong> - Mode adapter diagram
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>Current diagram shows: 5 modes
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>Actual code has: 6 adapters
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>Verify:
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>  - git_hooks.py
+<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>  - git_hooks_nonblocking.py ← MISSING FROM DIAGRAM
+<a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a>  - ci.py
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>  - cli.py
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a>  - pipeline.py
+<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a>  - mcp.py
+</code></pre></div></p>
+<p><strong>docs/architecture/simplified-architecture.md</strong>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>Verify component relationships match:
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>  - Factory pattern (src/huskycat/core/factory.py)
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>  - Adapter pattern (src/huskycat/core/adapters/)
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>  - Validator classes (src/huskycat/unified_validation.py)
+</code></pre></div></p>
+<p><strong>README.md</strong> - Execution model diagram
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>Verify against actual implementation
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>Check entry points match code
+</code></pre></div></p>
+<hr/>
+<h2 id="proposed-new-structure">📁 PROPOSED NEW STRUCTURE<a class="headerlink" href="#proposed-new-structure" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>docs/
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>├── README.md                          # Docs navigation
+<a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a>├── installation.md                    # ✅ VERIFIED
+<a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a>├── BETA_TESTING.md                   # ✅ NEW
+<a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a>├── troubleshooting.md                 # ⚠️ needs verification
+<a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a>├── configuration.md                   # ⚠️ needs verification
+<a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a>├── cli-reference.md                   # ⚠️ needs verification
+<a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a>│
+<a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a>├── architecture/                      # Technical architecture
+<a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a>│   ├── execution-models.md           # ⚠️ verify code refs
+<a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a>│   ├── product-modes.md              # ⚠️ verify 6 adapters
+<a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a>│   ├── fat-binaries.md               # 🆕 MERGE 3 files
+<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a>│   ├── tui.md                        # 🆕 MERGE 3 files
+<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a>│   └── parallel-execution.md         # ⚠️ verify
+<a href="#__codelineno-4-15" id="__codelineno-4-15" name="__codelineno-4-15"></a>│
+<a href="#__codelineno-4-16" id="__codelineno-4-16" name="__codelineno-4-16"></a>├── features/                          # Feature-specific docs
+<a href="#__codelineno-4-17" id="__codelineno-4-17" name="__codelineno-4-17"></a>│   ├── nonblocking-hooks.md          # ⚠️ verify
+<a href="#__codelineno-4-18" id="__codelineno-4-18" name="__codelineno-4-18"></a>│   ├── mcp-server.md                 # ⚠️ verify vs code
+<a href="#__codelineno-4-19" id="__codelineno-4-19" name="__codelineno-4-19"></a>│   └── auto-format.md                # Future
+<a href="#__codelineno-4-20" id="__codelineno-4-20" name="__codelineno-4-20"></a>│
+<a href="#__codelineno-4-21" id="__codelineno-4-21" name="__codelineno-4-21"></a>├── user-guide/                        # User documentation
+<a href="#__codelineno-4-22" id="__codelineno-4-22" name="__codelineno-4-22"></a>│   ├── getting-started.md            # ⚠️ verify
+<a href="#__codelineno-4-23" id="__codelineno-4-23" name="__codelineno-4-23"></a>│   ├── binary-gitops-installation.md # ⚠️ verify
+<a href="#__codelineno-4-24" id="__codelineno-4-24" name="__codelineno-4-24"></a>│   └── migration-to-nonblocking.md   # ⚠️ verify
+<a href="#__codelineno-4-25" id="__codelineno-4-25" name="__codelineno-4-25"></a>│
+<a href="#__codelineno-4-26" id="__codelineno-4-26" name="__codelineno-4-26"></a>├── ci-cd/                             # 🆕 NEW directory
+<a href="#__codelineno-4-27" id="__codelineno-4-27" name="__codelineno-4-27"></a>│   ├── gitlab.md                     # 🆕 MERGE 2 files
+<a href="#__codelineno-4-28" id="__codelineno-4-28" name="__codelineno-4-28"></a>│   └── github.md                     # Planned
+<a href="#__codelineno-4-29" id="__codelineno-4-29" name="__codelineno-4-29"></a>│
+<a href="#__codelineno-4-30" id="__codelineno-4-30" name="__codelineno-4-30"></a>├── api/                               # API reference
+<a href="#__codelineno-4-31" id="__codelineno-4-31" name="__codelineno-4-31"></a>│   └── mcp-tools.md                  # ⚠️ verify, check duplicate
+<a href="#__codelineno-4-32" id="__codelineno-4-32" name="__codelineno-4-32"></a>│
+<a href="#__codelineno-4-33" id="__codelineno-4-33" name="__codelineno-4-33"></a>├── proposals/                         # Active proposals only
+<a href="#__codelineno-4-34" id="__codelineno-4-34" name="__codelineno-4-34"></a>│   ├── auto-format-*.md              # ✅ Active
+<a href="#__codelineno-4-35" id="__codelineno-4-35" name="__codelineno-4-35"></a>│   ├── documentation-overhaul-2025.md # ✅ Active
+<a href="#__codelineno-4-36" id="__codelineno-4-36" name="__codelineno-4-36"></a>│   ├── e2e-ci-testing-strategy.md    # ✅ Active
+<a href="#__codelineno-4-37" id="__codelineno-4-37" name="__codelineno-4-37"></a>│   └── ... (7 active proposals)
+<a href="#__codelineno-4-38" id="__codelineno-4-38" name="__codelineno-4-38"></a>│
+<a href="#__codelineno-4-39" id="__codelineno-4-39" name="__codelineno-4-39"></a>└── archive/                           # 🆕 Historical docs
+<a href="#__codelineno-4-40" id="__codelineno-4-40" name="__codelineno-4-40"></a>    ├── sprints/                       # Sprint summaries
+<a href="#__codelineno-4-41" id="__codelineno-4-41" name="__codelineno-4-41"></a>    │   ├── sprint-9a-*.md            # 3 files
+<a href="#__codelineno-4-42" id="__codelineno-4-42" name="__codelineno-4-42"></a>    │   ├── sprint-9b-*.md            # 1 file
+<a href="#__codelineno-4-43" id="__codelineno-4-43" name="__codelineno-4-43"></a>    │   ├── sprint-10-*.md            # 4 files
+<a href="#__codelineno-4-44" id="__codelineno-4-44" name="__codelineno-4-44"></a>    │   ├── phase-*.md                # 4 files
+<a href="#__codelineno-4-45" id="__codelineno-4-45" name="__codelineno-4-45"></a>    │   └── SPRINT10_*.md             # 4 files
+<a href="#__codelineno-4-46" id="__codelineno-4-46" name="__codelineno-4-46"></a>    ├── chapel/                        # Chapel formatter
+<a href="#__codelineno-4-47" id="__codelineno-4-47" name="__codelineno-4-47"></a>    │   └── *.md                      # 6 files
+<a href="#__codelineno-4-48" id="__codelineno-4-48" name="__codelineno-4-48"></a>    └── proposals-completed/           # Finished proposals
+<a href="#__codelineno-4-49" id="__codelineno-4-49" name="__codelineno-4-49"></a>        └── llm-*.md                  # 2 files
+</code></pre></div>
+<p><strong>Total Files</strong>:
+- Current: 65 files
+- After cleanup: ~35 active files
+- Archived: ~30 files</p>
+<hr/>
+<h2 id="action-plan">🎯 ACTION PLAN<a class="headerlink" href="#action-plan" title="Permanent link">¶</a></h2>
+<h3 id="phase-1-archive-obvious-candidates-15-minutes">Phase 1: Archive Obvious Candidates (15 minutes)<a class="headerlink" href="#phase-1-archive-obvious-candidates-15-minutes" title="Permanent link">¶</a></h3>
+<ol>
+<li>Move sprint summaries to archive/sprints/ (16 files)</li>
+<li>Move chapel docs to archive/chapel/ (6 files)</li>
+<li>Move completed proposals to archive/proposals-completed/ (2 files)</li>
+</ol>
+<h3 id="phase-2-merge-redundant-docs-45-minutes">Phase 2: Merge Redundant Docs (45 minutes)<a class="headerlink" href="#phase-2-merge-redundant-docs-45-minutes" title="Permanent link">¶</a></h3>
+<ol>
+<li>Create docs/architecture/fat-binaries.md (merge 3)</li>
+<li>Create docs/architecture/tui.md (merge 3)</li>
+<li>Create docs/ci-cd/gitlab.md (merge 2)</li>
+<li>Delete source files after verification</li>
+</ol>
+<h3 id="phase-3-verify-code-references-90-minutes">Phase 3: Verify Code References (90 minutes)<a class="headerlink" href="#phase-3-verify-code-references-90-minutes" title="Permanent link">¶</a></h3>
+<ol>
+<li>Check all file:line references in architecture docs</li>
+<li>Verify Mermaid diagrams match code</li>
+<li>Update outdated references</li>
+<li>Add missing adapter (git_hooks_nonblocking.py) to diagrams</li>
+</ol>
+<h3 id="phase-4-update-mermaid-diagrams-60-minutes">Phase 4: Update Mermaid Diagrams (60 minutes)<a class="headerlink" href="#phase-4-update-mermaid-diagrams-60-minutes" title="Permanent link">¶</a></h3>
+<ol>
+<li>Fix product-modes.md (5 → 6 adapters)</li>
+<li>Verify execution-models.md against code</li>
+<li>Update simplified-architecture.md if needed</li>
+<li>Check README.md diagrams</li>
+</ol>
+<h3 id="phase-5-reorganize-structure-30-minutes">Phase 5: Reorganize Structure (30 minutes)<a class="headerlink" href="#phase-5-reorganize-structure-30-minutes" title="Permanent link">¶</a></h3>
+<ol>
+<li>Create ci-cd/ directory</li>
+<li>Move files to new structure</li>
+<li>Update internal links</li>
+<li>Create docs/README.md navigation</li>
+</ol>
+<p><strong>Total Estimated Time</strong>: 4 hours</p>
+<hr/>
+<h2 id="success-criteria">✅ SUCCESS CRITERIA<a class="headerlink" href="#success-criteria" title="Permanent link">¶</a></h2>
+<p>After cleanup:
+- [ ] Every code reference (file:line) is verified accurate
+- [ ] All Mermaid diagrams match actual code architecture
+- [ ] No duplicate documentation
+- [ ] Historical docs archived, not deleted
+- [ ] Documentation structure is intuitive
+- [ ] All active docs have clear purpose
+- [ ] Cross-references work (no broken links)</p>
+<hr/>
+<h2 id="next-steps">🚀 NEXT STEPS<a class="headerlink" href="#next-steps" title="Permanent link">¶</a></h2>
+<ol>
+<li>Execute Phase 1 (archive sprint summaries)</li>
+<li>Execute Phase 2 (merge redundant docs)</li>
+<li>Execute Phase 3 (verify code references)</li>
+<li>Execute Phase 4 (fix Mermaid diagrams)</li>
+<li>Execute Phase 5 (reorganize structure)</li>
+<li>Commit with detailed summary</li>
+</ol>
+<p><strong>Start with</strong>: Phase 1 - Low risk, high impact</p>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.follow", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+</body>
+</html>

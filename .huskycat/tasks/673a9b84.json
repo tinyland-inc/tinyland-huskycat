@@ -1,0 +1,22 @@
+{
+  "task_id": "673a9b84",
+  "status": "completed",
+  "progress": 100,
+  "total": 100,
+  "message": "Validation completed",
+  "started": "2026-01-15T18:23:15.932391",
+  "completed": "2026-01-15T18:23:15.984398",
+  "result": {
+    "summary": "Container validation (failed)",
+    "container_output": "",
+    "container_errors": "Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM\nError: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:63752: connect: connection refused\n",
+    "success": false,
+    "runtime": "podman"
+  },
+  "error": null,
+  "tool_name": "validate",
+  "arguments": {
+    "path": "src/huskycat/core/task_manager.py",
+    "fix": false
+  }
+}

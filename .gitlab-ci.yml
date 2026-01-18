@@ -10,6 +10,11 @@ include:
   - local: '/.gitlab/ci/download-tools.yml'
   - local: '/.gitlab/ci/build.yml'
   - local: '/.gitlab/ci/binary-tests.yml'
+  # Packaging and distribution
+  - local: '/.gitlab/ci/assets.yml'
+  - local: '/.gitlab/ci/fpm-packages.yml'
+  - local: '/.gitlab/ci/macos-pkg.yml'
+  - local: '/.gitlab/ci/sbom.yml'
 
 stages:
   - validate

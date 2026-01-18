@@ -38,6 +38,15 @@ plugins:
   - search
   - mermaid2
 
+# Exclude archived/internal docs from build warnings
+not_in_nav: |
+  archive/**
+  BETA_*.md
+  SPRINT_PLAN.md
+  *_SUMMARY.md
+  *_COMPLETE.md
+  *_PLAN.md
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -71,8 +80,11 @@ nav:
       - Product Modes: architecture/product-modes.md
       - Execution Models: architecture/execution-models.md
   - CI/CD Integration:
-      - GitLab CI/CD: gitlab-ci-cd.md
+      - GitLab CI/CD: ci-cd/gitlab.md
       - GitHub Actions: github-actions.md
+  - Development:
+      - Dogfooding Guide: dogfooding.md
+      - Parallel Executor: parallel_executor.md
   - Advanced:
       - Performance: performance.md
       - Migration Guide: migration/to-nonblocking.md

@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://tinyland.gitlab.io/ai/huskycat/binary-downloads/">
+        <link rel="canonical" href="https://huskycat-570fbd.gitlab.io/binary-downloads/">
       
       
         <link rel="prev" href="../installation/">
@@ -287,7 +287,51 @@
     
     
       <li class="md-tabs__item">
-        <a href="../gitlab-ci-cd/" class="md-tabs__link">
+        <a href="../features/mcp-server/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/product-modes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../ci-cd/gitlab/" class="md-tabs__link">
           
   
   
@@ -309,13 +353,35 @@
     
     
       <li class="md-tabs__item">
-        <a href="../features/mcp-server/" class="md-tabs__link">
+        <a href="../dogfooding/" class="md-tabs__link">
           
   
   
     
   
-  Features
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../performance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Advanced
 
         </a>
       </li>
@@ -569,6 +635,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#latest-release-main-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Latest Release (main branch)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#quick-install" class="md-nav__link">
     <span class="md-ellipsis">
       Quick Install
@@ -581,7 +656,7 @@
           <li class="md-nav__item">
   <a href="#linux-amd64" class="md-nav__link">
     <span class="md-ellipsis">
-      Linux (AMD64)
+      Linux (amd64)
     </span>
   </a>
   
@@ -597,60 +672,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#macos-apple-silicon" class="md-nav__link">
+  <a href="#macos-arm64-apple-silicon" class="md-nav__link">
     <span class="md-ellipsis">
-      macOS (Apple Silicon)
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#available-binaries" class="md-nav__link">
-    <span class="md-ellipsis">
-      Available Binaries
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#download-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Download Options
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Download Options">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#option-1-latest-release-recommended" class="md-nav__link">
-    <span class="md-ellipsis">
-      Option 1: Latest Release (Recommended)
+      macOS (ARM64 - Apple Silicon)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#option-2-specific-version" class="md-nav__link">
+  <a href="#macos-intel-rosetta-2" class="md-nav__link">
     <span class="md-ellipsis">
-      Option 2: Specific Version
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#option-3-browse-all-releases" class="md-nav__link">
-    <span class="md-ellipsis">
-      Option 3: Browse All Releases
+      macOS (Intel) - Rosetta 2
     </span>
   </a>
   
@@ -672,27 +705,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#check-version" class="md-nav__link">
+  <a href="#check-sha256-checksums" class="md-nav__link">
     <span class="md-ellipsis">
-      Check Version
+      Check SHA256 Checksums
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#verify-installation" class="md-nav__link">
+  <a href="#verify-binary-works" class="md-nav__link">
     <span class="md-ellipsis">
-      Verify Installation
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#container-requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Container Requirements
+      Verify Binary Works
     </span>
   </a>
   
@@ -704,37 +728,37 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation-methods" class="md-nav__link">
+  <a href="#whats-inside" class="md-nav__link">
     <span class="md-ellipsis">
-      Installation Methods
+      What's Inside
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Installation Methods">
+    <nav class="md-nav" aria-label="What&#39;s Inside">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#method-1-user-installation-recommended" class="md-nav__link">
+  <a href="#core-components" class="md-nav__link">
     <span class="md-ellipsis">
-      Method 1: User Installation (Recommended)
+      Core Components
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-2-system-wide-installation" class="md-nav__link">
+  <a href="#embedded-validation-tools" class="md-nav__link">
     <span class="md-ellipsis">
-      Method 2: System-Wide Installation
+      Embedded Validation Tools
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-3-project-local-installation" class="md-nav__link">
+  <a href="#total-binary-sizes" class="md-nav__link">
     <span class="md-ellipsis">
-      Method 3: Project-Local Installation
+      Total Binary Sizes
     </span>
   </a>
   
@@ -746,24 +770,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#container-runtime-installation" class="md-nav__link">
+  <a href="#platform-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Container Runtime Installation
+      Platform Support
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Container Runtime Installation">
+    <nav class="md-nav" aria-label="Platform Support">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#podman-recommended" class="md-nav__link">
+  <a href="#linux" class="md-nav__link">
     <span class="md-ellipsis">
-      Podman (Recommended)
+      Linux
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Podman (Recommended)">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#macos" class="md-nav__link">
@@ -775,89 +798,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#linux" class="md-nav__link">
+  <a href="#windows" class="md-nav__link">
     <span class="md-ellipsis">
-      Linux
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#docker" class="md-nav__link">
-    <span class="md-ellipsis">
-      Docker
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Docker">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#macos_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      macOS
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linux_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Linux
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#post-installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Post-Installation
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Post-Installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-setup-git-hooks" class="md-nav__link">
-    <span class="md-ellipsis">
-      1. Setup Git Hooks
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-configure-mcp-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. Configure MCP (Optional)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-build-container-first-run" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Build Container (First Run)
+      Windows
     </span>
   </a>
   
@@ -869,46 +812,28 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#troubleshooting" class="md-nav__link">
+  <a href="#download-from-specific-branchtag" class="md-nav__link">
     <span class="md-ellipsis">
-      Troubleshooting
+      Download from Specific Branch/Tag
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Troubleshooting">
+    <nav class="md-nav" aria-label="Download from Specific Branch/Tag">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#permission-denied-on-macos" class="md-nav__link">
+  <a href="#from-branch" class="md-nav__link">
     <span class="md-ellipsis">
-      "Permission denied" on macOS
+      From Branch
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#no-container-runtime-available" class="md-nav__link">
+  <a href="#from-tag" class="md-nav__link">
     <span class="md-ellipsis">
-      "No container runtime available"
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#binary-not-found-after-installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Binary not found after installation
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#architecture-mismatch" class="md-nav__link">
-    <span class="md-ellipsis">
-      Architecture mismatch
+      From Tag
     </span>
   </a>
   
@@ -920,28 +845,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#updating" class="md-nav__link">
+  <a href="#troubleshooting-downloads" class="md-nav__link">
     <span class="md-ellipsis">
-      Updating
+      Troubleshooting Downloads
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Updating">
+    <nav class="md-nav" aria-label="Troubleshooting Downloads">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#manual-update" class="md-nav__link">
+  <a href="#ssl-certificate-issues" class="md-nav__link">
     <span class="md-ellipsis">
-      Manual Update
+      SSL Certificate Issues
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#update-script" class="md-nav__link">
+  <a href="#download-timeout" class="md-nav__link">
     <span class="md-ellipsis">
-      Update Script
+      Download Timeout
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corrupted-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      Corrupted Download
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permission-denied-on-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      Permission Denied on Download
     </span>
   </a>
   
@@ -953,9 +896,78 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#alternative-build-from-source" class="md-nav__link">
+  <a href="#manual-download-browser" class="md-nav__link">
     <span class="md-ellipsis">
-      Alternative: Build from Source
+      Manual Download (Browser)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building from Source
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#release-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      Release Channels
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Release Channels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stable-main-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stable (main branch)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-feature-branches" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development (feature branches)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tagged-releases-v200-v210-etc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tagged Releases (v2.0.0, v2.1.0, etc.)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next Steps
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Questions?
     </span>
   </a>
   
@@ -1035,8 +1047,6 @@
       
         
       
-        
-      
     
     
     
@@ -1060,7 +1070,7 @@
   
   
   <span class="md-ellipsis">
-    CI/CD Integration
+    Features
     
   </span>
   
@@ -1070,6 +1080,214 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nonblocking-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/product-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/execution-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             CI/CD Integration
           </label>
@@ -1082,7 +1300,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gitlab-ci-cd/" class="md-nav__link">
+      <a href="../ci-cd/gitlab/" class="md-nav__link">
         
   
   
@@ -1121,29 +1339,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../gitlab-auto-devops-complete/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Auto-DevOps
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1162,6 +1357,8 @@
       
         
       
+        
+      
     
     
     
@@ -1177,15 +1374,15 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    Features
+    Development
     
   </span>
   
@@ -1193,10 +1390,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
-            Features
+            Development
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1207,12 +1404,164 @@
   
   
     <li class="md-nav__item">
-      <a href="../features/mcp-server/" class="md-nav__link">
+      <a href="../dogfooding/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    MCP Server
+    Dogfooding Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parallel_executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Performance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/to-nonblocking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macos-code-signing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    macOS Code Signing
     
   </span>
   
@@ -1256,10 +1605,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -1272,8 +1621,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -1351,295 +1700,307 @@
 
 
 <h1 id="binary-downloads">Binary Downloads<a class="headerlink" href="#binary-downloads" title="Permanent link">&para;</a></h1>
-<p>HuskyCat provides pre-built binaries for multiple platforms through GitLab releases.</p>
-<h2 id="quick-install">Quick Install<a class="headerlink" href="#quick-install" title="Permanent link">&para;</a></h2>
-<h3 id="linux-amd64">Linux (AMD64)<a class="headerlink" href="#linux-amd64" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Download latest release</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>huskycat<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Make executable</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Install to system path (optional)</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo<span class="w"> </span>mv<span class="w"> </span>huskycat<span class="w"> </span>/usr/local/bin/
-</code></pre></div>
-<h3 id="linux-arm64">Linux (ARM64)<a class="headerlink" href="#linux-arm64" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Download latest release</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>huskycat<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-arm64
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Make executable</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Install to system path (optional)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>sudo<span class="w"> </span>mv<span class="w"> </span>huskycat<span class="w"> </span>/usr/local/bin/
-</code></pre></div>
-<h3 id="macos-apple-silicon">macOS (Apple Silicon)<a class="headerlink" href="#macos-apple-silicon" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Download latest release (ad-hoc signed)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>huskycat<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-darwin-arm64
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Make executable</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Install to user path (recommended for unsigned binaries)</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>mv<span class="w"> </span>huskycat<span class="w"> </span>~/.local/bin/
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Add to PATH if needed</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=&quot;$HOME/.local/bin:$PATH&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.zshrc
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="nb">source</span><span class="w"> </span>~/.zshrc
-</code></pre></div>
-<p><strong>Note</strong>: macOS binaries are ad-hoc signed. You may need to allow execution in System Settings &gt; Privacy &amp; Security on first run.</p>
-<h2 id="available-binaries">Available Binaries<a class="headerlink" href="#available-binaries" title="Permanent link">&para;</a></h2>
+<p>Pre-built HuskyCat binaries for all supported platforms.</p>
+<h2 id="latest-release-main-branch">Latest Release (main branch)<a class="headerlink" href="#latest-release-main-branch" title="Permanent link">&para;</a></h2>
+<p>Download the latest binary from the main branch CI artifacts:</p>
 <table>
 <thead>
 <tr>
 <th>Platform</th>
 <th>Architecture</th>
-<th>Binary Name</th>
-<th>Status</th>
+<th>Size</th>
+<th>Download Link</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Linux</td>
-<td>x86_64</td>
-<td><code>huskycat-linux-amd64</code></td>
-<td>✅ Rocky Linux 10</td>
+<td><strong>Linux</strong></td>
+<td>x86_64 (amd64)</td>
+<td>~150-200 MB</td>
+<td><a href="https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64">Download</a></td>
 </tr>
 <tr>
-<td>Linux</td>
-<td>ARM64/aarch64</td>
-<td><code>huskycat-linux-arm64</code></td>
-<td>✅ Rocky Linux 10</td>
+<td><strong>Linux</strong></td>
+<td>ARM64</td>
+<td>~150-200 MB</td>
+<td><a href="https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64">Download</a></td>
 </tr>
 <tr>
-<td>macOS</td>
-<td>Apple Silicon (M1/M2/M3)</td>
-<td><code>huskycat-darwin-arm64</code></td>
-<td>✅ Ad-hoc signed</td>
-</tr>
-<tr>
-<td>macOS</td>
-<td>Intel (x86_64)</td>
-<td>❌ Not available</td>
-<td>GitLab SaaS ARM64 only</td>
+<td><strong>macOS</strong></td>
+<td>ARM64 (M1/M2/M3/M4)</td>
+<td>~150-200 MB</td>
+<td><a href="https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64">Download</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="download-options">Download Options<a class="headerlink" href="#download-options" title="Permanent link">&para;</a></h2>
-<h3 id="option-1-latest-release-recommended">Option 1: Latest Release (Recommended)<a class="headerlink" href="#option-1-latest-release-recommended" title="Permanent link">&para;</a></h3>
-<p>Use GitLab's permalink to always get the latest version:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Linux AMD64</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Linux ARM64</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-arm64
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># macOS ARM64</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-darwin-arm64
+<blockquote>
+<p><strong>Note</strong>: macOS Intel (x86_64) binary not currently available due to GitLab SaaS runner limitations. Intel Mac users can use Rosetta 2 or container execution.</p>
+</blockquote>
+<h2 id="quick-install">Quick Install<a class="headerlink" href="#quick-install" title="Permanent link">&para;</a></h2>
+<h3 id="linux-amd64">Linux (amd64)<a class="headerlink" href="#linux-amd64" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-amd64?job=build:binary:linux-amd64&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>./huskycat<span class="w"> </span>install
 </code></pre></div>
-<h3 id="option-2-specific-version">Option 2: Specific Version<a class="headerlink" href="#option-2-specific-version" title="Permanent link">&para;</a></h3>
-<p>Download a specific tagged release:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Replace $VERSION with desired tag (e.g., v2.0.0)</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>https://gitlab.com/tinyland/ai/huskycat/-/jobs/artifacts/<span class="nv">$VERSION</span>/raw/dist/bin/huskycat-linux-amd64?job<span class="o">=</span>binary:build:linux
+<h3 id="linux-arm64">Linux (ARM64)<a class="headerlink" href="#linux-arm64" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-linux-arm64?job=build:binary:linux-arm64&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>./huskycat<span class="w"> </span>install
 </code></pre></div>
-<h3 id="option-3-browse-all-releases">Option 3: Browse All Releases<a class="headerlink" href="#option-3-browse-all-releases" title="Permanent link">&para;</a></h3>
-<p>Visit the releases page to see all available versions:</p>
-<p><a href="https://gitlab.com/tinyland/ai/huskycat/-/releases">https://gitlab.com/tinyland/ai/huskycat/-/releases</a></p>
+<h3 id="macos-arm64-apple-silicon">macOS (ARM64 - Apple Silicon)<a class="headerlink" href="#macos-arm64-apple-silicon" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Remove quarantine (macOS security)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>xattr<span class="w"> </span>-d<span class="w"> </span>com.apple.quarantine<span class="w"> </span>huskycat
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>./huskycat<span class="w"> </span>install
+</code></pre></div>
+<h3 id="macos-intel-rosetta-2">macOS (Intel) - Rosetta 2<a class="headerlink" href="#macos-intel-rosetta-2" title="Permanent link">&para;</a></h3>
+<p>Intel Mac users can run the ARM64 binary using Rosetta 2:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Download ARM64 binary</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/bin/huskycat-darwin-arm64?job=build:binary:darwin-arm64&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>xattr<span class="w"> </span>-d<span class="w"> </span>com.apple.quarantine<span class="w"> </span>huskycat
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Run with Rosetta 2</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>arch<span class="w"> </span>-x86_64<span class="w"> </span>./huskycat<span class="w"> </span>install
+</code></pre></div>
 <h2 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
-<h3 id="check-version">Check Version<a class="headerlink" href="#check-version" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>./huskycat<span class="w"> </span>--version
+<h3 id="check-sha256-checksums">Check SHA256 Checksums<a class="headerlink" href="#check-sha256-checksums" title="Permanent link">&para;</a></h3>
+<p>Download checksums from CI artifacts:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Linux amd64</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat.sha256?job=build:binary:linux-amd64&#39;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># macOS ARM64</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/darwin-arm64/huskycat.sha256?job=build:binary:darwin-arm64&#39;</span>
 </code></pre></div>
-<h3 id="verify-installation">Verify Installation<a class="headerlink" href="#verify-installation" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Show system status</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>./huskycat<span class="w"> </span>status
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Test validation</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>./huskycat<span class="w"> </span>validate<span class="w"> </span>--help
+<p>Verify checksum:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Linux</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sha256sum<span class="w"> </span>huskycat
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Should match downloaded checksum</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># macOS</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>huskycat
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Should match downloaded checksum</span>
 </code></pre></div>
-<h3 id="container-requirements">Container Requirements<a class="headerlink" href="#container-requirements" title="Permanent link">&para;</a></h3>
-<p>HuskyCat requires a container runtime for validation:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Check for Podman</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>podman<span class="w"> </span>--version
+<h3 id="verify-binary-works">Verify Binary Works<a class="headerlink" href="#verify-binary-works" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>./huskycat<span class="w"> </span>--version
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>./huskycat<span class="w"> </span>--help
+</code></pre></div>
+<p>Expected output:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>$ ./huskycat --version
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>huskycat 2.0.0
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Or check for Docker</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>docker<span class="w"> </span>--version
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>$ ./huskycat --help
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>huskycat - Universal Code Validation Platform
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>Usage:
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>  huskycat [command] [options]
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>Commands:
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  validate          Validate files with configured tools
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  setup-hooks       Install git hooks
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>  install           Install binary to ~/.local/bin
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>  status            Show HuskyCat configuration
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>  ...
+</code></pre></div></p>
+<h2 id="whats-inside">What's Inside<a class="headerlink" href="#whats-inside" title="Permanent link">&para;</a></h2>
+<p>Each binary includes:</p>
+<h3 id="core-components">Core Components<a class="headerlink" href="#core-components" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HuskyCat Engine</strong> (~5 MB) - Validation orchestration</li>
+<li><strong>Python Runtime</strong> (~40 MB) - Embedded Python 3.13</li>
+<li><strong>Python Packages</strong> (~30-50 MB) - Dependencies (pytest, rich, networkx, etc.)</li>
+</ul>
+<h3 id="embedded-validation-tools">Embedded Validation Tools<a class="headerlink" href="#embedded-validation-tools" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>shellcheck</strong> v0.10.0 (~3-4 MB) - Shell script linter</li>
+<li><strong>hadolint</strong> v2.12.0 (~10-15 MB) - Dockerfile linter</li>
+<li><strong>taplo</strong> v0.9.3 (~15-20 MB) - TOML formatter/validator</li>
+</ul>
+<h3 id="total-binary-sizes">Total Binary Sizes<a class="headerlink" href="#total-binary-sizes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Linux binaries</strong>: ~150-200 MB (all tools embedded)</li>
+<li><strong>macOS binaries</strong>: ~21-200 MB (varies by build configuration)</li>
+</ul>
+<h2 id="platform-support">Platform Support<a class="headerlink" href="#platform-support" title="Permanent link">&para;</a></h2>
+<h3 id="linux">Linux<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h3>
+<p><strong>Architectures</strong>:
+- x86_64 (amd64) - Most common
+- ARM64 (aarch64) - Raspberry Pi, AWS Graviton, etc.</p>
+<p><strong>Requirements</strong>:
+- glibc 2.17+ (available on most modern distributions)
+- No additional dependencies required</p>
+<p><strong>Tested On</strong>:
+- Ubuntu 20.04+
+- Debian 11+
+- RHEL/CentOS 8+
+- Alpine Linux 3.14+
+- Fedora 34+</p>
+<h3 id="macos">macOS<a class="headerlink" href="#macos" title="Permanent link">&para;</a></h3>
+<p><strong>Architectures</strong>:
+- ARM64 (Apple Silicon) - M1, M2, M3 chips
+- x86_64 (Intel) - Older Macs</p>
+<p><strong>Requirements</strong>:
+- macOS 10.13+ (High Sierra or later)
+- May require Xcode Command Line Tools for some operations</p>
+<p><strong>Tested On</strong>:
+- macOS 14 (Sonoma) - ARM64
+- macOS 13 (Ventura) - ARM64
+- macOS 12 (Monterey) - ARM64/Intel
+- macOS 11 (Big Sur) - ARM64/Intel</p>
+<h3 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>: Not yet supported</p>
+<p><strong>Alternatives</strong>:
+1. <strong>WSL2</strong> (Recommended):
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Use Linux binary in WSL2</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/main/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>./huskycat<span class="w"> </span>install
+</code></pre></div></p>
+<ol>
+<li>
+<p><strong>Docker Desktop</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>registry.gitlab.com/jsullivan2/huskycats-bates:latest
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/workspace&quot;</span><span class="w"> </span>huskycat<span class="w"> </span>validate<span class="w"> </span>--all
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Git Bash</strong> (Limited):</p>
+</li>
+<li>May work with Linux binary and Git Bash compatibility layer</li>
+<li>Not officially supported</li>
+</ol>
+<h2 id="download-from-specific-branchtag">Download from Specific Branch/Tag<a class="headerlink" href="#download-from-specific-branchtag" title="Permanent link">&para;</a></h2>
+<p>Replace <code>main</code> with your branch name or tag:</p>
+<h3 id="from-branch">From Branch<a class="headerlink" href="#from-branch" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Replace &#39;feature-branch&#39; with your branch name</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/feature-branch/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
 </code></pre></div>
-<p>If neither is installed, see <a href="#container-runtime-installation">Container Runtime Installation</a>.</p>
-<h2 id="installation-methods">Installation Methods<a class="headerlink" href="#installation-methods" title="Permanent link">&para;</a></h2>
-<h3 id="method-1-user-installation-recommended">Method 1: User Installation (Recommended)<a class="headerlink" href="#method-1-user-installation-recommended" title="Permanent link">&para;</a></h3>
-<p>Install to <code>~/.local/bin</code> (no sudo required):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Create directory if it doesn&#39;t exist</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.local/bin
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Download and install</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>~/.local/bin/huskycat<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>chmod<span class="w"> </span>+x<span class="w"> </span>~/.local/bin/huskycat
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># Add to PATH (if not already)</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=&quot;$HOME/.local/bin:$PATH&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="nb">source</span><span class="w"> </span>~/.bashrc
+<h3 id="from-tag">From Tag<a class="headerlink" href="#from-tag" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Replace &#39;v2.0.0&#39; with your tag</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://gitlab.com/jsullivan2/huskycats-bates/-/jobs/artifacts/v2.0.0/raw/dist/linux-amd64/huskycat?job=build:binary:linux-amd64&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
 </code></pre></div>
-<h3 id="method-2-system-wide-installation">Method 2: System-Wide Installation<a class="headerlink" href="#method-2-system-wide-installation" title="Permanent link">&para;</a></h3>
-<p>Install to <code>/usr/local/bin</code> (requires sudo):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Download</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>/tmp/huskycat<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Install</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sudo<span class="w"> </span>install<span class="w"> </span>-m<span class="w"> </span><span class="m">0755</span><span class="w"> </span>/tmp/huskycat<span class="w"> </span>/usr/local/bin/huskycat
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>rm<span class="w"> </span>/tmp/huskycat
-</code></pre></div>
-<h3 id="method-3-project-local-installation">Method 3: Project-Local Installation<a class="headerlink" href="#method-3-project-local-installation" title="Permanent link">&para;</a></h3>
-<p>Install in your project directory:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Download to project</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>huskycat<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># Use relative path</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>./huskycat<span class="w"> </span>setup-hooks
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>./huskycat<span class="w"> </span>validate
-</code></pre></div>
-<h2 id="container-runtime-installation">Container Runtime Installation<a class="headerlink" href="#container-runtime-installation" title="Permanent link">&para;</a></h2>
-<p>HuskyCat requires either Podman or Docker for validation.</p>
-<h3 id="podman-recommended">Podman (Recommended)<a class="headerlink" href="#podman-recommended" title="Permanent link">&para;</a></h3>
-<h4 id="macos">macOS<a class="headerlink" href="#macos" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Using Homebrew</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>brew<span class="w"> </span>install<span class="w"> </span>podman
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Start Podman machine</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>podman<span class="w"> </span>machine<span class="w"> </span>init
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>podman<span class="w"> </span>machine<span class="w"> </span>start
-</code></pre></div>
-<h4 id="linux">Linux<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Ubuntu/Debian</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>podman
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Fedora/Rocky/RHEL</span>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>podman
+<h2 id="troubleshooting-downloads">Troubleshooting Downloads<a class="headerlink" href="#troubleshooting-downloads" title="Permanent link">&para;</a></h2>
+<h3 id="ssl-certificate-issues">SSL Certificate Issues<a class="headerlink" href="#ssl-certificate-issues" title="Permanent link">&para;</a></h3>
+<p>If you encounter SSL errors:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Skip SSL verification (not recommended for production)</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>--insecure<span class="w"> </span><span class="s1">&#39;https://...&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Or install ca-certificates</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Ubuntu/Debian</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ca-certificates
 <a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="c1"># Arch</span>
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>podman
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="c1"># RHEL/CentOS</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>ca-certificates
 </code></pre></div>
-<h3 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h3>
-<h4 id="macos_1">macOS<a class="headerlink" href="#macos_1" title="Permanent link">&para;</a></h4>
-<p>Download Docker Desktop from <a href="https://www.docker.com/products/docker-desktop">https://www.docker.com/products/docker-desktop</a></p>
-<h4 id="linux_1">Linux<a class="headerlink" href="#linux_1" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Ubuntu/Debian</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://get.docker.com<span class="w"> </span>-o<span class="w"> </span>get-docker.sh
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>sudo<span class="w"> </span>sh<span class="w"> </span>get-docker.sh
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1"># Add user to docker group (optional)</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>docker<span class="w"> </span><span class="nv">$USER</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>newgrp<span class="w"> </span>docker
+<h3 id="download-timeout">Download Timeout<a class="headerlink" href="#download-timeout" title="Permanent link">&para;</a></h3>
+<p>For slow connections, increase timeout:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>curl<span class="w"> </span>-L<span class="w"> </span>--max-time<span class="w"> </span><span class="m">300</span><span class="w"> </span><span class="s1">&#39;https://...&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
 </code></pre></div>
-<h2 id="post-installation">Post-Installation<a class="headerlink" href="#post-installation" title="Permanent link">&para;</a></h2>
-<h3 id="1-setup-git-hooks">1. Setup Git Hooks<a class="headerlink" href="#1-setup-git-hooks" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Navigate to your project</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">cd</span><span class="w"> </span>your-project
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Install HuskyCat git hooks</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>huskycat<span class="w"> </span>setup-hooks
+<h3 id="corrupted-download">Corrupted Download<a class="headerlink" href="#corrupted-download" title="Permanent link">&para;</a></h3>
+<p>Verify and retry:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Check file size</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>ls<span class="w"> </span>-lh<span class="w"> </span>huskycat
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># Should be ~150-200 MB for Linux, ~21 MB for macOS ARM64</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c1"># If wrong size, delete and retry</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>rm<span class="w"> </span>huskycat
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://...&#39;</span><span class="w"> </span>-o<span class="w"> </span>huskycat
 </code></pre></div>
-<h3 id="2-configure-mcp-optional">2. Configure MCP (Optional)<a class="headerlink" href="#2-configure-mcp-optional" title="Permanent link">&para;</a></h3>
-<p>For Claude Code integration:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>huskycat<span class="w"> </span>bootstrap
+<h3 id="permission-denied-on-download">Permission Denied on Download<a class="headerlink" href="#permission-denied-on-download" title="Permanent link">&para;</a></h3>
+<p>Ensure write permissions:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Download to current directory</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://...&#39;</span><span class="w"> </span>-o<span class="w"> </span>./huskycat
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Or use ~/Downloads</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://...&#39;</span><span class="w"> </span>-o<span class="w"> </span>~/Downloads/huskycat
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nb">cd</span><span class="w"> </span>~/Downloads
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>chmod<span class="w"> </span>+x<span class="w"> </span>huskycat
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>./huskycat<span class="w"> </span>install
 </code></pre></div>
-<p>See <a href="../features/mcp-server/">MCP Server Integration</a> for details.</p>
-<h3 id="3-build-container-first-run">3. Build Container (First Run)<a class="headerlink" href="#3-build-container-first-run" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Build validation container</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nb">cd</span><span class="w"> </span>/path/to/huskycats-bates
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>npm<span class="w"> </span>run<span class="w"> </span>container:build
+<h2 id="manual-download-browser">Manual Download (Browser)<a class="headerlink" href="#manual-download-browser" title="Permanent link">&para;</a></h2>
+<p>If <code>curl</code> is not available:</p>
+<ol>
+<li>
+<p>Visit the GitLab CI pipelines page:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>https://gitlab.com/jsullivan2/huskycats-bates/-/pipelines
+</code></pre></div></p>
+</li>
+<li>
+<p>Click on the latest successful pipeline (green checkmark)</p>
+</li>
+<li>
+<p>Click "Browse" next to the build job for your platform:</p>
+</li>
+<li><code>build:binary:linux-amd64</code></li>
+<li><code>build:binary:darwin-arm64</code></li>
+<li>
+<p>etc.</p>
+</li>
+<li>
+<p>Navigate to <code>dist/&lt;platform&gt;/huskycat</code></p>
+</li>
+<li>
+<p>Click "Download" button</p>
+</li>
+<li>
+<p>Move to desired location and make executable:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>~/Downloads/huskycat
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>~/Downloads/huskycat<span class="w"> </span>install
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="building-from-source">Building from Source<a class="headerlink" href="#building-from-source" title="Permanent link">&para;</a></h2>
+<p>If binaries don't work for your platform:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Clone repository</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://gitlab.com/jsullivan2/huskycats-bates.git
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="nb">cd</span><span class="w"> </span>huskycats-bates
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># Install dependencies</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>uv<span class="w"> </span>sync<span class="w"> </span>--dev
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="c1"># Build binary</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>npm<span class="w"> </span>run<span class="w"> </span>build:binary
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="c1"># Binary will be in dist/huskycat</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>./dist/huskycat<span class="w"> </span>--version
 </code></pre></div>
-<p><strong>Note</strong>: This step is only needed if you're developing HuskyCat itself. For normal usage, the binary will use pre-built container images.</p>
-<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
-<h3 id="permission-denied-on-macos">"Permission denied" on macOS<a class="headerlink" href="#permission-denied-on-macos" title="Permanent link">&para;</a></h3>
-<p>macOS Gatekeeper may block unsigned binaries:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Allow execution</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>xattr<span class="w"> </span>-d<span class="w"> </span>com.apple.quarantine<span class="w"> </span>~/.local/bin/huskycat
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Or: System Settings &gt; Privacy &amp; Security &gt; Allow &quot;huskycat&quot;</span>
-</code></pre></div>
-<h3 id="no-container-runtime-available">"No container runtime available"<a class="headerlink" href="#no-container-runtime-available" title="Permanent link">&para;</a></h3>
-<p>Install Podman or Docker:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Check if installed</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>which<span class="w"> </span>podman<span class="w"> </span><span class="o">||</span><span class="w"> </span>which<span class="w"> </span>docker
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Install Podman (recommended)</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>brew<span class="w"> </span>install<span class="w"> </span>podman<span class="w">  </span><span class="c1"># macOS</span>
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>podman<span class="w">  </span><span class="c1"># Rocky Linux</span>
-</code></pre></div>
-<h3 id="binary-not-found-after-installation">Binary not found after installation<a class="headerlink" href="#binary-not-found-after-installation" title="Permanent link">&para;</a></h3>
-<p>Check PATH:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Verify binary location</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>ls<span class="w"> </span>-l<span class="w"> </span>~/.local/bin/huskycat
-<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
-<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Check if directory is in PATH</span>
-<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="nb">echo</span><span class="w"> </span><span class="nv">$PATH</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.local/bin&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ In PATH&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ Not in PATH&quot;</span>
-<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
-<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># Add to PATH</span>
-<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=&quot;$HOME/.local/bin:$PATH&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
-<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="nb">source</span><span class="w"> </span>~/.bashrc
-</code></pre></div>
-<h3 id="architecture-mismatch">Architecture mismatch<a class="headerlink" href="#architecture-mismatch" title="Permanent link">&para;</a></h3>
-<p>Ensure you downloaded the correct binary for your platform:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Check your architecture</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>uname<span class="w"> </span>-m
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="c1"># x86_64 → Use huskycat-linux-amd64</span>
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1"># aarch64 or arm64 → Use huskycat-linux-arm64 or huskycat-darwin-arm64</span>
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="c1"># Check binary architecture</span>
-<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>file<span class="w"> </span>huskycat
-</code></pre></div>
-<h2 id="updating">Updating<a class="headerlink" href="#updating" title="Permanent link">&para;</a></h2>
-<h3 id="manual-update">Manual Update<a class="headerlink" href="#manual-update" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># Download new version</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>/tmp/huskycat<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-linux-amd64
-<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
-<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># Replace existing binary</span>
-<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>chmod<span class="w"> </span>+x<span class="w"> </span>/tmp/huskycat
-<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>mv<span class="w"> </span>/tmp/huskycat<span class="w"> </span>~/.local/bin/huskycat
-<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>
-<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="c1"># Verify new version</span>
-<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>huskycat<span class="w"> </span>--version
-</code></pre></div>
-<h3 id="update-script">Update Script<a class="headerlink" href="#update-script" title="Permanent link">&para;</a></h3>
-<p>Create an update script:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="ch">#!/usr/bin/env bash</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1"># update-huskycat.sh</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
-<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="nb">set</span><span class="w"> </span>-euo<span class="w"> </span>pipefail
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>
-<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="nv">PLATFORM</span><span class="o">=</span><span class="s2">&quot;linux-amd64&quot;</span><span class="w">  </span><span class="c1"># Change to your platform</span>
-<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="nv">INSTALL_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.local/bin&quot;</span>
-<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="nv">BINARY_URL</span><span class="o">=</span><span class="s2">&quot;https://gitlab.com/tinyland/ai/huskycat/-/releases/permalink/latest/downloads/huskycat-</span><span class="si">${</span><span class="nv">PLATFORM</span><span class="si">}</span><span class="s2">&quot;</span>
-<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>
-<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Downloading HuskyCat for </span><span class="si">${</span><span class="nv">PLATFORM</span><span class="si">}</span><span class="s2">...&quot;</span>
-<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>curl<span class="w"> </span>-L<span class="w"> </span>-o<span class="w"> </span>/tmp/huskycat<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BINARY_URL</span><span class="s2">&quot;</span>
-<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>
-<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Installing to </span><span class="si">${</span><span class="nv">INSTALL_DIR</span><span class="si">}</span><span class="s2">...&quot;</span>
-<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>chmod<span class="w"> </span>+x<span class="w"> </span>/tmp/huskycat
-<a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a>mv<span class="w"> </span>/tmp/huskycat<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INSTALL_DIR</span><span class="si">}</span><span class="s2">/huskycat&quot;</span>
-<a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a>
-<a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ HuskyCat updated successfully!&quot;</span>
-<a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>huskycat<span class="w"> </span>--version
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Make executable and run</span>
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>update-huskycat.sh
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>./update-huskycat.sh
-</code></pre></div>
-<h2 id="alternative-build-from-source">Alternative: Build from Source<a class="headerlink" href="#alternative-build-from-source" title="Permanent link">&para;</a></h2>
-<p>If binaries aren't available for your platform, build from source:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://gitlab.com/tinyland/ai/huskycat.git
-<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="nb">cd</span><span class="w"> </span>huskycat
-<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>npm<span class="w"> </span>install
-<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>uv<span class="w"> </span>sync<span class="w"> </span>--dev
-<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>npm<span class="w"> </span>run<span class="w"> </span>build:binary
-<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
-<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="c1"># Binary will be at: dist/huskycat</span>
-</code></pre></div>
-<p>See <a href="../installation/">Installation Guide</a> for detailed build instructions.</p>
-<hr />
-<p>For additional support, see <a href="../troubleshooting/">Troubleshooting</a> or visit our <a href="https://gitlab.com/tinyland/ai/huskycat/-/issues">GitLab Issues</a>.</p>
+<p>See <a href="../CONTRIBUTING.md">Development Guide</a> for details.</p>
+<h2 id="release-channels">Release Channels<a class="headerlink" href="#release-channels" title="Permanent link">&para;</a></h2>
+<h3 id="stable-main-branch">Stable (main branch)<a class="headerlink" href="#stable-main-branch" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Thoroughly tested</li>
+<li>Recommended for production use</li>
+<li>Download from <code>main</code> branch</li>
+</ul>
+<h3 id="development-feature-branches">Development (feature branches)<a class="headerlink" href="#development-feature-branches" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Latest features</li>
+<li>May have bugs</li>
+<li>Download from specific feature branch</li>
+</ul>
+<h3 id="tagged-releases-v200-v210-etc">Tagged Releases (v2.0.0, v2.1.0, etc.)<a class="headerlink" href="#tagged-releases-v200-v210-etc" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Semantic versioning</li>
+<li>Production-ready releases</li>
+<li>Download from tagged commits</li>
+</ul>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<p>After downloading:</p>
+<ol>
+<li><a href="../installation/">Install</a> - Installation guide</li>
+<li><a href="../configuration/">Configure</a> - Set up for your project</li>
+<li><a href="../dogfooding/">Git Hooks</a> - Enable validation on commits</li>
+<li><a href="../troubleshooting/">Troubleshooting</a> - Fix common issues</li>
+</ol>
+<h2 id="questions">Questions?<a class="headerlink" href="#questions" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Documentation</strong>: <a href=".">docs/</a></li>
+<li><strong>Issues</strong>: <a href="https://gitlab.com/jsullivan2/huskycats-bates/-/issues">GitLab Issues</a></li>
+<li><strong>CI/CD</strong>: <a href="https://gitlab.com/jsullivan2/huskycats-bates/-/pipelines">Pipeline Status</a></li>
+</ul>
 
 
 

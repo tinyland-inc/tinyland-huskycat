@@ -1,0 +1,143 @@
+# SPDX-License-Identifier: Apache-2.0
+# RemoteJuggler Integration Schema
+# Configuration for HuskyCat <-> RemoteJuggler integration
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://tinyland.gitlab.io/ai/huskycat/schemas/remote-juggler-integration.yaml"
+title: RemoteJuggler Integration Configuration
+description: |
+  Schema for configuring HuskyCat integration with RemoteJuggler
+  for git identity management and profile switching.
+
+type: object
+additionalProperties: false
+
+properties:
+  version:
+    type: string
+    description: Schema version
+    const: "1.0"
+
+  enabled:
+    type: boolean
+    description: Whether RemoteJuggler integration is enabled
+    default: true
+
+  binary_path:
+    type: string
+    description: |
+      Path to RemoteJuggler binary. If not specified, searches PATH
+      and common installation locations.
+    examples:
+      - "~/.local/bin/remote-juggler"
+      - "/usr/local/bin/remote-juggler"
+
+  integration_mode:
+    type: string
+    description: |
+      How HuskyCat integrates with RemoteJuggler:
+      - mcp: Proxy RemoteJuggler MCP tools through HuskyCat MCP server
+      - cli: Call RemoteJuggler CLI directly
+      - config: Read RemoteJuggler config files directly
+    enum:
+      - mcp
+      - cli
+      - config
+    default: cli
+
+  hooks:
+    type: object
+    description: Git hook integration settings
+    additionalProperties: false
+    properties:
+      pre_commit:
+        type: object
+        description: Pre-commit hook settings
+        additionalProperties: false
+        properties:
+          detect_identity:
+            type: boolean
+            description: Detect expected identity before commit
+            default: true
+          warn_on_mismatch:
+            type: boolean
+            description: Warn if current identity doesn't match detected
+            default: true
+          auto_switch:
+            type: boolean
+            description: Automatically switch identity on mismatch
+            default: false
+
+      pre_push:
+        type: object
+        description: Pre-push hook settings
+        additionalProperties: false
+        properties:
+          validate_gpg:
+            type: boolean
+            description: Verify GPG signing is configured
+            default: true
+          validate_credentials:
+            type: boolean
+            description: Verify SSH/API credentials work
+            default: true
+
+  mcp:
+    type: object
+    description: MCP server integration settings
+    additionalProperties: false
+    properties:
+      proxy_tools:
+        type: boolean
+        description: |
+          Expose RemoteJuggler MCP tools through HuskyCat MCP server.
+          When enabled, Claude Code sees both HuskyCat and RemoteJuggler
+          tools from a single MCP server.
+        default: true
+      tool_prefix:
+        type: string
+        description: Prefix for proxied tool names
+        default: "juggler_"
+        pattern: "^[a-z_]+$"
+
+required:
+  - version
+  - enabled
+
+examples:
+  - # Minimal configuration
+    version: "1.0"
+    enabled: true
+
+  - # Full configuration
+    version: "1.0"
+    enabled: true
+    binary_path: "~/.local/bin/remote-juggler"
+    integration_mode: "mcp"
+    hooks:
+      pre_commit:
+        detect_identity: true
+        warn_on_mismatch: true
+        auto_switch: false
+      pre_push:
+        validate_gpg: true
+        validate_credentials: true
+    mcp:
+      proxy_tools: true
+      tool_prefix: "juggler_"
+
+  - # CI mode (no hooks, MCP proxy only)
+    version: "1.0"
+    enabled: true
+    integration_mode: "mcp"
+    hooks:
+      pre_commit:
+        detect_identity: false
+        warn_on_mismatch: false
+        auto_switch: false
+      pre_push:
+        validate_gpg: false
+        validate_credentials: false
+    mcp:
+      proxy_tools: true
+      tool_prefix: "rj_"

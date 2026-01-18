@@ -1,79 +1,331 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/SPRINT_PLAN/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/BETA_TESTING/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/binary-downloads/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/BETA_TESTING_READINESS/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/cli-reference/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/SPRINT_PLAN/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/configuration/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/binary-downloads/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/future-roadmap/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/cli-reference/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/github-actions/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/configuration/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/gitlab-auto-devops-complete/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/dogfooding/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/gitlab-ci-cd/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/github-actions/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/installation/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/installation/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/macos-code-signing/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/macos-code-signing/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/mcp-tool-api/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/nonblocking-hooks/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/troubleshooting/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/parallel_executor/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/api/mcp-tools/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/performance/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/architecture/simplified-architecture/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/process_manager_integration/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/features/mcp-server/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/troubleshooting/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/proposals/documentation-overhaul-2025/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/api/mcp-tools/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/proposals/git-tracked-hooks/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/INTEGRATION_QUICK_REFERENCE/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
-         <loc>https://tinyland.gitlab.io/ai/huskycat/proposals/llm-friendly-docs-ci/</loc>
-         <lastmod>2025-12-05</lastmod>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/INTEGRATION_ROADMAP/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/RESEARCH_SUMMARY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/ai-assistant-integration-research/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/execution-models/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/fat-binaries/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/fat-binary-documentation-audit/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/product-modes/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/simplified-architecture/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/architecture/tui/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/audits/AGENT_REVIEW_FINDINGS/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/audits/DOCUMENTATION_AUDIT/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/chapel/chapel-formatter-design/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/chapel/chapel-formatter-final-summary/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/chapel/chapel-formatter-implementation-complete/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/chapel/chapel-formatter-sprint-plan/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/chapel/chapel-future-enhancements/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/chapel/chapel-language-research/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/proposals-completed/gitlab-auto-devops-complete/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/proposals-completed/llm-docs-implementation-summary/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/proposals-completed/llm-friendly-docs-ci/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/EMBEDDED_TOOLS_MIGRATION/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/EMBEDDED_TOOL_EXECUTION/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/FAT_BINARY_ARCHITECTURE/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/TUI_INTEGRATION/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/ci-pipeline-architecture/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/ci-pipeline-fat-binary-status/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/fat-binary-builds/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/gitlab-ci-cd/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/tui_framework/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/redundant/tui_implementation_summary/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/BUILD_FAT_BINARY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/CURRENT_STATUS/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/PARALLEL_EXECUTOR_SUMMARY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/PHASE1_INTEGRATION_COMPLETE/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/REFACTOR_SUMMARY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/SPRINT10_CLEANUP_SUMMARY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/SPRINT10_PLAN_VS_REALITY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/SPRINT10_TEST_COVERAGE_COMPLETE/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/SPRINT10_TEST_COVERAGE_PLAN/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/SPRINT11_DOGFOODING_BINARY_BOOTSTRAP/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/TEST_COVERAGE_SUMMARY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/TUI_DELIVERY_SUMMARY/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/phase-1-implementation-complete/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/phase-2-implementation-complete/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/phase-3-implementation-complete/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/phase-4-sprint-8-complete/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/sprint-10-architectural-refactor/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/sprint-9a-phase-1-implementation-summary/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/sprint-9a-phase-2-implementation-summary/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/sprint-9a-session-summary/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/archive/sprints/sprint-9b-implementation-summary/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/ci-cd/MIGRATION_NOTES/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/ci-cd/gitlab/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/features/mcp-server/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/migration/to-nonblocking/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/proposals/auto-format-comprehensive-review/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/proposals/auto-format-implementation-plan/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/proposals/documentation-overhaul-2025/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/proposals/e2e-ci-testing-strategy/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/proposals/feature-parity-analysis/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/proposals/git-tracked-hooks/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/proposals/gitops-binary-bootstrap-plan/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/user-guide/binary-gitops-installation/</loc>
+         <lastmod>2026-01-16</lastmod>
+    </url>
+    <url>
+         <loc>https://huskycat-570fbd.gitlab.io/user-guide/getting-started/</loc>
+         <lastmod>2026-01-16</lastmod>
     </url>
 </urlset>

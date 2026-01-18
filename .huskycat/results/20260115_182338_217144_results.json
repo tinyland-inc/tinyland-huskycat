@@ -1,0 +1,215 @@
+{
+  "run_id": "20260115_182338_217144",
+  "mode": "ci",
+  "timestamp": "2026-01-15T18:23:38.217510",
+  "summary": {
+    "total_errors": 15,
+    "total_warnings": 0,
+    "files_checked": 1,
+    "fixed_files": 0
+  },
+  "error_details": [
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "mypy",
+      "message": "src/huskycat/core/adapters/ci.py:200: error: Need type annotation for \"serialized\" (hint: \"serialized: dict[<type>, <type>] = ...\")  [var-annotated]",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 12: Import block is un-sorted or un-formatted",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 39: Missing return type annotation for special method `__init__`",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 98: `datetime.datetime.now()` called without a `tz` argument",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 112: `datetime.datetime.now()` called without a `tz` argument",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 123: Logging statement uses f-string",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 125: Use `logging.exception` instead of `logging.error`",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 125: Logging statement uses f-string",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 131: Logging statement uses f-string",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 133: Use `logging.exception` instead of `logging.error`",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 133: Logging statement uses f-string",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 139: `datetime.datetime.now()` called without a `tz` argument",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 140: `datetime.datetime.now()` called without a `tz` argument",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "ruff",
+      "message": "Line 171: Line too long (93 > 88)",
+      "severity": "error"
+    },
+    {
+      "file": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+      "tool": "isort",
+      "message": "Imports are not properly sorted",
+      "severity": "error"
+    }
+  ],
+  "warning_details": [],
+  "results": {
+    "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py": [
+      {
+        "tool": "autoflake",
+        "filepath": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+        "success": true,
+        "messages": [
+          "No unused imports or variables found"
+        ],
+        "errors": [],
+        "warnings": [],
+        "fixed": false,
+        "duration_ms": 391
+      },
+      {
+        "tool": "flake8",
+        "filepath": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+        "success": true,
+        "messages": [
+          "No issues found"
+        ],
+        "errors": [],
+        "warnings": [],
+        "fixed": false,
+        "duration_ms": 567
+      },
+      {
+        "tool": "mypy",
+        "filepath": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+        "success": false,
+        "messages": [],
+        "errors": [
+          "src/huskycat/core/adapters/ci.py:200: error: Need type annotation for \"serialized\" (hint: \"serialized: dict[<type>, <type>] = ...\")  [var-annotated]"
+        ],
+        "warnings": [],
+        "fixed": false,
+        "duration_ms": 20303
+      },
+      {
+        "tool": "ruff",
+        "filepath": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+        "success": false,
+        "messages": [
+          "Line 12: Import block is un-sorted or un-formatted",
+          "Line 39: Missing return type annotation for special method `__init__`",
+          "Line 98: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 112: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 123: Logging statement uses f-string",
+          "Line 125: Use `logging.exception` instead of `logging.error`",
+          "Line 125: Logging statement uses f-string",
+          "Line 131: Logging statement uses f-string",
+          "Line 133: Use `logging.exception` instead of `logging.error`",
+          "Line 133: Logging statement uses f-string",
+          "Line 139: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 140: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 171: Line too long (93 > 88)"
+        ],
+        "errors": [
+          "Line 12: Import block is un-sorted or un-formatted",
+          "Line 39: Missing return type annotation for special method `__init__`",
+          "Line 98: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 112: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 123: Logging statement uses f-string",
+          "Line 125: Use `logging.exception` instead of `logging.error`",
+          "Line 125: Logging statement uses f-string",
+          "Line 131: Logging statement uses f-string",
+          "Line 133: Use `logging.exception` instead of `logging.error`",
+          "Line 133: Logging statement uses f-string",
+          "Line 139: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 140: `datetime.datetime.now()` called without a `tz` argument",
+          "Line 171: Line too long (93 > 88)"
+        ],
+        "warnings": [],
+        "fixed": false,
+        "duration_ms": 89
+      },
+      {
+        "tool": "isort",
+        "filepath": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+        "success": false,
+        "messages": [
+          "--- /Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py:before\t2026-01-15 18:19:52.503941",
+          "+++ /Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py:after\t2026-01-15 18:23:36.458071",
+          "@@ -16,8 +16,8 @@",
+          " from pathlib import Path",
+          " from typing import Any, Dict, List",
+          " ",
+          "+from ..process_manager import ProcessManager, ValidationRun",
+          " from .base import AdapterConfig, ModeAdapter, OutputFormat",
+          "-from ..process_manager import ProcessManager, ValidationRun",
+          " "
+        ],
+        "errors": [
+          "Imports are not properly sorted"
+        ],
+        "warnings": [],
+        "fixed": false,
+        "duration_ms": 805
+      },
+      {
+        "tool": "bandit",
+        "filepath": "/Users/jsullivan2/git/huskycats-bates/src/huskycat/core/adapters/ci.py",
+        "success": true,
+        "messages": [],
+        "errors": [],
+        "warnings": [],
+        "fixed": false,
+        "duration_ms": 1748
+      }
+    ]
+  }
+}

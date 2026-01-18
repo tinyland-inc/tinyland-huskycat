@@ -198,6 +198,36 @@ def create_parser() -> argparse.ArgumentParser:
     # Status command
     subparsers.add_parser("status", help="Show HuskyCat status and configuration")
 
+    # History command (API parity with MCP)
+    history_parser = subparsers.add_parser(
+        "history", help="Show validation run history"
+    )
+    history_parser.add_argument(
+        "--last", action="store_true", help="Show only the most recent run"
+    )
+    history_parser.add_argument(
+        "--run-id", type=str, help="Show details for a specific run ID"
+    )
+    history_parser.add_argument(
+        "--limit", type=int, default=10, help="Maximum number of runs to show"
+    )
+
+    # Tasks command (API parity with MCP)
+    tasks_parser = subparsers.add_parser(
+        "tasks", help="Manage async validation tasks"
+    )
+    tasks_parser.add_argument(
+        "--status",
+        choices=["pending", "running", "completed", "failed", "cancelled"],
+        help="Filter tasks by status",
+    )
+    tasks_parser.add_argument(
+        "--cancel", type=str, metavar="TASK_ID", help="Cancel a specific task"
+    )
+    tasks_parser.add_argument(
+        "--limit", type=int, default=20, help="Maximum number of tasks to show"
+    )
+
     # Bootstrap command for Claude Code integration
     bootstrap_parser = subparsers.add_parser(
         "bootstrap", help="Bootstrap Claude Code MCP integration"

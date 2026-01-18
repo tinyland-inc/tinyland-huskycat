@@ -189,8 +189,8 @@ See [Product Modes Documentation](architecture/product-modes.md) for complete co
 - [Installation Guide](installation.md) - Detailed installation instructions
 - [Configuration](configuration.md) - Customize validation rules
 - [MCP Server](features/mcp-server.md) - Claude Code integration
-- [Git Hooks](features/git-hooks.md) - Automated validation setup
-- [API Reference](api/cli.md) - Complete command reference
+- [Non-Blocking Hooks](nonblocking-hooks.md) - Fast commit workflow with background validation
+- [CLI Reference](cli-reference.md) - Complete command reference
 
 ## Support
 

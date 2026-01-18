@@ -26,6 +26,26 @@ from .core.process_manager import ProcessManager, ValidationRun
 from .core.task_manager import TaskManager, TaskStatus, get_task_manager
 from .unified_validation import ValidationEngine
 
+# Import commands for API parity
+try:
+    from .commands.ci import CIValidateCommand
+    HAS_CI_VALIDATE = True
+except ImportError:
+    HAS_CI_VALIDATE = False
+
+try:
+    from .commands.autodevops import AutoDevOpsCommand
+    HAS_AUTO_DEVOPS = True
+except ImportError:
+    HAS_AUTO_DEVOPS = False
+
+# RemoteJuggler integration for git identity management
+try:
+    from .integrations.remote_juggler import RemoteJugglerIntegration
+    HAS_REMOTE_JUGGLER = True
+except ImportError:
+    HAS_REMOTE_JUGGLER = False
+
 # Token limits for output management
 MAX_TOKENS = int(os.environ.get("MAX_MCP_OUTPUT_TOKENS", "25000"))
 WARN_TOKENS = 10000
@@ -55,6 +75,18 @@ class MCPServer:
         self.process_manager = ProcessManager()
         self.task_manager = get_task_manager()
         self.request_id = 0
+
+        # Initialize RemoteJuggler integration if available
+        self.remote_juggler = None
+        if HAS_REMOTE_JUGGLER:
+            try:
+                self.remote_juggler = RemoteJugglerIntegration()
+                if self.remote_juggler.is_available():
+                    logger.info("RemoteJuggler integration enabled")
+                else:
+                    self.remote_juggler = None
+            except Exception as e:
+                logger.warning(f"Failed to initialize RemoteJuggler: {e}")
 
         logger.info(
             f"MCP Server initialized (container-only mode): {self.container_available}"
@@ -500,6 +532,86 @@ class MCPServer:
             }
         )
 
+        # API parity tools - CI and auto-devops validation
+        if HAS_CI_VALIDATE:
+            tools.append(
+                {
+                    "name": "ci_validate",
+                    "description": "Validate CI/CD configuration files (.gitlab-ci.yml, GitHub Actions workflows, docker-compose.yml). "
+                    "Auto-detects and validates all CI configuration files in the project.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "files": {
+                                "type": "array",
+                                "items": {"type": "string"},
+                                "description": "Specific CI files to validate. If empty, auto-detects.",
+                            },
+                        },
+                    },
+                }
+            )
+
+        if HAS_AUTO_DEVOPS:
+            tools.append(
+                {
+                    "name": "auto_devops",
+                    "description": "Validate Auto-DevOps configuration including Helm charts, Kubernetes manifests, and GitLab CI Auto-DevOps compliance. "
+                    "Use for validating deployment configurations.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "project_path": {
+                                "type": "string",
+                                "description": "Project path to validate",
+                                "default": ".",
+                            },
+                            "validate_helm": {
+                                "type": "boolean",
+                                "description": "Validate Helm charts",
+                                "default": True,
+                            },
+                            "validate_k8s": {
+                                "type": "boolean",
+                                "description": "Validate Kubernetes manifests",
+                                "default": True,
+                            },
+                            "simulate_deployment": {
+                                "type": "boolean",
+                                "description": "Simulate deployment (dry-run)",
+                                "default": False,
+                            },
+                            "strict_mode": {
+                                "type": "boolean",
+                                "description": "Enable strict validation",
+                                "default": False,
+                            },
+                            "fast_mode": {
+                                "type": "boolean",
+                                "description": "Skip slow operations (for git hooks)",
+                                "default": False,
+                            },
+                        },
+                    },
+                }
+            )
+
+        # Status tool for system information
+        tools.append(
+            {
+                "name": "status",
+                "description": "Get HuskyCat system status including available validators, container runtime status, and configuration.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {},
+                },
+            }
+        )
+
+        # RemoteJuggler integration tools (git identity management)
+        if self.remote_juggler:
+            tools.extend(self.remote_juggler.get_mcp_tools())
+
         return {"jsonrpc": "2.0", "id": request_id, "result": {"tools": tools}}
 
     def _handle_tool_call(
@@ -532,10 +644,19 @@ class MCPServer:
                 result = self._list_async_tasks(arguments)
             elif tool_name == "cancel_async_task":
                 result = self._cancel_async_task(arguments)
+            elif tool_name == "ci_validate":
+                result = self._ci_validate(arguments)
+            elif tool_name == "auto_devops":
+                result = self._auto_devops(arguments)
+            elif tool_name == "status":
+                result = self._status(arguments)
             elif tool_name.startswith("validate_"):
                 # Individual validator
                 validator_name = tool_name.replace("validate_", "")
                 result = self._validate_with_specific_tool(validator_name, arguments)
+            elif self.remote_juggler and tool_name.startswith(self.remote_juggler.config.tool_prefix):
+                # RemoteJuggler integration tools
+                result = self.remote_juggler.handle_mcp_tool(tool_name, arguments)
             else:
                 return self._error_response(
                     request_id, -32602, f"Unknown tool: {tool_name}"
@@ -1038,6 +1159,142 @@ class MCPServer:
                 "task_id": task_id,
                 "error": "Failed to cancel task",
             }
+
+    # ==========================================================================
+    # API Parity Tools - CI, Auto-DevOps, Status
+    # ==========================================================================
+
+    def _ci_validate(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate CI/CD configuration files.
+
+        Supports:
+        - GitLab CI (.gitlab-ci.yml)
+        - GitHub Actions (.github/workflows/*.yml)
+        - Docker Compose (docker-compose.yml, compose.yml)
+        """
+        if not HAS_CI_VALIDATE:
+            return {
+                "success": False,
+                "error": "CI validation command not available",
+                "message": "CIValidateCommand not found in installation",
+            }
+
+        files = arguments.get("files", None)
+
+        try:
+            command = CIValidateCommand()
+            result = command.execute(files=files)
+
+            return {
+                "success": result.success,
+                "message": result.message,
+                "output": result.output,
+                "files_validated": result.data.get("files_validated", []) if result.data else [],
+                "errors": result.data.get("errors", []) if result.data else [],
+            }
+        except Exception as e:
+            logger.error(f"CI validation failed: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "message": f"CI validation error: {e}",
+            }
+
+    def _auto_devops(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate Auto-DevOps configuration.
+
+        Validates:
+        - Helm charts (Chart.yaml, values.yaml, templates/)
+        - Kubernetes manifests (*.yaml in k8s/, manifests/, deploy/)
+        - GitLab CI Auto-DevOps compliance
+        """
+        if not HAS_AUTO_DEVOPS:
+            return {
+                "success": False,
+                "error": "Auto-DevOps validation command not available",
+                "message": "AutoDevOpsCommand not found in installation",
+            }
+
+        project_path = arguments.get("project_path", ".")
+        validate_helm = arguments.get("validate_helm", True)
+        validate_k8s = arguments.get("validate_k8s", True)
+        simulate_deployment = arguments.get("simulate_deployment", False)
+        strict_mode = arguments.get("strict_mode", False)
+        fast_mode = arguments.get("fast_mode", False)
+
+        try:
+            command = AutoDevOpsCommand()
+            result = command.execute(
+                project_path=project_path,
+                validate_helm=validate_helm,
+                validate_k8s=validate_k8s,
+                simulate_deployment=simulate_deployment,
+                strict_mode=strict_mode,
+                fast_mode=fast_mode,
+            )
+
+            return {
+                "success": result.success,
+                "message": result.message,
+                "output": result.output,
+                "helm_charts": result.data.get("helm_charts", []) if result.data else [],
+                "k8s_manifests": result.data.get("k8s_manifests", []) if result.data else [],
+                "errors": result.data.get("errors", []) if result.data else [],
+            }
+        except Exception as e:
+            logger.error(f"Auto-DevOps validation failed: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "message": f"Auto-DevOps validation error: {e}",
+            }
+
+    def _status(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get HuskyCat system status.
+
+        Returns information about:
+        - Available validators
+        - Container runtime availability
+        - Recent validation history
+        - Configuration
+        """
+        # Get validator info
+        validators = []
+        for v in self.engine.validators:
+            validators.append({
+                "name": v.name,
+                "available": v.is_available(),
+                "file_patterns": getattr(v, "file_patterns", []),
+            })
+
+        # Get recent run count
+        recent_runs = self.process_manager.get_run_history(limit=5)
+        running_validations = self.process_manager.get_running_validations()
+
+        # Get async task summary
+        all_tasks = self.task_manager.list_tasks(limit=20)
+        task_summary = {
+            "total": len(all_tasks),
+            "pending": len([t for t in all_tasks if t.status == TaskStatus.PENDING]),
+            "running": len([t for t in all_tasks if t.status == TaskStatus.RUNNING]),
+            "completed": len([t for t in all_tasks if t.status == TaskStatus.COMPLETED]),
+            "failed": len([t for t in all_tasks if t.status == TaskStatus.FAILED]),
+        }
+
+        return {
+            "version": "2.0.0",
+            "container_available": self.container_available,
+            "is_container": self._is_running_in_container(),
+            "validators": validators,
+            "validator_count": len(validators),
+            "recent_runs": len(recent_runs),
+            "running_validations": len(running_validations),
+            "async_tasks": task_summary,
+            "api_parity": {
+                "ci_validate": HAS_CI_VALIDATE,
+                "auto_devops": HAS_AUTO_DEVOPS,
+            },
+        }
 
     def _tool_error_response(
         self, request_id: Any, error: Exception, context: Optional[str] = None

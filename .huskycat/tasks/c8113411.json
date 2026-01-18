@@ -1,0 +1,22 @@
+{
+  "task_id": "c8113411",
+  "status": "completed",
+  "progress": 100,
+  "total": 100,
+  "message": "Validation completed",
+  "started": "2026-01-18T14:41:13.850264",
+  "completed": "2026-01-18T14:41:14.743528",
+  "result": {
+    "summary": "Container validation (failed)",
+    "container_output": "",
+    "container_errors": "Resolving \"huskycat\" using unqualified-search registries (/etc/containers/registries.conf.d/999-podman-machine.conf)\nTrying to pull docker.io/library/huskycat:local...\nError: unable to copy from source docker://huskycat:local: initializing source docker://huskycat:local: reading manifest local in docker.io/library/huskycat: requested access to the resource is denied\n",
+    "success": false,
+    "runtime": "podman"
+  },
+  "error": null,
+  "tool_name": "validate",
+  "arguments": {
+    "path": "/private/var/folders/4j/kdp0zvyn5h5fg18wktq6d3cwk69pr3/T/pytest-of-jsullivan2/pytest-16/test_validate_async_with_fix0/async_workspace/fix_test.py",
+    "fix": true
+  }
+}

@@ -1,0 +1,2432 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Universal Code Validation Platform" name="description"/>
+<link href="https://huskycat-570fbd.gitlab.io/ci-cd/gitlab/" rel="canonical"/>
+<link href="../../architecture/execution-models/" rel="prev"/>
+<link href="../../github-actions/" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.18" name="generator"/>
+<title>GitLab CI/CD - HuskyCat Documentation</title>
+<link href="../../assets/stylesheets/main.7e37652d.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="blue" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#gitlab-cicd-pipeline-documentation">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="HuskyCat Documentation" class="md-header__button md-logo" data-md-component="logo" href="../.." title="HuskyCat Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            HuskyCat Documentation
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              GitLab CI/CD
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../installation/">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../cli-reference/">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../features/mcp-server/">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../architecture/product-modes/">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="./">
+          
+  
+  
+    
+  
+  CI/CD Integration
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../dogfooding/">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../performance/">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../api/mcp-tools/">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../troubleshooting/">
+        
+  
+  
+    
+  
+  Troubleshooting
+
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="HuskyCat Documentation" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="HuskyCat Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    HuskyCat Documentation
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
+    Home
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../installation/">
+<span class="md-ellipsis">
+    Installation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../binary-downloads/">
+<span class="md-ellipsis">
+    Binary Downloads
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../configuration/">
+<span class="md-ellipsis">
+    Configuration
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli-reference/">
+<span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Features
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../features/mcp-server/">
+<span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../nonblocking-hooks/">
+<span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Architecture
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../architecture/product-modes/">
+<span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../architecture/execution-models/">
+<span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+<span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            CI/CD Integration
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#table-of-contents">
+<span class="md-ellipsis">
+      Table of Contents
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pipeline-overview">
+<span class="md-ellipsis">
+      Pipeline Overview
+    </span>
+</a>
+<nav aria-label="Pipeline Overview" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pipeline-stages-flow">
+<span class="md-ellipsis">
+      Pipeline Stages Flow
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pipeline-stages">
+<span class="md-ellipsis">
+      Pipeline Stages
+    </span>
+</a>
+<nav aria-label="Pipeline Stages" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-1-validate">
+<span class="md-ellipsis">
+      Stage 1: Validate
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-2-security">
+<span class="md-ellipsis">
+      Stage 2: Security
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-3-build">
+<span class="md-ellipsis">
+      Stage 3: Build
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-4-test">
+<span class="md-ellipsis">
+      Stage 4: Test
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-5-package">
+<span class="md-ellipsis">
+      Stage 5: Package
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-6-sign">
+<span class="md-ellipsis">
+      Stage 6: Sign
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-7-deploy">
+<span class="md-ellipsis">
+      Stage 7: Deploy
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-8-scheduled">
+<span class="md-ellipsis">
+      Stage 8: Scheduled
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#job-catalog">
+<span class="md-ellipsis">
+      Job Catalog
+    </span>
+</a>
+<nav aria-label="Job Catalog" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-build-jobs">
+<span class="md-ellipsis">
+      Container Build Jobs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#validation-jobs">
+<span class="md-ellipsis">
+      Validation Jobs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tool-download-jobs">
+<span class="md-ellipsis">
+      Tool Download Jobs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#test-jobs">
+<span class="md-ellipsis">
+      Test Jobs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-jobs">
+<span class="md-ellipsis">
+      Build Jobs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deployment-jobs">
+<span class="md-ellipsis">
+      Deployment Jobs
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-platform-support">
+<span class="md-ellipsis">
+      Multi-Platform Support
+    </span>
+</a>
+<nav aria-label="Multi-Platform Support" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#supported-platforms">
+<span class="md-ellipsis">
+      Supported Platforms
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#runner-configuration">
+<span class="md-ellipsis">
+      Runner Configuration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#platform-build-matrix">
+<span class="md-ellipsis">
+      Platform Build Matrix
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fat-binary-build-process">
+<span class="md-ellipsis">
+      Fat Binary Build Process
+    </span>
+</a>
+<nav aria-label="Fat Binary Build Process" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      Overview
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-flow">
+<span class="md-ellipsis">
+      Build Flow
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-1-tool-downloads">
+<span class="md-ellipsis">
+      Step 1: Tool Downloads
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-2-tool-verification">
+<span class="md-ellipsis">
+      Step 2: Tool Verification
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-3-binary-build">
+<span class="md-ellipsis">
+      Step 3: Binary Build
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-4-compression-linux-only">
+<span class="md-ellipsis">
+      Step 4: Compression (Linux Only)
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-5-binary-verification">
+<span class="md-ellipsis">
+      Step 5: Binary Verification
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-6-checksum-generation">
+<span class="md-ellipsis">
+      Step 6: Checksum Generation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-build-strategy">
+<span class="md-ellipsis">
+      Container Build Strategy
+    </span>
+</a>
+<nav aria-label="Container Build Strategy" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-architecture-builds">
+<span class="md-ellipsis">
+      Multi-Architecture Builds
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-jobs_1">
+<span class="md-ellipsis">
+      Build Jobs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#manifest-creation">
+<span class="md-ellipsis">
+      Manifest Creation
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-registry-tags">
+<span class="md-ellipsis">
+      Container Registry Tags
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#testing-strategy">
+<span class="md-ellipsis">
+      Testing Strategy
+    </span>
+</a>
+<nav aria-label="Testing Strategy" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#unit-tests">
+<span class="md-ellipsis">
+      Unit Tests
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mcp-server-tests">
+<span class="md-ellipsis">
+      MCP Server Tests
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#binary-tests">
+<span class="md-ellipsis">
+      Binary Tests
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#e2e-tests">
+<span class="md-ellipsis">
+      E2E Tests
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#artifact-management">
+<span class="md-ellipsis">
+      Artifact Management
+    </span>
+</a>
+<nav aria-label="Artifact Management" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#artifact-types">
+<span class="md-ellipsis">
+      Artifact Types
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#artifact-flow">
+<span class="md-ellipsis">
+      Artifact Flow
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#caching-strategy">
+<span class="md-ellipsis">
+      Caching Strategy
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-and-quality-gates">
+<span class="md-ellipsis">
+      Security and Quality Gates
+    </span>
+</a>
+<nav aria-label="Security and Quality Gates" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-scanning">
+<span class="md-ellipsis">
+      Security Scanning
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#blocking-quality-gates">
+<span class="md-ellipsis">
+      Blocking Quality Gates
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#warning-quality-gates">
+<span class="md-ellipsis">
+      Warning Quality Gates
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#binary-size-enforcement">
+<span class="md-ellipsis">
+      Binary Size Enforcement
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ci-configuration-files">
+<span class="md-ellipsis">
+      CI Configuration Files
+    </span>
+</a>
+<nav aria-label="CI Configuration Files" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#file-structure">
+<span class="md-ellipsis">
+      File Structure
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#key-variables">
+<span class="md-ellipsis">
+      Key Variables
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#troubleshooting">
+<span class="md-ellipsis">
+      Troubleshooting
+    </span>
+</a>
+<nav aria-label="Troubleshooting" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common-issues">
+<span class="md-ellipsis">
+      Common Issues
+    </span>
+</a>
+<nav aria-label="Common Issues" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-binary-size-exceeds-limit">
+<span class="md-ellipsis">
+      1. Binary Size Exceeds Limit
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-tool-download-failures">
+<span class="md-ellipsis">
+      2. Tool Download Failures
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-code-signing-failures">
+<span class="md-ellipsis">
+      3. Code Signing Failures
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4-container-build-failures">
+<span class="md-ellipsis">
+      4. Container Build Failures
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#5-binary-execution-test-failures">
+<span class="md-ellipsis">
+      5. Binary Execution Test Failures
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#debug-mode">
+<span class="md-ellipsis">
+      Debug Mode
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#artifact-inspection">
+<span class="md-ellipsis">
+      Artifact Inspection
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#runner-selection">
+<span class="md-ellipsis">
+      Runner Selection
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pipeline-performance">
+<span class="md-ellipsis">
+      Pipeline Performance
+    </span>
+</a>
+<nav aria-label="Pipeline Performance" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#typical-build-times">
+<span class="md-ellipsis">
+      Typical Build Times
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#optimization-features">
+<span class="md-ellipsis">
+      Optimization Features
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#future-enhancements">
+<span class="md-ellipsis">
+      Future Enhancements
+    </span>
+</a>
+<nav aria-label="Future Enhancements" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#planned-improvements">
+<span class="md-ellipsis">
+      Planned Improvements
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#known-limitations">
+<span class="md-ellipsis">
+      Known Limitations
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#references">
+<span class="md-ellipsis">
+      References
+    </span>
+</a>
+<nav aria-label="References" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#official-documentation">
+<span class="md-ellipsis">
+      Official Documentation
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#project-files">
+<span class="md-ellipsis">
+      Project Files
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../github-actions/">
+<span class="md-ellipsis">
+    GitHub Actions
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Development
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../dogfooding/">
+<span class="md-ellipsis">
+    Dogfooding Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../parallel_executor/">
+<span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+<span class="md-ellipsis">
+    Advanced
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_8_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_8">
+<span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../performance/">
+<span class="md-ellipsis">
+    Performance
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../migration/to-nonblocking/">
+<span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../macos-code-signing/">
+<span class="md-ellipsis">
+    macOS Code Signing
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_9_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_9">
+<span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/mcp-tools/">
+<span class="md-ellipsis">
+    MCP Tools
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../troubleshooting/">
+<span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="gitlab-cicd-pipeline-documentation">GitLab CI/CD Pipeline Documentation<a class="headerlink" href="#gitlab-cicd-pipeline-documentation" title="Permanent link">¶</a></h1>
+<p><strong>HuskyCat Multi-Architecture Build and Validation Pipeline</strong></p>
+<p>Version: 2025-12-12
+Status: Production (All jobs verified against actual configuration)</p>
+<hr/>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="#pipeline-overview">Pipeline Overview</a></li>
+<li><a href="#pipeline-stages">Pipeline Stages</a></li>
+<li><a href="#job-catalog">Job Catalog</a></li>
+<li><a href="#multi-platform-support">Multi-Platform Support</a></li>
+<li><a href="#fat-binary-build-process">Fat Binary Build Process</a></li>
+<li><a href="#container-build-strategy">Container Build Strategy</a></li>
+<li><a href="#testing-strategy">Testing Strategy</a></li>
+<li><a href="#artifact-management">Artifact Management</a></li>
+<li><a href="#security-and-quality-gates">Security and Quality Gates</a></li>
+<li><a href="#ci-configuration-files">CI Configuration Files</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+<hr/>
+<h2 id="pipeline-overview">Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Permanent link">¶</a></h2>
+<p>The HuskyCat CI/CD pipeline implements a comprehensive multi-architecture build system with:</p>
+<ul>
+<li><strong>8 pipeline stages</strong> for sequential validation, building, testing, and deployment</li>
+<li><strong>Multi-architecture container builds</strong> (AMD64 and ARM64)</li>
+<li><strong>Fat binary builds</strong> with embedded validation tools</li>
+<li><strong>Comprehensive testing</strong> (unit, integration, E2E, binary bootstrap)</li>
+<li><strong>Automated releases</strong> on Git tags</li>
+<li><strong>Documentation deployment</strong> via GitLab Pages</li>
+</ul>
+<h3 id="pipeline-stages-flow">Pipeline Stages Flow<a class="headerlink" href="#pipeline-stages-flow" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>graph TB
+    A[validate] --&gt; B[security]
+    B --&gt; C[build]
+    C --&gt; D[test]
+    D --&gt; E[package]
+    E --&gt; F[sign]
+    F --&gt; G[deploy]
+    G --&gt; H[scheduled]
+
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style C fill:#e8f5e9
+    style D fill:#fce4ec
+    style E fill:#f3e5f5
+    style F fill:#e0f2f1
+    style G fill:#fff9c4
+    style H fill:#f5f5f5</code></pre>
+<p><strong>Configuration Reference</strong>: <code>.gitlab-ci.yml:14-22</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="nt">stages</span><span class="p">:</span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validate</span><span class="w">      </span><span class="c1"># Container builds, multi-arch manifests</span>
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security</span><span class="w">      </span><span class="c1"># SAST, dependency scanning, basic validation</span>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build</span><span class="w">         </span><span class="c1"># Tool downloads, validation completion</span>
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span><span class="w">          </span><span class="c1"># Unit tests, MCP tests, tool verification, E2E tests</span>
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">package</span><span class="w">       </span><span class="c1"># Binary builds, Python packages, checksums</span>
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sign</span><span class="w">          </span><span class="c1"># Code signing (macOS)</span>
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy</span><span class="w">        </span><span class="c1"># Releases, GitLab Pages</span>
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scheduled</span><span class="w">     </span><span class="c1"># Scheduled dependency updates</span>
+</code></pre></div>
+<hr/>
+<h2 id="pipeline-stages">Pipeline Stages<a class="headerlink" href="#pipeline-stages" title="Permanent link">¶</a></h2>
+<h3 id="stage-1-validate">Stage 1: Validate<a class="headerlink" href="#stage-1-validate" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Build multi-architecture container images for downstream validation</p>
+<p><strong>Jobs</strong> (<code>.gitlab-ci.yml:149-210</code>):
+- <code>container:build:amd64</code> - Build AMD64 container
+- <code>container:build:arm64</code> - Build ARM64 container
+- <code>container:build:manifest</code> - Create multi-arch manifest</p>
+<p><strong>Key Features</strong>:
+- Buildah with <code>--layers</code> for efficient layer caching
+- Parallel builds for AMD64 and ARM64
+- Multi-arch manifest combining both architectures
+- Push to GitLab Container Registry</p>
+<p><strong>Example Job</strong> (<code>.gitlab-ci.yml:149-165</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nt">container:build:amd64</span><span class="p">:</span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validate</span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">quay.io/buildah/stable:latest</span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">  </span><span class="nt">variables</span><span class="p">:</span>
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="nt">PLATFORM</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
+<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="nt">ARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">amd64</span>
+<a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah build --platform=$PLATFORM --layers -f ContainerFile \</span>
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">-t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .</span>
+<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH</span>
+</code></pre></div></p>
+<h3 id="stage-2-security">Stage 2: Security<a class="headerlink" href="#stage-2-security" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Run security scanning and basic code validation</p>
+<p><strong>Jobs</strong> (<code>.gitlab-ci.yml:47-79</code>):
+- <code>validate:basic</code> - Black code formatting check
+- <code>validate:yaml</code> - YAML linting (yamllint)
+- <code>SAST</code> - GitLab security scanning template
+- <code>Dependency-Scanning</code> - GitLab dependency scanning template</p>
+<p><strong>Security Templates</strong> (<code>.gitlab-ci.yml:5-6</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="nt">include</span><span class="p">:</span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Security/SAST.gitlab-ci.yml</span>
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Security/Dependency-Scanning.gitlab-ci.yml</span>
+</code></pre></div></p>
+<p><strong>Validation Example</strong> (<code>.gitlab-ci.yml:47-62</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="nt">validate:basic</span><span class="p">:</span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security</span>
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span>
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONTAINER_REGISTRY:$CONTAINER_TAG-amd64</span>
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">""</span><span class="p p-Indicator">]</span>
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
+<a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">container:build:amd64</span>
+<a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black --check src/</span>
+</code></pre></div></p>
+<h3 id="stage-3-build">Stage 3: Build<a class="headerlink" href="#stage-3-build" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Download validation tools and perform comprehensive validation</p>
+<p><strong>Jobs</strong>:
+- <code>download:tools:linux-amd64</code> (<code>.gitlab/ci/download-tools.yml:35-39</code>)
+- <code>download:tools:linux-arm64</code> (<code>.gitlab/ci/download-tools.yml:42-46</code>)
+- <code>download:tools:darwin-amd64</code> (<code>.gitlab/ci/download-tools.yml:49-53</code>)
+- <code>download:tools:darwin-arm64</code> (<code>.gitlab/ci/download-tools.yml:56-60</code>)
+- <code>container:build:manifest</code> (<code>.gitlab-ci.yml:183-210</code>)
+- <code>validate:complete</code> (<code>.gitlab-ci.yml:216-237</code>)</p>
+<p><strong>Tool Download Template</strong> (<code>.gitlab/ci/download-tools.yml:6-32</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="nt">.download_tools_template</span><span class="p">:</span>
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build</span>
+<a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python:3.11-slim</span>
+<a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python3 scripts/download_tools.py --platform ${PLATFORM} \</span>
+<a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--output-dir ${OUTPUT_DIR}</span>
+<a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+<a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OUTPUT_DIR}</span>
+<a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="w">    </span><span class="nt">expire_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1 day</span>
+<a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w">  </span><span class="nt">cache</span><span class="p">:</span>
+<a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">"tools-${PLATFORM}"</span>
+<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OUTPUT_DIR}</span>
+</code></pre></div></p>
+<p><strong>Tools Downloaded</strong>:
+- <code>shellcheck</code> v0.10.0 (~15-20MB)
+- <code>hadolint</code> v2.12.0 (~10-15MB)
+- <code>taplo</code> v0.9.3 (~8-12MB)</p>
+<h3 id="stage-4-test">Stage 4: Test<a class="headerlink" href="#stage-4-test" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Comprehensive testing including unit tests, MCP server tests, tool verification, E2E tests, and binary tests</p>
+<p><strong>Jobs</strong>:
+- <code>test:unit</code> (<code>.gitlab-ci.yml:82-110</code>) - PyTest with coverage
+- <code>test:mcp:server</code> (<code>.gitlab-ci.yml:116-138</code>) - MCP protocol tests
+- <code>verify:tools:all-platforms</code> (<code>.gitlab/ci/download-tools.yml:63-122</code>) - Tool verification
+- <code>verify:binary-size</code> (<code>.gitlab/ci/build.yml:199-272</code>) - Binary size validation
+- <code>binary:test:linux-amd64</code> (<code>.gitlab/ci/binary-tests.yml:31-39</code>) - Linux AMD64 binary testing
+- <code>binary:test:linux-arm64</code> (<code>.gitlab/ci/binary-tests.yml:41-50</code>) - Linux ARM64 binary testing
+- <code>binary:test:darwin-arm64</code> (<code>.gitlab/ci/binary-tests.yml:76-98</code>) - macOS ARM64 binary testing
+- <code>binary:smoke-test</code> (<code>.gitlab/ci/binary-tests.yml:101-116</code>) - Quick smoke test
+- E2E tests (<code>.gitlab/ci/e2e-tests.yml</code>) - See <a href="#testing-strategy">Testing Strategy</a></p>
+<p><strong>Unit Test Job</strong> (<code>.gitlab-ci.yml:82-110</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nt">test:unit</span><span class="p">:</span>
+<a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span>
+<a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONTAINER_REGISTRY:$CONTAINER_TAG-amd64</span>
+<a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">""</span><span class="p p-Indicator">]</span>
+<a href="#__codelineno-5-6" id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
+<a href="#__codelineno-5-7" id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">container:build:amd64</span>
+<a href="#__codelineno-5-8" id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="w">  </span><span class="nt">variables</span><span class="p">:</span>
+<a href="#__codelineno-5-9" id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="w">    </span><span class="nt">PYTHONPATH</span><span class="p">:</span><span class="w"> </span><span class="s">"$CI_PROJECT_DIR/src"</span>
+<a href="#__codelineno-5-10" id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-5-11" id="__codelineno-5-11" name="__codelineno-5-11"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">export HYPOTHESIS_PROFILE=ci</span>
+<a href="#__codelineno-5-12" id="__codelineno-5-12" name="__codelineno-5-12"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pytest tests/test_*pbt.py -v --tb=short \</span>
+<a href="#__codelineno-5-13" id="__codelineno-5-13" name="__codelineno-5-13"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--hypothesis-profile=ci --timeout=300 --cov=src/</span>
+<a href="#__codelineno-5-14" id="__codelineno-5-14" name="__codelineno-5-14"></a><span class="w">  </span><span class="nt">coverage</span><span class="p">:</span><span class="w"> </span><span class="s">'/TOTAL.*\s+(\d+)%/'</span>
+<a href="#__codelineno-5-15" id="__codelineno-5-15" name="__codelineno-5-15"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+<a href="#__codelineno-5-16" id="__codelineno-5-16" name="__codelineno-5-16"></a><span class="w">    </span><span class="nt">reports</span><span class="p">:</span>
+<a href="#__codelineno-5-17" id="__codelineno-5-17" name="__codelineno-5-17"></a><span class="w">      </span><span class="nt">coverage_report</span><span class="p">:</span>
+<a href="#__codelineno-5-18" id="__codelineno-5-18" name="__codelineno-5-18"></a><span class="w">        </span><span class="nt">coverage_format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cobertura</span>
+<a href="#__codelineno-5-19" id="__codelineno-5-19" name="__codelineno-5-19"></a><span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">coverage.xml</span>
+</code></pre></div></p>
+<p><strong>Tool Verification</strong> (<code>.gitlab/ci/download-tools.yml:76-117</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="nt">verify:tools:all-platforms</span><span class="p">:</span>
+<a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="w">      </span><span class="no">for platform in linux-amd64 linux-arm64 darwin-amd64 darwin-arm64; do</span>
+<a href="#__codelineno-6-6" id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="w">        </span><span class="no">for tool in shellcheck hadolint taplo; do</span>
+<a href="#__codelineno-6-7" id="__codelineno-6-7" name="__codelineno-6-7"></a><span class="w">          </span><span class="no">tool_path="dist/tools/${platform}/${tool}"</span>
+<a href="#__codelineno-6-8" id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="w">          </span><span class="no">if [ ! -f "${tool_path}" ]; then</span>
+<a href="#__codelineno-6-9" id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="w">            </span><span class="no">echo "  MISSING: ${tool}"</span>
+<a href="#__codelineno-6-10" id="__codelineno-6-10" name="__codelineno-6-10"></a><span class="w">            </span><span class="no">exit 1</span>
+<a href="#__codelineno-6-11" id="__codelineno-6-11" name="__codelineno-6-11"></a><span class="w">          </span><span class="no">fi</span>
+<a href="#__codelineno-6-12" id="__codelineno-6-12" name="__codelineno-6-12"></a><span class="w">          </span><span class="no">if [ ! -x "${tool_path}" ]; then</span>
+<a href="#__codelineno-6-13" id="__codelineno-6-13" name="__codelineno-6-13"></a><span class="w">            </span><span class="no">echo "  NOT EXECUTABLE: ${tool}"</span>
+<a href="#__codelineno-6-14" id="__codelineno-6-14" name="__codelineno-6-14"></a><span class="w">            </span><span class="no">exit 1</span>
+<a href="#__codelineno-6-15" id="__codelineno-6-15" name="__codelineno-6-15"></a><span class="w">          </span><span class="no">fi</span>
+<a href="#__codelineno-6-16" id="__codelineno-6-16" name="__codelineno-6-16"></a><span class="w">        </span><span class="no">done</span>
+<a href="#__codelineno-6-17" id="__codelineno-6-17" name="__codelineno-6-17"></a><span class="w">      </span><span class="no">done</span>
+</code></pre></div></p>
+<h3 id="stage-5-package">Stage 5: Package<a class="headerlink" href="#stage-5-package" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Build fat binaries with embedded tools and Python packages</p>
+<p><strong>Jobs</strong>:
+- <code>build:binary:linux-amd64</code> (<code>.gitlab/ci/build.yml:6-63</code>)
+- <code>build:binary:linux-arm64</code> (<code>.gitlab/ci/build.yml:66-125</code>)
+- <code>build:binary:darwin-arm64</code> (<code>.gitlab/ci/build.yml:128-179</code>)
+- <code>package:python</code> (<code>.gitlab-ci.yml:240-270</code>)
+- <code>checksums:generate</code> (<code>.gitlab/ci/build.yml:275-305</code>)</p>
+<p><strong>Binary Build Example</strong> (<code>.gitlab/ci/build.yml:6-63</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nt">build:binary:linux-amd64</span><span class="p">:</span>
+<a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">package</span>
+<a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux/rockylinux:10</span>
+<a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
+<a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">download:tools:linux-amd64</span>
+<a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">      </span><span class="nt">artifacts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv sync --extra build</span>
+<a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="w">      </span><span class="no">uv run pyinstaller --onefile \</span>
+<a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">        </span><span class="no">--name huskycat-linux-amd64 \</span>
+<a href="#__codelineno-7-12" id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="w">        </span><span class="no">--add-binary "dist/tools/linux-amd64/shellcheck:tools/" \</span>
+<a href="#__codelineno-7-13" id="__codelineno-7-13" name="__codelineno-7-13"></a><span class="w">        </span><span class="no">--add-binary "dist/tools/linux-amd64/hadolint:tools/" \</span>
+<a href="#__codelineno-7-14" id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="w">        </span><span class="no">--add-binary "dist/tools/linux-amd64/taplo:tools/" \</span>
+<a href="#__codelineno-7-15" id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="w">        </span><span class="no">huskycat_main.py</span>
+<a href="#__codelineno-7-16" id="__codelineno-7-16" name="__codelineno-7-16"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mv dist/huskycat-linux-amd64 dist/bin/</span>
+<a href="#__codelineno-7-17" id="__codelineno-7-17" name="__codelineno-7-17"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upx --best --lzma dist/bin/huskycat-linux-amd64 || echo "UPX compression failed"</span>
+<a href="#__codelineno-7-18" id="__codelineno-7-18" name="__codelineno-7-18"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+<a href="#__codelineno-7-19" id="__codelineno-7-19" name="__codelineno-7-19"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-7-20" id="__codelineno-7-20" name="__codelineno-7-20"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dist/bin/huskycat-linux-amd64</span>
+<a href="#__codelineno-7-21" id="__codelineno-7-21" name="__codelineno-7-21"></a><span class="w">    </span><span class="nt">expire_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1 month</span>
+</code></pre></div></p>
+<p><strong>Python Package Build</strong> (<code>.gitlab-ci.yml:240-270</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="nt">package:python</span><span class="p">:</span>
+<a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">package</span>
+<a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python:3.11-alpine</span>
+<a href="#__codelineno-8-4" id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-8-5" id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv sync --dev</span>
+<a href="#__codelineno-8-6" id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv build</span>
+<a href="#__codelineno-8-7" id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+<a href="#__codelineno-8-8" id="__codelineno-8-8" name="__codelineno-8-8"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-8-9" id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dist/*.tar.gz</span>
+<a href="#__codelineno-8-10" id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dist/*.whl</span>
+<a href="#__codelineno-8-11" id="__codelineno-8-11" name="__codelineno-8-11"></a><span class="w">    </span><span class="nt">expire_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1 month</span>
+</code></pre></div></p>
+<h3 id="stage-6-sign">Stage 6: Sign<a class="headerlink" href="#stage-6-sign" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Code signing for macOS binaries</p>
+<p><strong>Jobs</strong>:
+- <code>sign:darwin-arm64</code> (<code>.gitlab-ci.yml:311-504</code>)</p>
+<p><strong>Code Signing Process</strong> (<code>.gitlab-ci.yml:311-504</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="nt">sign:darwin-arm64</span><span class="p">:</span>
+<a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="w">  </span><span class="nt">extends</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.macos_saas_runners</span>
+<a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sign</span>
+<a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
+<a href="#__codelineno-9-5" id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build:binary:darwin-arm64</span>
+<a href="#__codelineno-9-6" id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">      </span><span class="nt">artifacts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a href="#__codelineno-9-7" id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-9-8" id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="w">    </span><span class="c1"># Create temporary keychain</span>
+<a href="#__codelineno-9-9" id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"</span>
+<a href="#__codelineno-9-10" id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security set-keychain-settings "$KEYCHAIN_NAME"</span>
+<a href="#__codelineno-9-11" id="__codelineno-9-11" name="__codelineno-9-11"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"</span>
+<a href="#__codelineno-9-12" id="__codelineno-9-12" name="__codelineno-9-12"></a>
+<a href="#__codelineno-9-13" id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="w">    </span><span class="c1"># Import certificates</span>
+<a href="#__codelineno-9-14" id="__codelineno-9-14" name="__codelineno-9-14"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security import certificate.p12 -k "$KEYCHAIN_NAME" \</span>
+<a href="#__codelineno-9-15" id="__codelineno-9-15" name="__codelineno-9-15"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">-P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign -A</span>
+<a href="#__codelineno-9-16" id="__codelineno-9-16" name="__codelineno-9-16"></a>
+<a href="#__codelineno-9-17" id="__codelineno-9-17" name="__codelineno-9-17"></a><span class="w">    </span><span class="c1"># Set partition list for headless CI</span>
+<a href="#__codelineno-9-18" id="__codelineno-9-18" name="__codelineno-9-18"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security set-key-partition-list -S apple-tool:,apple</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">\</span>
+<a href="#__codelineno-9-19" id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">-s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"</span>
+<a href="#__codelineno-9-20" id="__codelineno-9-20" name="__codelineno-9-20"></a>
+<a href="#__codelineno-9-21" id="__codelineno-9-21" name="__codelineno-9-21"></a><span class="w">    </span><span class="c1"># Sign binary</span>
+<a href="#__codelineno-9-22" id="__codelineno-9-22" name="__codelineno-9-22"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codesign --force --options runtime \</span>
+<a href="#__codelineno-9-23" id="__codelineno-9-23" name="__codelineno-9-23"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--sign "$APPLE_DEVELOPER_ID_APPLICATION" \</span>
+<a href="#__codelineno-9-24" id="__codelineno-9-24" name="__codelineno-9-24"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--keychain "$KEYCHAIN_NAME" dist/bin/huskycat-darwin-arm64</span>
+<a href="#__codelineno-9-25" id="__codelineno-9-25" name="__codelineno-9-25"></a>
+<a href="#__codelineno-9-26" id="__codelineno-9-26" name="__codelineno-9-26"></a><span class="w">    </span><span class="c1"># Notarize if credentials available</span>
+<a href="#__codelineno-9-27" id="__codelineno-9-27" name="__codelineno-9-27"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xcrun notarytool submit huskycat-darwin-arm64.zip \</span>
+<a href="#__codelineno-9-28" id="__codelineno-9-28" name="__codelineno-9-28"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--apple-id "$APPLE_ID" \</span>
+<a href="#__codelineno-9-29" id="__codelineno-9-29" name="__codelineno-9-29"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--password "$APPLE_NOTARIZE_PASSWORD" \</span>
+<a href="#__codelineno-9-30" id="__codelineno-9-30" name="__codelineno-9-30"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--team-id "$APPLE_TEAM_ID" --wait</span>
+<a href="#__codelineno-9-31" id="__codelineno-9-31" name="__codelineno-9-31"></a><span class="w">  </span><span class="nt">allow_failure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div></p>
+<p><strong>Required CI Variables</strong>:
+- <code>APPLE_CERTIFICATE_BASE64</code> - Base64 encoded .p12 certificate
+- <code>APPLE_CERTIFICATE_PASSWORD</code> - Certificate password
+- <code>APPLE_DEVELOPER_ID_APPLICATION</code> - Developer ID identity
+- <code>APPLE_DEVELOPER_ID_CA_G2</code> - Base64 intermediate CA cert
+- <code>APPLE_ID</code> - Apple ID for notarization
+- <code>APPLE_NOTARIZE_PASSWORD</code> - App-specific password
+- <code>APPLE_TEAM_ID</code> - Apple Team ID</p>
+<h3 id="stage-7-deploy">Stage 7: Deploy<a class="headerlink" href="#stage-7-deploy" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Create releases and deploy documentation</p>
+<p><strong>Jobs</strong>:
+- <code>release:create</code> (<code>.gitlab-ci.yml:508-536</code>)
+- <code>pages</code> (<code>.gitlab/ci/pages.yml:3-91</code>)</p>
+<p><strong>Release Creation</strong> (<code>.gitlab-ci.yml:508-536</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="nt">release:create</span><span class="p">:</span>
+<a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy</span>
+<a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.gitlab.com/gitlab-org/release-cli:latest</span>
+<a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
+<a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">package:python</span>
+<a href="#__codelineno-10-6" id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a href="#__codelineno-10-7" id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build:binary:linux-amd64</span>
+<a href="#__codelineno-10-8" id="__codelineno-10-8" name="__codelineno-10-8"></a><span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a href="#__codelineno-10-9" id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build:binary:linux-arm64</span>
+<a href="#__codelineno-10-10" id="__codelineno-10-10" name="__codelineno-10-10"></a><span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a href="#__codelineno-10-11" id="__codelineno-10-11" name="__codelineno-10-11"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sign:darwin-arm64</span>
+<a href="#__codelineno-10-12" id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a href="#__codelineno-10-13" id="__codelineno-10-13" name="__codelineno-10-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">checksums:generate</span>
+<a href="#__codelineno-10-14" id="__codelineno-10-14" name="__codelineno-10-14"></a><span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a href="#__codelineno-10-15" id="__codelineno-10-15" name="__codelineno-10-15"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-10-16" id="__codelineno-10-16" name="__codelineno-10-16"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<a href="#__codelineno-10-17" id="__codelineno-10-17" name="__codelineno-10-17"></a><span class="w">      </span><span class="no">release-cli create \</span>
+<a href="#__codelineno-10-18" id="__codelineno-10-18" name="__codelineno-10-18"></a><span class="w">        </span><span class="no">--name "HuskyCat $CI_COMMIT_TAG" \</span>
+<a href="#__codelineno-10-19" id="__codelineno-10-19" name="__codelineno-10-19"></a><span class="w">        </span><span class="no">--tag-name $CI_COMMIT_TAG \</span>
+<a href="#__codelineno-10-20" id="__codelineno-10-20" name="__codelineno-10-20"></a><span class="w">        </span><span class="no">--description "Release $CI_COMMIT_TAG - Fat binaries with embedded tools" \</span>
+<a href="#__codelineno-10-21" id="__codelineno-10-21" name="__codelineno-10-21"></a><span class="w">        </span><span class="no">--assets-link "..." # Multiple asset links</span>
+<a href="#__codelineno-10-22" id="__codelineno-10-22" name="__codelineno-10-22"></a><span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<a href="#__codelineno-10-23" id="__codelineno-10-23" name="__codelineno-10-23"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CI_COMMIT_TAG</span>
+</code></pre></div></p>
+<p><strong>Pages Deployment</strong> (<code>.gitlab/ci/pages.yml:3-91</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="nt">pages</span><span class="p">:</span>
+<a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy</span>
+<a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python:3.11-slim</span>
+<a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip install mkdocs mkdocs-material mkdocs-mermaid2-plugin pyyaml</span>
+<a href="#__codelineno-11-6" id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mkdocs build --site-dir public</span>
+<a href="#__codelineno-11-7" id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python scripts/generate-llms-docs.py</span>
+<a href="#__codelineno-11-8" id="__codelineno-11-8" name="__codelineno-11-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mkdir -p public/downloads</span>
+<a href="#__codelineno-11-9" id="__codelineno-11-9" name="__codelineno-11-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cp scripts/install.sh public/install.sh</span>
+<a href="#__codelineno-11-10" id="__codelineno-11-10" name="__codelineno-11-10"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+<a href="#__codelineno-11-11" id="__codelineno-11-11" name="__codelineno-11-11"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-11-12" id="__codelineno-11-12" name="__codelineno-11-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public</span>
+<a href="#__codelineno-11-13" id="__codelineno-11-13" name="__codelineno-11-13"></a><span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<a href="#__codelineno-11-14" id="__codelineno-11-14" name="__codelineno-11-14"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CI_COMMIT_BRANCH == "main"</span>
+<a href="#__codelineno-11-15" id="__codelineno-11-15" name="__codelineno-11-15"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CI_COMMIT_TAG</span>
+<a href="#__codelineno-11-16" id="__codelineno-11-16" name="__codelineno-11-16"></a><span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<a href="#__codelineno-11-17" id="__codelineno-11-17" name="__codelineno-11-17"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+<a href="#__codelineno-11-18" id="__codelineno-11-18" name="__codelineno-11-18"></a><span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://huskycat-570fbd.gitlab.io</span>
+</code></pre></div></p>
+<h3 id="stage-8-scheduled">Stage 8: Scheduled<a class="headerlink" href="#stage-8-scheduled" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Automated dependency updates and maintenance</p>
+<p><strong>Jobs</strong>: See <code>.gitlab/ci/scheduled-updates.yml</code> (included but not detailed in this documentation)</p>
+<hr/>
+<h2 id="job-catalog">Job Catalog<a class="headerlink" href="#job-catalog" title="Permanent link">¶</a></h2>
+<h3 id="container-build-jobs">Container Build Jobs<a class="headerlink" href="#container-build-jobs" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Job Name</th>
+<th>Stage</th>
+<th>Platform</th>
+<th>File Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>container:build:amd64</code></td>
+<td>validate</td>
+<td>linux/amd64</td>
+<td><code>.gitlab-ci.yml:149-165</code></td>
+</tr>
+<tr>
+<td><code>container:build:arm64</code></td>
+<td>validate</td>
+<td>linux/arm64</td>
+<td><code>.gitlab-ci.yml:166-182</code></td>
+</tr>
+<tr>
+<td><code>container:build:manifest</code></td>
+<td>build</td>
+<td>multi-arch</td>
+<td><code>.gitlab-ci.yml:183-210</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="validation-jobs">Validation Jobs<a class="headerlink" href="#validation-jobs" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Job Name</th>
+<th>Stage</th>
+<th>Purpose</th>
+<th>File Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>validate:basic</code></td>
+<td>security</td>
+<td>Black formatting check</td>
+<td><code>.gitlab-ci.yml:47-62</code></td>
+</tr>
+<tr>
+<td><code>validate:yaml</code></td>
+<td>security</td>
+<td>YAML linting</td>
+<td><code>.gitlab-ci.yml:65-79</code></td>
+</tr>
+<tr>
+<td><code>validate:complete</code></td>
+<td>build</td>
+<td>Comprehensive validation</td>
+<td><code>.gitlab-ci.yml:216-237</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tool-download-jobs">Tool Download Jobs<a class="headerlink" href="#tool-download-jobs" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Job Name</th>
+<th>Stage</th>
+<th>Platform</th>
+<th>File Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>download:tools:linux-amd64</code></td>
+<td>build</td>
+<td>linux-amd64</td>
+<td><code>.gitlab/ci/download-tools.yml:35-39</code></td>
+</tr>
+<tr>
+<td><code>download:tools:linux-arm64</code></td>
+<td>build</td>
+<td>linux-arm64</td>
+<td><code>.gitlab/ci/download-tools.yml:42-46</code></td>
+</tr>
+<tr>
+<td><code>download:tools:darwin-amd64</code></td>
+<td>build</td>
+<td>darwin-amd64</td>
+<td><code>.gitlab/ci/download-tools.yml:49-53</code></td>
+</tr>
+<tr>
+<td><code>download:tools:darwin-arm64</code></td>
+<td>build</td>
+<td>darwin-arm64</td>
+<td><code>.gitlab/ci/download-tools.yml:56-60</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="test-jobs">Test Jobs<a class="headerlink" href="#test-jobs" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Job Name</th>
+<th>Stage</th>
+<th>Purpose</th>
+<th>File Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test:unit</code></td>
+<td>test</td>
+<td>PyTest unit tests</td>
+<td><code>.gitlab-ci.yml:82-110</code></td>
+</tr>
+<tr>
+<td><code>test:mcp:server</code></td>
+<td>test</td>
+<td>MCP protocol tests</td>
+<td><code>.gitlab-ci.yml:116-138</code></td>
+</tr>
+<tr>
+<td><code>verify:tools:all-platforms</code></td>
+<td>test</td>
+<td>Tool verification</td>
+<td><code>.gitlab/ci/download-tools.yml:63-122</code></td>
+</tr>
+<tr>
+<td><code>verify:binary-size</code></td>
+<td>package</td>
+<td>Binary size validation</td>
+<td><code>.gitlab/ci/build.yml:199-272</code></td>
+</tr>
+<tr>
+<td><code>binary:test:linux-amd64</code></td>
+<td>test</td>
+<td>Linux AMD64 binary test</td>
+<td><code>.gitlab/ci/binary-tests.yml:31-39</code></td>
+</tr>
+<tr>
+<td><code>binary:test:linux-arm64</code></td>
+<td>test</td>
+<td>Linux ARM64 binary test</td>
+<td><code>.gitlab/ci/binary-tests.yml:41-50</code></td>
+</tr>
+<tr>
+<td><code>binary:test:darwin-arm64</code></td>
+<td>test</td>
+<td>macOS ARM64 binary test</td>
+<td><code>.gitlab/ci/binary-tests.yml:76-98</code></td>
+</tr>
+<tr>
+<td><code>binary:smoke-test</code></td>
+<td>test</td>
+<td>Quick smoke test</td>
+<td><code>.gitlab/ci/binary-tests.yml:101-116</code></td>
+</tr>
+<tr>
+<td><code>test:e2e:bootstrap:gitops</code></td>
+<td>test</td>
+<td>E2E GitOps bootstrap</td>
+<td><code>.gitlab/ci/e2e-tests.yml:5-32</code></td>
+</tr>
+<tr>
+<td><code>test:e2e:bootstrap:types</code></td>
+<td>test</td>
+<td>E2E repository types</td>
+<td><code>.gitlab/ci/e2e-tests.yml:34-62</code></td>
+</tr>
+<tr>
+<td><code>test:e2e:hooks:execution</code></td>
+<td>test</td>
+<td>E2E hook execution</td>
+<td><code>.gitlab/ci/e2e-tests.yml:65-96</code></td>
+</tr>
+<tr>
+<td><code>test:e2e:fast:mode</code></td>
+<td>test</td>
+<td>E2E fast mode</td>
+<td><code>.gitlab/ci/e2e-tests.yml:99-126</code></td>
+</tr>
+<tr>
+<td><code>test:e2e:edge:cases</code></td>
+<td>test</td>
+<td>E2E edge cases</td>
+<td><code>.gitlab/ci/e2e-tests.yml:129-157</code></td>
+</tr>
+<tr>
+<td><code>test:e2e:comprehensive</code></td>
+<td>test</td>
+<td>E2E comprehensive suite</td>
+<td><code>.gitlab/ci/e2e-tests.yml:200-234</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="build-jobs">Build Jobs<a class="headerlink" href="#build-jobs" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Job Name</th>
+<th>Stage</th>
+<th>Platform</th>
+<th>File Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>build:binary:linux-amd64</code></td>
+<td>package</td>
+<td>linux-amd64</td>
+<td><code>.gitlab/ci/build.yml:6-63</code></td>
+</tr>
+<tr>
+<td><code>build:binary:linux-arm64</code></td>
+<td>package</td>
+<td>linux-arm64</td>
+<td><code>.gitlab/ci/build.yml:66-125</code></td>
+</tr>
+<tr>
+<td><code>build:binary:darwin-arm64</code></td>
+<td>package</td>
+<td>darwin-arm64</td>
+<td><code>.gitlab/ci/build.yml:128-179</code></td>
+</tr>
+<tr>
+<td><code>package:python</code></td>
+<td>package</td>
+<td>N/A</td>
+<td><code>.gitlab-ci.yml:240-270</code></td>
+</tr>
+<tr>
+<td><code>checksums:generate</code></td>
+<td>package</td>
+<td>N/A</td>
+<td><code>.gitlab/ci/build.yml:275-305</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="deployment-jobs">Deployment Jobs<a class="headerlink" href="#deployment-jobs" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Job Name</th>
+<th>Stage</th>
+<th>Purpose</th>
+<th>File Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sign:darwin-arm64</code></td>
+<td>sign</td>
+<td>macOS code signing</td>
+<td><code>.gitlab-ci.yml:311-504</code></td>
+</tr>
+<tr>
+<td><code>release:create</code></td>
+<td>deploy</td>
+<td>GitLab releases</td>
+<td><code>.gitlab-ci.yml:508-536</code></td>
+</tr>
+<tr>
+<td><code>pages</code></td>
+<td>deploy</td>
+<td>Documentation site</td>
+<td><code>.gitlab/ci/pages.yml:3-91</code></td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="multi-platform-support">Multi-Platform Support<a class="headerlink" href="#multi-platform-support" title="Permanent link">¶</a></h2>
+<h3 id="supported-platforms">Supported Platforms<a class="headerlink" href="#supported-platforms" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Architecture</th>
+<th>Runner</th>
+<th>Build Status</th>
+<th>Signing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td>AMD64 (x86_64)</td>
+<td>GitLab SaaS AMD64</td>
+<td>✅ Supported</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>ARM64 (aarch64)</td>
+<td>GitLab SaaS ARM64</td>
+<td>✅ Supported</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>macOS</td>
+<td>Apple Silicon (ARM64)</td>
+<td>GitLab SaaS macOS M1</td>
+<td>✅ Supported</td>
+<td>✅ Developer ID or Ad-hoc</td>
+</tr>
+<tr>
+<td>macOS</td>
+<td>Intel (AMD64)</td>
+<td>N/A</td>
+<td>⚠️ Not available</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: macOS Intel (AMD64) builds are not available because GitLab SaaS only provides ARM64 macOS runners. Intel Mac users can use ARM64 binaries via Rosetta 2.</p>
+<h3 id="runner-configuration">Runner Configuration<a class="headerlink" href="#runner-configuration" title="Permanent link">¶</a></h3>
+<p><strong>Linux AMD64</strong> (<code>.gitlab/ci/build.yml:6-8</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="nt">build:binary:linux-amd64</span><span class="p">:</span>
+<a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">package</span>
+<a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux/rockylinux:10</span>
+<a href="#__codelineno-12-4" id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="w">  </span><span class="c1"># Uses default GitLab SaaS AMD64 runner</span>
+</code></pre></div></p>
+<p><strong>Linux ARM64</strong> (<code>.gitlab/ci/build.yml:66-70</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="nt">build:binary:linux-arm64</span><span class="p">:</span>
+<a href="#__codelineno-13-2" id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">package</span>
+<a href="#__codelineno-13-3" id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux/rockylinux:10</span>
+<a href="#__codelineno-13-4" id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="w">  </span><span class="nt">tags</span><span class="p">:</span>
+<a href="#__codelineno-13-5" id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">saas-linux-medium-arm64</span>
+</code></pre></div></p>
+<p><strong>macOS ARM64</strong> (<code>.gitlab-ci.yml:297-300</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="nt">.macos_saas_runners</span><span class="p">:</span>
+<a href="#__codelineno-14-2" id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="w">  </span><span class="nt">tags</span><span class="p">:</span>
+<a href="#__codelineno-14-3" id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">saas-macos-medium-m1</span>
+<a href="#__codelineno-14-4" id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">macos-14-xcode-15</span>
+</code></pre></div></p>
+<h3 id="platform-build-matrix">Platform Build Matrix<a class="headerlink" href="#platform-build-matrix" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>graph LR
+    A[Tool Downloads] --&gt; B[Linux AMD64 Build]
+    A --&gt; C[Linux ARM64 Build]
+    A --&gt; D[macOS ARM64 Build]
+
+    B --&gt; E[UPX Compression]
+    C --&gt; F[UPX Compression]
+    D --&gt; G[Code Signing]
+
+    E --&gt; H[Release]
+    F --&gt; H
+    G --&gt; H</code></pre>
+<hr/>
+<h2 id="fat-binary-build-process">Fat Binary Build Process<a class="headerlink" href="#fat-binary-build-process" title="Permanent link">¶</a></h2>
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h3>
+<p>HuskyCat builds "fat binaries" that include:
+1. <strong>Python runtime</strong> - PyInstaller-embedded Python interpreter
+2. <strong>HuskyCat code</strong> - All source code and dependencies
+3. <strong>Validation tools</strong> - shellcheck, hadolint, taplo binaries</p>
+<p><strong>Total binary size</strong>: 60-100MB (Linux, compressed) / 150-200MB (macOS, uncompressed)</p>
+<h3 id="build-flow">Build Flow<a class="headerlink" href="#build-flow" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>graph TB
+    A[Download Tools Stage] --&gt; B[Verify Tools]
+    B --&gt; C[Build Binary Stage]
+    C --&gt; D[PyInstaller Package]
+    D --&gt; E{Platform?}
+    E --&gt;|Linux| F[UPX Compression]
+    E --&gt;|macOS| G[No Compression]
+    F --&gt; H[Verify Binary Size]
+    G --&gt; H
+    H --&gt; I[Generate Checksums]</code></pre>
+<h3 id="step-1-tool-downloads">Step 1: Tool Downloads<a class="headerlink" href="#step-1-tool-downloads" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>download:tools:linux-amd64</code> (example)
+<strong>File</strong>: <code>.gitlab/ci/download-tools.yml:35-39</code>
+<strong>Script</strong>: <code>scripts/download_tools.py</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-15-1" id="__codelineno-15-1" name="__codelineno-15-1"></a>python3<span class="w"> </span>scripts/download_tools.py<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-15-2" id="__codelineno-15-2" name="__codelineno-15-2"></a><span class="w">  </span>--platform<span class="w"> </span>linux-amd64<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-15-3" id="__codelineno-15-3" name="__codelineno-15-3"></a><span class="w">  </span>--output-dir<span class="w"> </span>dist/tools/linux-amd64
+</code></pre></div>
+<p><strong>Downloaded Tools</strong>:
+- <code>shellcheck</code> v0.10.0 - Shell script linter (~15-20MB)
+- <code>hadolint</code> v2.12.0 - Dockerfile linter (~10-15MB)
+- <code>taplo</code> v0.9.3 - TOML formatter (~8-12MB)</p>
+<p><strong>Artifacts</strong>:
+- <code>dist/tools/{platform}/shellcheck</code>
+- <code>dist/tools/{platform}/hadolint</code>
+- <code>dist/tools/{platform}/taplo</code>
+- <code>dist/tools/{platform}/versions.txt</code></p>
+<p><strong>Expiry</strong>: 1 day
+<strong>Cache</strong>: Per-platform with key <code>tools-{platform}</code></p>
+<h3 id="step-2-tool-verification">Step 2: Tool Verification<a class="headerlink" href="#step-2-tool-verification" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>verify:tools:all-platforms</code>
+<strong>File</strong>: <code>.gitlab/ci/download-tools.yml:63-122</code></p>
+<p>Verifies for all platforms:
+- Tool files exist
+- Tools are executable
+- Versions.txt manifest is present
+- File sizes are reasonable</p>
+<p><strong>Failure Mode</strong>: Blocks pipeline if any tool is missing or invalid</p>
+<h3 id="step-3-binary-build">Step 3: Binary Build<a class="headerlink" href="#step-3-binary-build" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>build:binary:linux-amd64</code> (example)
+<strong>File</strong>: <code>.gitlab/ci/build.yml:6-63</code></p>
+<p><strong>Build Command</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-16-1" id="__codelineno-16-1" name="__codelineno-16-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pyinstaller<span class="w"> </span>--onefile<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-16-2" id="__codelineno-16-2" name="__codelineno-16-2"></a><span class="w">  </span>--name<span class="w"> </span>huskycat-linux-amd64<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-16-3" id="__codelineno-16-3" name="__codelineno-16-3"></a><span class="w">  </span>--add-binary<span class="w"> </span><span class="s2">"dist/tools/linux-amd64/shellcheck:tools/"</span><span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-16-4" id="__codelineno-16-4" name="__codelineno-16-4"></a><span class="w">  </span>--add-binary<span class="w"> </span><span class="s2">"dist/tools/linux-amd64/hadolint:tools/"</span><span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-16-5" id="__codelineno-16-5" name="__codelineno-16-5"></a><span class="w">  </span>--add-binary<span class="w"> </span><span class="s2">"dist/tools/linux-amd64/taplo:tools/"</span><span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-16-6" id="__codelineno-16-6" name="__codelineno-16-6"></a><span class="w">  </span>huskycat_main.py
+</code></pre></div></p>
+<p><strong>PyInstaller Options</strong>:
+- <code>--onefile</code> - Single executable bundle
+- <code>--name</code> - Output binary name (platform-specific)
+- <code>--add-binary</code> - Embed external binaries (tools)</p>
+<p><strong>Output</strong>: <code>dist/bin/huskycat-{platform}</code></p>
+<h3 id="step-4-compression-linux-only">Step 4: Compression (Linux Only)<a class="headerlink" href="#step-4-compression-linux-only" title="Permanent link">¶</a></h3>
+<p><strong>Linux Platforms</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-17-1" id="__codelineno-17-1" name="__codelineno-17-1"></a>upx<span class="w"> </span>--best<span class="w"> </span>--lzma<span class="w"> </span>dist/bin/huskycat-linux-amd64
+</code></pre></div></p>
+<p><strong>Compression Ratio</strong>: 40-60% size reduction
+<strong>Failure Mode</strong>: Continues without compression if UPX fails</p>
+<p><strong>macOS Platforms</strong>: No compression (incompatible with code signing)</p>
+<h3 id="step-5-binary-verification">Step 5: Binary Verification<a class="headerlink" href="#step-5-binary-verification" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>verify:binary-size</code>
+<strong>File</strong>: <code>.gitlab/ci/build.yml:199-272</code></p>
+<p><strong>Checks</strong>:
+- Binary size &lt;= 250MB (fails if exceeded)
+- Executable permissions set
+- Valid ELF/Mach-O format
+- Binary file is not empty</p>
+<p><strong>Example Output</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-18-1" id="__codelineno-18-1" name="__codelineno-18-1"></a>Binary: dist/bin/huskycat-linux-amd64
+<a href="#__codelineno-18-2" id="__codelineno-18-2" name="__codelineno-18-2"></a>----------------------------------------
+<a href="#__codelineno-18-3" id="__codelineno-18-3" name="__codelineno-18-3"></a>  Size: 85MB
+<a href="#__codelineno-18-4" id="__codelineno-18-4" name="__codelineno-18-4"></a>  OK: Size acceptable
+<a href="#__codelineno-18-5" id="__codelineno-18-5" name="__codelineno-18-5"></a>  OK: Executable bit set
+<a href="#__codelineno-18-6" id="__codelineno-18-6" name="__codelineno-18-6"></a>  OK: Valid binary format
+</code></pre></div></p>
+<h3 id="step-6-checksum-generation">Step 6: Checksum Generation<a class="headerlink" href="#step-6-checksum-generation" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>checksums:generate</code>
+<strong>File</strong>: <code>.gitlab/ci/build.yml:275-305</code></p>
+<p><strong>Output</strong>: <code>dist/bin/SHA256SUMS.txt</code></p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-19-1" id="__codelineno-19-1" name="__codelineno-19-1"></a>abc123...  huskycat-linux-amd64
+<a href="#__codelineno-19-2" id="__codelineno-19-2" name="__codelineno-19-2"></a>def456...  huskycat-linux-arm64
+<a href="#__codelineno-19-3" id="__codelineno-19-3" name="__codelineno-19-3"></a>789ghi...  huskycat-darwin-arm64
+</code></pre></div></p>
+<hr/>
+<h2 id="container-build-strategy">Container Build Strategy<a class="headerlink" href="#container-build-strategy" title="Permanent link">¶</a></h2>
+<h3 id="multi-architecture-builds">Multi-Architecture Builds<a class="headerlink" href="#multi-architecture-builds" title="Permanent link">¶</a></h3>
+<p><strong>Approach</strong>: Build separate images for AMD64 and ARM64, then create a multi-arch manifest.</p>
+<p><strong>File</strong>: <code>ContainerFile</code> (Alpine-based multi-stage build)</p>
+<h3 id="build-jobs_1">Build Jobs<a class="headerlink" href="#build-jobs_1" title="Permanent link">¶</a></h3>
+<p><strong>AMD64 Build</strong> (<code>.gitlab-ci.yml:149-165</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-20-1" id="__codelineno-20-1" name="__codelineno-20-1"></a><span class="nt">container:build:amd64</span><span class="p">:</span>
+<a href="#__codelineno-20-2" id="__codelineno-20-2" name="__codelineno-20-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validate</span>
+<a href="#__codelineno-20-3" id="__codelineno-20-3" name="__codelineno-20-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">quay.io/buildah/stable:latest</span>
+<a href="#__codelineno-20-4" id="__codelineno-20-4" name="__codelineno-20-4"></a><span class="w">  </span><span class="nt">variables</span><span class="p">:</span>
+<a href="#__codelineno-20-5" id="__codelineno-20-5" name="__codelineno-20-5"></a><span class="w">    </span><span class="nt">PLATFORM</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
+<a href="#__codelineno-20-6" id="__codelineno-20-6" name="__codelineno-20-6"></a><span class="w">    </span><span class="nt">ARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">amd64</span>
+<a href="#__codelineno-20-7" id="__codelineno-20-7" name="__codelineno-20-7"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-20-8" id="__codelineno-20-8" name="__codelineno-20-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah build --platform=$PLATFORM --layers \</span>
+<a href="#__codelineno-20-9" id="__codelineno-20-9" name="__codelineno-20-9"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">-f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .</span>
+<a href="#__codelineno-20-10" id="__codelineno-20-10" name="__codelineno-20-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH</span>
+</code></pre></div></p>
+<p><strong>ARM64 Build</strong> (<code>.gitlab-ci.yml:166-182</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-21-1" id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="nt">container:build:arm64</span><span class="p">:</span>
+<a href="#__codelineno-21-2" id="__codelineno-21-2" name="__codelineno-21-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validate</span>
+<a href="#__codelineno-21-3" id="__codelineno-21-3" name="__codelineno-21-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">quay.io/buildah/stable:latest</span>
+<a href="#__codelineno-21-4" id="__codelineno-21-4" name="__codelineno-21-4"></a><span class="w">  </span><span class="nt">variables</span><span class="p">:</span>
+<a href="#__codelineno-21-5" id="__codelineno-21-5" name="__codelineno-21-5"></a><span class="w">    </span><span class="nt">PLATFORM</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/arm64</span>
+<a href="#__codelineno-21-6" id="__codelineno-21-6" name="__codelineno-21-6"></a><span class="w">    </span><span class="nt">ARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arm64</span>
+<a href="#__codelineno-21-7" id="__codelineno-21-7" name="__codelineno-21-7"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-21-8" id="__codelineno-21-8" name="__codelineno-21-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah build --platform=$PLATFORM --layers \</span>
+<a href="#__codelineno-21-9" id="__codelineno-21-9" name="__codelineno-21-9"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">-f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .</span>
+<a href="#__codelineno-21-10" id="__codelineno-21-10" name="__codelineno-21-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH</span>
+</code></pre></div></p>
+<h3 id="manifest-creation">Manifest Creation<a class="headerlink" href="#manifest-creation" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>container:build:manifest</code>
+<strong>File</strong>: <code>.gitlab-ci.yml:183-210</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-22-1" id="__codelineno-22-1" name="__codelineno-22-1"></a><span class="nt">container:build:manifest</span><span class="p">:</span>
+<a href="#__codelineno-22-2" id="__codelineno-22-2" name="__codelineno-22-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build</span>
+<a href="#__codelineno-22-3" id="__codelineno-22-3" name="__codelineno-22-3"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-22-4" id="__codelineno-22-4" name="__codelineno-22-4"></a><span class="w">    </span><span class="c1"># Create multi-arch manifest</span>
+<a href="#__codelineno-22-5" id="__codelineno-22-5" name="__codelineno-22-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah manifest create $CONTAINER_REGISTRY:$CONTAINER_TAG</span>
+<a href="#__codelineno-22-6" id="__codelineno-22-6" name="__codelineno-22-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah manifest add $CONTAINER_REGISTRY:$CONTAINER_TAG \</span>
+<a href="#__codelineno-22-7" id="__codelineno-22-7" name="__codelineno-22-7"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">$CONTAINER_REGISTRY:$CONTAINER_TAG-amd64</span>
+<a href="#__codelineno-22-8" id="__codelineno-22-8" name="__codelineno-22-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah manifest add $CONTAINER_REGISTRY:$CONTAINER_TAG \</span>
+<a href="#__codelineno-22-9" id="__codelineno-22-9" name="__codelineno-22-9"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">$CONTAINER_REGISTRY:$CONTAINER_TAG-arm64</span>
+<a href="#__codelineno-22-10" id="__codelineno-22-10" name="__codelineno-22-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildah manifest push --all $CONTAINER_REGISTRY:$CONTAINER_TAG</span>
+<a href="#__codelineno-22-11" id="__codelineno-22-11" name="__codelineno-22-11"></a>
+<a href="#__codelineno-22-12" id="__codelineno-22-12" name="__codelineno-22-12"></a><span class="w">    </span><span class="c1"># Create 'latest' tag for main branch</span>
+<a href="#__codelineno-22-13" id="__codelineno-22-13" name="__codelineno-22-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<a href="#__codelineno-22-14" id="__codelineno-22-14" name="__codelineno-22-14"></a><span class="w">      </span><span class="no">if [ "$CI_COMMIT_BRANCH" = "main" ] || [ -n "$CI_COMMIT_TAG" ]; then</span>
+<a href="#__codelineno-22-15" id="__codelineno-22-15" name="__codelineno-22-15"></a><span class="w">        </span><span class="no">buildah manifest create $CONTAINER_REGISTRY:latest</span>
+<a href="#__codelineno-22-16" id="__codelineno-22-16" name="__codelineno-22-16"></a><span class="w">        </span><span class="no">buildah manifest add $CONTAINER_REGISTRY:latest \</span>
+<a href="#__codelineno-22-17" id="__codelineno-22-17" name="__codelineno-22-17"></a><span class="w">          </span><span class="no">$CONTAINER_REGISTRY:$CONTAINER_TAG-amd64</span>
+<a href="#__codelineno-22-18" id="__codelineno-22-18" name="__codelineno-22-18"></a><span class="w">        </span><span class="no">buildah manifest add $CONTAINER_REGISTRY:latest \</span>
+<a href="#__codelineno-22-19" id="__codelineno-22-19" name="__codelineno-22-19"></a><span class="w">          </span><span class="no">$CONTAINER_REGISTRY:$CONTAINER_TAG-arm64</span>
+<a href="#__codelineno-22-20" id="__codelineno-22-20" name="__codelineno-22-20"></a><span class="w">        </span><span class="no">buildah manifest push --all $CONTAINER_REGISTRY:latest</span>
+<a href="#__codelineno-22-21" id="__codelineno-22-21" name="__codelineno-22-21"></a><span class="w">      </span><span class="no">fi</span>
+</code></pre></div>
+<h3 id="container-registry-tags">Container Registry Tags<a class="headerlink" href="#container-registry-tags" title="Permanent link">¶</a></h3>
+<ul>
+<li><code>$CONTAINER_REGISTRY:$CONTAINER_TAG</code> - Commit-specific (e.g., <code>abc123</code>)</li>
+<li><code>$CONTAINER_REGISTRY:$CONTAINER_TAG-amd64</code> - AMD64 specific</li>
+<li><code>$CONTAINER_REGISTRY:$CONTAINER_TAG-arm64</code> - ARM64 specific</li>
+<li><code>$CONTAINER_REGISTRY:latest</code> - Latest from main branch</li>
+</ul>
+<p><strong>Registry URL</strong>: <code>registry.gitlab.com/tinyland/ai/huskycat</code></p>
+<hr/>
+<h2 id="testing-strategy">Testing Strategy<a class="headerlink" href="#testing-strategy" title="Permanent link">¶</a></h2>
+<h3 id="unit-tests">Unit Tests<a class="headerlink" href="#unit-tests" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>test:unit</code>
+<strong>File</strong>: <code>.gitlab-ci.yml:82-110</code></p>
+<p><strong>Test Framework</strong>: PyTest with Hypothesis (property-based testing)</p>
+<p><strong>Command</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-23-1" id="__codelineno-23-1" name="__codelineno-23-1"></a>pytest<span class="w"> </span>tests/test_*pbt.py<span class="w"> </span>-v<span class="w"> </span>--tb<span class="o">=</span>short<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-23-2" id="__codelineno-23-2" name="__codelineno-23-2"></a><span class="w">  </span>--hypothesis-profile<span class="o">=</span>ci<span class="w"> </span>--timeout<span class="o">=</span><span class="m">300</span><span class="w"> </span>--cov<span class="o">=</span>src/
+</code></pre></div></p>
+<p><strong>Coverage</strong>:
+- Coverage reporting via Cobertura format
+- Coverage badge in pipeline
+- HTML coverage reports archived</p>
+<p><strong>Artifacts</strong>:
+- <code>coverage.xml</code> (Cobertura format)
+- <code>htmlcov/</code> (HTML coverage report)</p>
+<h3 id="mcp-server-tests">MCP Server Tests<a class="headerlink" href="#mcp-server-tests" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>test:mcp:server</code>
+<strong>File</strong>: <code>.gitlab-ci.yml:116-138</code></p>
+<p><strong>Purpose</strong>: Test MCP (Model Context Protocol) server implementation</p>
+<p><strong>Command</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-24-1" id="__codelineno-24-1" name="__codelineno-24-1"></a>pytest<span class="w"> </span>tests/test_mcp_server_pbt.py<span class="w"> </span>-v<span class="w"> </span>--tb<span class="o">=</span>short
+</code></pre></div></p>
+<h3 id="binary-tests">Binary Tests<a class="headerlink" href="#binary-tests" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Verify built binaries execute correctly and support bootstrap operations</p>
+<p><strong>Jobs</strong> (<code>.gitlab/ci/binary-tests.yml</code>):
+- <code>binary:test:linux-amd64</code> - Test Linux AMD64 binary
+- <code>binary:test:linux-arm64</code> - Test Linux ARM64 binary
+- <code>binary:test:darwin-arm64</code> - Test macOS ARM64 binary
+- <code>binary:smoke-test</code> - Quick smoke test</p>
+<p><strong>Test Script</strong>: <code>scripts/verify_binary.sh</code>
+<strong>Test Suite</strong>: <code>tests/test_binary_bootstrap.py</code></p>
+<p><strong>Example Binary Test</strong> (<code>.gitlab/ci/binary-tests.yml:31-39</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-25-1" id="__codelineno-25-1" name="__codelineno-25-1"></a><span class="nt">binary:test:linux-amd64</span><span class="p">:</span>
+<a href="#__codelineno-25-2" id="__codelineno-25-2" name="__codelineno-25-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<a href="#__codelineno-25-3" id="__codelineno-25-3" name="__codelineno-25-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python:3.13-slim</span>
+<a href="#__codelineno-25-4" id="__codelineno-25-4" name="__codelineno-25-4"></a><span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
+<a href="#__codelineno-25-5" id="__codelineno-25-5" name="__codelineno-25-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build:binary:linux-amd64</span>
+<a href="#__codelineno-25-6" id="__codelineno-25-6" name="__codelineno-25-6"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-25-7" id="__codelineno-25-7" name="__codelineno-25-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chmod +x ${BINARY_PATH}</span>
+<a href="#__codelineno-25-8" id="__codelineno-25-8" name="__codelineno-25-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bash scripts/verify_binary.sh ${BINARY_PATH}</span>
+<a href="#__codelineno-25-9" id="__codelineno-25-9" name="__codelineno-25-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pytest tests/test_binary_bootstrap.py --binary=${BINARY_PATH} -v</span>
+</code></pre></div></p>
+<h3 id="e2e-tests">E2E Tests<a class="headerlink" href="#e2e-tests" title="Permanent link">¶</a></h3>
+<p><strong>Purpose</strong>: Test complete workflows including bootstrap, hook generation, and validation</p>
+<p><strong>Jobs</strong> (<code>.gitlab/ci/e2e-tests.yml</code>):
+- <code>test:e2e:bootstrap:gitops</code> - Full GitOps repository bootstrap
+- <code>test:e2e:bootstrap:types</code> - Different repository types
+- <code>test:e2e:hooks:execution</code> - Git hook execution tests
+- <code>test:e2e:fast:mode</code> - Fast mode integration
+- <code>test:e2e:edge:cases</code> - Edge cases and error handling
+- <code>test:e2e:comprehensive</code> - Complete E2E test suite</p>
+<p><strong>Example E2E Test</strong> (<code>.gitlab/ci/e2e-tests.yml:5-32</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-26-1" id="__codelineno-26-1" name="__codelineno-26-1"></a><span class="nt">test:e2e:bootstrap:gitops</span><span class="p">:</span>
+<a href="#__codelineno-26-2" id="__codelineno-26-2" name="__codelineno-26-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<a href="#__codelineno-26-3" id="__codelineno-26-3" name="__codelineno-26-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python:3.11-alpine</span>
+<a href="#__codelineno-26-4" id="__codelineno-26-4" name="__codelineno-26-4"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<a href="#__codelineno-26-5" id="__codelineno-26-5" name="__codelineno-26-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv run pytest tests/e2e/test_bootstrap_gitops.py::TestBootstrapGitOps::test_bootstrap_full_gitops_repo -v -s</span>
+</code></pre></div></p>
+<p><strong>Test Coverage</strong>:
+- GitOps repository bootstrap
+- Helm-only repositories
+- Kubernetes-only repositories
+- Plain Python repositories
+- Pre-commit hook validation (valid and invalid)
+- Commit message format validation
+- Fast mode integration
+- Non-git directories (error handling)
+- Empty repositories (error handling)
+- Force regeneration of hooks</p>
+<hr/>
+<h2 id="artifact-management">Artifact Management<a class="headerlink" href="#artifact-management" title="Permanent link">¶</a></h2>
+<h3 id="artifact-types">Artifact Types<a class="headerlink" href="#artifact-types" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Expiry</th>
+<th>Size (approx)</th>
+<th>Jobs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tool downloads</td>
+<td>1 day</td>
+<td>100-150MB per platform</td>
+<td><code>download:tools:*</code></td>
+</tr>
+<tr>
+<td>Container images</td>
+<td>Permanent</td>
+<td>N/A (registry)</td>
+<td><code>container:build:*</code></td>
+</tr>
+<tr>
+<td>Binary builds</td>
+<td>1 month</td>
+<td>60-200MB per binary</td>
+<td><code>build:binary:*</code></td>
+</tr>
+<tr>
+<td>Python packages</td>
+<td>1 month</td>
+<td>5-10MB</td>
+<td><code>package:python</code></td>
+</tr>
+<tr>
+<td>Checksums</td>
+<td>1 month</td>
+<td>&lt;1KB</td>
+<td><code>checksums:generate</code></td>
+</tr>
+<tr>
+<td>Signed binaries</td>
+<td>1 month</td>
+<td>150-200MB</td>
+<td><code>sign:darwin-arm64</code></td>
+</tr>
+<tr>
+<td>Test reports</td>
+<td>1 week</td>
+<td>&lt;1MB</td>
+<td>Various test jobs</td>
+</tr>
+<tr>
+<td>Coverage reports</td>
+<td>1 week</td>
+<td>1-5MB</td>
+<td><code>test:unit</code></td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Permanent</td>
+<td>10-20MB</td>
+<td><code>pages</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="artifact-flow">Artifact Flow<a class="headerlink" href="#artifact-flow" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>graph TB
+    A[Tool Downloads&lt;br/&gt;1 day expiry] --&gt; B[Binary Builds&lt;br/&gt;1 month expiry]
+    B --&gt; C[Checksums&lt;br/&gt;1 month expiry]
+    B --&gt; D[Code Signing&lt;br/&gt;1 month expiry]
+    C --&gt; E[GitLab Releases&lt;br/&gt;Permanent]
+    D --&gt; E
+    F[Python Packages&lt;br/&gt;1 month expiry] --&gt; E
+    G[Container Images&lt;br/&gt;Permanent] --&gt; E</code></pre>
+<h3 id="caching-strategy">Caching Strategy<a class="headerlink" href="#caching-strategy" title="Permanent link">¶</a></h3>
+<p><strong>UV Dependencies</strong> (<code>.gitlab-ci.yml:244-254</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-27-1" id="__codelineno-27-1" name="__codelineno-27-1"></a><span class="nt">cache</span><span class="p">:</span>
+<a href="#__codelineno-27-2" id="__codelineno-27-2" name="__codelineno-27-2"></a><span class="w">  </span><span class="nt">key</span><span class="p">:</span>
+<a href="#__codelineno-27-3" id="__codelineno-27-3" name="__codelineno-27-3"></a><span class="w">    </span><span class="nt">files</span><span class="p">:</span>
+<a href="#__codelineno-27-4" id="__codelineno-27-4" name="__codelineno-27-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pyproject.toml</span>
+<a href="#__codelineno-27-5" id="__codelineno-27-5" name="__codelineno-27-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv.lock</span>
+<a href="#__codelineno-27-6" id="__codelineno-27-6" name="__codelineno-27-6"></a><span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CI_JOB_NAME</span>
+<a href="#__codelineno-27-7" id="__codelineno-27-7" name="__codelineno-27-7"></a><span class="w">  </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-27-8" id="__codelineno-27-8" name="__codelineno-27-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.cache/uv</span>
+<a href="#__codelineno-27-9" id="__codelineno-27-9" name="__codelineno-27-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.cache/pip</span>
+<a href="#__codelineno-27-10" id="__codelineno-27-10" name="__codelineno-27-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.venv/</span>
+<a href="#__codelineno-27-11" id="__codelineno-27-11" name="__codelineno-27-11"></a><span class="w">  </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pull-push</span>
+</code></pre></div></p>
+<p><strong>Tool Downloads</strong> (<code>.gitlab/ci/download-tools.yml:24-28</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-28-1" id="__codelineno-28-1" name="__codelineno-28-1"></a><span class="nt">cache</span><span class="p">:</span>
+<a href="#__codelineno-28-2" id="__codelineno-28-2" name="__codelineno-28-2"></a><span class="w">  </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">"tools-${PLATFORM}"</span>
+<a href="#__codelineno-28-3" id="__codelineno-28-3" name="__codelineno-28-3"></a><span class="w">  </span><span class="nt">paths</span><span class="p">:</span>
+<a href="#__codelineno-28-4" id="__codelineno-28-4" name="__codelineno-28-4"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OUTPUT_DIR}</span>
+<a href="#__codelineno-28-5" id="__codelineno-28-5" name="__codelineno-28-5"></a><span class="w">  </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pull-push</span>
+</code></pre></div></p>
+<p><strong>Container Layers</strong>:
+- Buildah <code>--layers</code> flag for layer caching
+- Reduces rebuild time by ~50%</p>
+<hr/>
+<h2 id="security-and-quality-gates">Security and Quality Gates<a class="headerlink" href="#security-and-quality-gates" title="Permanent link">¶</a></h2>
+<h3 id="security-scanning">Security Scanning<a class="headerlink" href="#security-scanning" title="Permanent link">¶</a></h3>
+<p><strong>SAST (Static Application Security Testing)</strong>:
+- Template: <code>Security/SAST.gitlab-ci.yml</code>
+- Runs automatically on all code changes
+- Scans for security vulnerabilities in code</p>
+<p><strong>Dependency Scanning</strong>:
+- Template: <code>Security/Dependency-Scanning.gitlab-ci.yml</code>
+- Checks for vulnerable dependencies
+- Reports CVEs and security advisories</p>
+<p><strong>Configuration</strong> (<code>.gitlab-ci.yml:34-35</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-29-1" id="__codelineno-29-1" name="__codelineno-29-1"></a><span class="nt">SAST_EXCLUDED_PATHS</span><span class="p">:</span><span class="w"> </span><span class="s">'spec,</span><span class="nv"> </span><span class="s">test,</span><span class="nv"> </span><span class="s">tests,</span><span class="nv"> </span><span class="s">tmp,</span><span class="nv"> </span><span class="s">.cache,</span><span class="nv"> </span><span class="s">.hypothesis'</span>
+<a href="#__codelineno-29-2" id="__codelineno-29-2" name="__codelineno-29-2"></a><span class="nt">DS_EXCLUDED_PATHS</span><span class="p">:</span><span class="w"> </span><span class="s">'spec,</span><span class="nv"> </span><span class="s">test,</span><span class="nv"> </span><span class="s">tests,</span><span class="nv"> </span><span class="s">tmp,</span><span class="nv"> </span><span class="s">.cache,</span><span class="nv"> </span><span class="s">.hypothesis'</span>
+</code></pre></div></p>
+<h3 id="blocking-quality-gates">Blocking Quality Gates<a class="headerlink" href="#blocking-quality-gates" title="Permanent link">¶</a></h3>
+<p>Pipeline <strong>fails</strong> if:
+1. Container build failures
+2. Security scanning finds critical issues
+3. Tool download verification failures
+4. Binary size exceeds 250MB
+5. Binary format validation failures
+6. Tool verification fails (missing or non-executable)</p>
+<h3 id="warning-quality-gates">Warning Quality Gates<a class="headerlink" href="#warning-quality-gates" title="Permanent link">¶</a></h3>
+<p>Pipeline <strong>continues</strong> but warns if:
+1. UPX compression failures
+2. Code signing failures (falls back to ad-hoc)
+3. Binary execution test warnings
+4. Documentation build warnings</p>
+<h3 id="binary-size-enforcement">Binary Size Enforcement<a class="headerlink" href="#binary-size-enforcement" title="Permanent link">¶</a></h3>
+<p><strong>Job</strong>: <code>verify:binary-size</code>
+<strong>File</strong>: <code>.gitlab/ci/build.yml:199-272</code>
+<strong>Limit</strong>: 250MB
+<strong>Failure Mode</strong>: <code>allow_failure: false</code> (blocks pipeline)</p>
+<p><strong>Example Check</strong> (<code>.gitlab/ci/build.yml:234-238</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-30-1" id="__codelineno-30-1" name="__codelineno-30-1"></a><span class="nv">SIZE_MB</span><span class="o">=</span><span class="k">$(</span>du<span class="w"> </span>-m<span class="w"> </span><span class="s2">"</span><span class="nv">$binary</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="k">)</span>
+<a href="#__codelineno-30-2" id="__codelineno-30-2" name="__codelineno-30-2"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$SIZE_MB</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">250</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a href="#__codelineno-30-3" id="__codelineno-30-3" name="__codelineno-30-3"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"ERROR: Binary too large (</span><span class="si">${</span><span class="nv">SIZE_MB</span><span class="si">}</span><span class="s2">MB &gt; 250MB target)"</span>
+<a href="#__codelineno-30-4" id="__codelineno-30-4" name="__codelineno-30-4"></a><span class="w">  </span><span class="nv">FAIL</span><span class="o">=</span><span class="m">1</span>
+<a href="#__codelineno-30-5" id="__codelineno-30-5" name="__codelineno-30-5"></a><span class="k">fi</span>
+</code></pre></div></p>
+<hr/>
+<h2 id="ci-configuration-files">CI Configuration Files<a class="headerlink" href="#ci-configuration-files" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-31-1" id="__codelineno-31-1" name="__codelineno-31-1"></a>.gitlab-ci.yml                              # Main pipeline definition (539 lines)
+<a href="#__codelineno-31-2" id="__codelineno-31-2" name="__codelineno-31-2"></a>├── include:
+<a href="#__codelineno-31-3" id="__codelineno-31-3" name="__codelineno-31-3"></a>│   ├── template: Security/SAST.gitlab-ci.yml            # GitLab SAST template
+<a href="#__codelineno-31-4" id="__codelineno-31-4" name="__codelineno-31-4"></a>│   ├── template: Security/Dependency-Scanning.gitlab-ci.yml  # Dependency scanning
+<a href="#__codelineno-31-5" id="__codelineno-31-5" name="__codelineno-31-5"></a>│   ├── local: /.gitlab/ci/scheduled-updates.yml        # Scheduled updates
+<a href="#__codelineno-31-6" id="__codelineno-31-6" name="__codelineno-31-6"></a>│   ├── local: /.gitlab/ci/pages.yml                    # GitLab Pages (91 lines)
+<a href="#__codelineno-31-7" id="__codelineno-31-7" name="__codelineno-31-7"></a>│   ├── local: /.gitlab/ci/e2e-tests.yml                # E2E tests (235 lines)
+<a href="#__codelineno-31-8" id="__codelineno-31-8" name="__codelineno-31-8"></a>│   ├── local: /.gitlab/ci/download-tools.yml           # Tool downloads (123 lines)
+<a href="#__codelineno-31-9" id="__codelineno-31-9" name="__codelineno-31-9"></a>│   ├── local: /.gitlab/ci/build.yml                    # Binary builds (305 lines)
+<a href="#__codelineno-31-10" id="__codelineno-31-10" name="__codelineno-31-10"></a>│   └── local: /.gitlab/ci/binary-tests.yml             # Binary tests (116 lines)
+<a href="#__codelineno-31-11" id="__codelineno-31-11" name="__codelineno-31-11"></a>│
+<a href="#__codelineno-31-12" id="__codelineno-31-12" name="__codelineno-31-12"></a>├── scripts/
+<a href="#__codelineno-31-13" id="__codelineno-31-13" name="__codelineno-31-13"></a>│   ├── download_tools.py                   # Tool downloader script
+<a href="#__codelineno-31-14" id="__codelineno-31-14" name="__codelineno-31-14"></a>│   ├── verify_binary.sh                    # Binary verification script
+<a href="#__codelineno-31-15" id="__codelineno-31-15" name="__codelineno-31-15"></a>│   ├── generate-llms-docs.py               # LLM-friendly docs generator
+<a href="#__codelineno-31-16" id="__codelineno-31-16" name="__codelineno-31-16"></a>│   └── install.sh                          # Binary install script
+<a href="#__codelineno-31-17" id="__codelineno-31-17" name="__codelineno-31-17"></a>│
+<a href="#__codelineno-31-18" id="__codelineno-31-18" name="__codelineno-31-18"></a>├── tests/
+<a href="#__codelineno-31-19" id="__codelineno-31-19" name="__codelineno-31-19"></a>│   ├── test_*pbt.py                        # Property-based unit tests
+<a href="#__codelineno-31-20" id="__codelineno-31-20" name="__codelineno-31-20"></a>│   ├── test_mcp_server_pbt.py              # MCP server tests
+<a href="#__codelineno-31-21" id="__codelineno-31-21" name="__codelineno-31-21"></a>│   ├── test_binary_bootstrap.py            # Binary bootstrap tests
+<a href="#__codelineno-31-22" id="__codelineno-31-22" name="__codelineno-31-22"></a>│   └── e2e/
+<a href="#__codelineno-31-23" id="__codelineno-31-23" name="__codelineno-31-23"></a>│       └── test_bootstrap_gitops.py        # E2E GitOps tests
+<a href="#__codelineno-31-24" id="__codelineno-31-24" name="__codelineno-31-24"></a>│
+<a href="#__codelineno-31-25" id="__codelineno-31-25" name="__codelineno-31-25"></a>└── huskycat_main.py                        # Binary entry point
+</code></pre></div>
+<h3 id="file-structure">File Structure<a class="headerlink" href="#file-structure" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Lines</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.gitlab-ci.yml</code></td>
+<td>539</td>
+<td>Main pipeline definition, includes, global variables</td>
+</tr>
+<tr>
+<td><code>.gitlab/ci/build.yml</code></td>
+<td>305</td>
+<td>Fat binary builds for all platforms</td>
+</tr>
+<tr>
+<td><code>.gitlab/ci/download-tools.yml</code></td>
+<td>123</td>
+<td>Tool download jobs and verification</td>
+</tr>
+<tr>
+<td><code>.gitlab/ci/e2e-tests.yml</code></td>
+<td>235</td>
+<td>End-to-end test jobs</td>
+</tr>
+<tr>
+<td><code>.gitlab/ci/binary-tests.yml</code></td>
+<td>116</td>
+<td>Binary testing jobs</td>
+</tr>
+<tr>
+<td><code>.gitlab/ci/pages.yml</code></td>
+<td>91</td>
+<td>GitLab Pages deployment</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-variables">Key Variables<a class="headerlink" href="#key-variables" title="Permanent link">¶</a></h3>
+<p><strong>Global Variables</strong> (<code>.gitlab-ci.yml:24-35</code>):
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-32-1" id="__codelineno-32-1" name="__codelineno-32-1"></a><span class="nt">variables</span><span class="p">:</span>
+<a href="#__codelineno-32-2" id="__codelineno-32-2" name="__codelineno-32-2"></a><span class="w">  </span><span class="nt">CONTAINER_REGISTRY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.gitlab.com/tinyland/ai/huskycat</span>
+<a href="#__codelineno-32-3" id="__codelineno-32-3" name="__codelineno-32-3"></a><span class="w">  </span><span class="nt">CONTAINER_TAG</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CI_COMMIT_SHORT_SHA</span>
+<a href="#__codelineno-32-4" id="__codelineno-32-4" name="__codelineno-32-4"></a><span class="w">  </span><span class="nt">UV_CACHE_DIR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CI_PROJECT_DIR/.cache/uv</span>
+<a href="#__codelineno-32-5" id="__codelineno-32-5" name="__codelineno-32-5"></a><span class="w">  </span><span class="nt">PIP_CACHE_DIR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CI_PROJECT_DIR/.cache/pip</span>
+<a href="#__codelineno-32-6" id="__codelineno-32-6" name="__codelineno-32-6"></a><span class="w">  </span><span class="nt">UV_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">'0.5.8'</span>
+<a href="#__codelineno-32-7" id="__codelineno-32-7" name="__codelineno-32-7"></a><span class="w">  </span><span class="nt">PAGES_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://huskycat-570fbd.gitlab.io</span>
+<a href="#__codelineno-32-8" id="__codelineno-32-8" name="__codelineno-32-8"></a><span class="w">  </span><span class="nt">BUILDAH_FORMAT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker</span>
+<a href="#__codelineno-32-9" id="__codelineno-32-9" name="__codelineno-32-9"></a><span class="w">  </span><span class="nt">BUILDAH_ISOLATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chroot</span>
+<a href="#__codelineno-32-10" id="__codelineno-32-10" name="__codelineno-32-10"></a><span class="w">  </span><span class="nt">SAST_EXCLUDED_PATHS</span><span class="p">:</span><span class="w"> </span><span class="s">'spec,</span><span class="nv"> </span><span class="s">test,</span><span class="nv"> </span><span class="s">tests,</span><span class="nv"> </span><span class="s">tmp,</span><span class="nv"> </span><span class="s">.cache,</span><span class="nv"> </span><span class="s">.hypothesis'</span>
+<a href="#__codelineno-32-11" id="__codelineno-32-11" name="__codelineno-32-11"></a><span class="w">  </span><span class="nt">DS_EXCLUDED_PATHS</span><span class="p">:</span><span class="w"> </span><span class="s">'spec,</span><span class="nv"> </span><span class="s">test,</span><span class="nv"> </span><span class="s">tests,</span><span class="nv"> </span><span class="s">tmp,</span><span class="nv"> </span><span class="s">.cache,</span><span class="nv"> </span><span class="s">.hypothesis'</span>
+</code></pre></div></p>
+<hr/>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
+<h3 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">¶</a></h3>
+<h4 id="1-binary-size-exceeds-limit">1. Binary Size Exceeds Limit<a class="headerlink" href="#1-binary-size-exceeds-limit" title="Permanent link">¶</a></h4>
+<p><strong>Error</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-33-1" id="__codelineno-33-1" name="__codelineno-33-1"></a>ERROR: Binary too large (265MB &gt; 250MB target)
+</code></pre></div></p>
+<p><strong>Solution</strong>:
+- Check if UPX compression is working (Linux only)
+- Review PyInstaller spec for unnecessary includes
+- Verify tool sizes are as expected
+- Consider stripping Python standard library unused modules</p>
+<p><strong>File</strong>: <code>.gitlab/ci/build.yml:234-238</code></p>
+<h4 id="2-tool-download-failures">2. Tool Download Failures<a class="headerlink" href="#2-tool-download-failures" title="Permanent link">¶</a></h4>
+<p><strong>Error</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-34-1" id="__codelineno-34-1" name="__codelineno-34-1"></a>ERROR: Missing tool directory for linux-amd64
+<a href="#__codelineno-34-2" id="__codelineno-34-2" name="__codelineno-34-2"></a>MISSING: shellcheck
+</code></pre></div></p>
+<p><strong>Solution</strong>:
+- Check network connectivity to GitHub releases
+- Verify tool versions in <code>scripts/download_tools.py</code>
+- Check cache is not corrupted (clear cache and retry)
+- Ensure platform name matches expected format</p>
+<p><strong>File</strong>: <code>.gitlab/ci/download-tools.yml:76-106</code></p>
+<h4 id="3-code-signing-failures">3. Code Signing Failures<a class="headerlink" href="#3-code-signing-failures" title="Permanent link">¶</a></h4>
+<p><strong>Error</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-35-1" id="__codelineno-35-1" name="__codelineno-35-1"></a>WARNING: No Developer ID Application certificate found
+</code></pre></div></p>
+<p><strong>Solution</strong>:
+- Verify <code>APPLE_CERTIFICATE_BASE64</code> is set correctly
+- Check certificate is Developer ID Application (not Installer)
+- Ensure <code>APPLE_DEVELOPER_ID_CA_G2</code> intermediate is provided
+- Falls back to ad-hoc signing (suitable for testing)</p>
+<p><strong>File</strong>: <code>.gitlab-ci.yml:435-442</code></p>
+<h4 id="4-container-build-failures">4. Container Build Failures<a class="headerlink" href="#4-container-build-failures" title="Permanent link">¶</a></h4>
+<p><strong>Error</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-36-1" id="__codelineno-36-1" name="__codelineno-36-1"></a>buildah: Error building at STEP "RUN apk add ..."
+</code></pre></div></p>
+<p><strong>Solution</strong>:
+- Check <code>ContainerFile</code> syntax
+- Verify Alpine package names are correct
+- Ensure network connectivity for package downloads
+- Check Buildah version compatibility</p>
+<p><strong>File</strong>: <code>.gitlab-ci.yml:149-182</code></p>
+<h4 id="5-binary-execution-test-failures">5. Binary Execution Test Failures<a class="headerlink" href="#5-binary-execution-test-failures" title="Permanent link">¶</a></h4>
+<p><strong>Error</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-37-1" id="__codelineno-37-1" name="__codelineno-37-1"></a>Binary test failed, but continuing
+</code></pre></div></p>
+<p><strong>Solution</strong>:
+- Verify binary has executable permissions
+- Check if required dynamic libraries are present
+- Test binary on matching platform/architecture
+- Review <code>scripts/verify_binary.sh</code> output</p>
+<p><strong>File</strong>: <code>.gitlab/ci/build.yml:45</code> (warning only, doesn't block)</p>
+<h3 id="debug-mode">Debug Mode<a class="headerlink" href="#debug-mode" title="Permanent link">¶</a></h3>
+<p>Enable verbose output by adding to job:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-38-1" id="__codelineno-38-1" name="__codelineno-38-1"></a><span class="nt">variables</span><span class="p">:</span>
+<a href="#__codelineno-38-2" id="__codelineno-38-2" name="__codelineno-38-2"></a><span class="w">  </span><span class="nt">VERBOSE</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
+<a href="#__codelineno-38-3" id="__codelineno-38-3" name="__codelineno-38-3"></a><span class="w">  </span><span class="nt">DEBUG</span><span class="p">:</span><span class="w"> </span><span class="s">"1"</span>
+</code></pre></div></p>
+<h3 id="artifact-inspection">Artifact Inspection<a class="headerlink" href="#artifact-inspection" title="Permanent link">¶</a></h3>
+<p>Download artifacts from GitLab UI:
+- Navigate to Pipeline → Job → Artifacts
+- Download and inspect locally
+- Verify file permissions and sizes</p>
+<h3 id="runner-selection">Runner Selection<a class="headerlink" href="#runner-selection" title="Permanent link">¶</a></h3>
+<p><strong>Linux Jobs</strong>: Default GitLab SaaS runners
+<strong>Linux ARM64 Jobs</strong>: Tag <code>saas-linux-medium-arm64</code>
+<strong>macOS Jobs</strong>: Tags <code>saas-macos-medium-m1</code>, image <code>macos-14-xcode-15</code></p>
+<hr/>
+<h2 id="pipeline-performance">Pipeline Performance<a class="headerlink" href="#pipeline-performance" title="Permanent link">¶</a></h2>
+<h3 id="typical-build-times">Typical Build Times<a class="headerlink" href="#typical-build-times" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Tool Download</th>
+<th>Binary Build</th>
+<th>Total (est)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux AMD64</td>
+<td>2-3 min</td>
+<td>8-12 min</td>
+<td>10-15 min</td>
+</tr>
+<tr>
+<td>Linux ARM64</td>
+<td>2-3 min</td>
+<td>10-15 min</td>
+<td>12-18 min</td>
+</tr>
+<tr>
+<td>macOS ARM64</td>
+<td>2-3 min</td>
+<td>12-18 min</td>
+<td>14-21 min</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total Pipeline Time</strong>: ~21 minutes (parallel execution, limited by slowest build)</p>
+<h3 id="optimization-features">Optimization Features<a class="headerlink" href="#optimization-features" title="Permanent link">¶</a></h3>
+<p><strong>Parallel Execution</strong>:
+- All platform tool downloads run in parallel (4 jobs)
+- All platform binary builds run in parallel (3 jobs)
+- Security scans run in parallel with validation</p>
+<p><strong>Caching</strong>:
+- UV dependencies cached per <code>pyproject.toml</code> + <code>uv.lock</code> hash
+- Tool downloads cached per platform (1 day TTL)
+- Container layer caching with Buildah <code>--layers</code></p>
+<p><strong>Compression</strong>:
+- UPX compression on Linux binaries (40-60% size reduction)
+- macOS binaries uncompressed (code signing requirement)
+- Tar.gz for release artifacts</p>
+<hr/>
+<h2 id="future-enhancements">Future Enhancements<a class="headerlink" href="#future-enhancements" title="Permanent link">¶</a></h2>
+<h3 id="planned-improvements">Planned Improvements<a class="headerlink" href="#planned-improvements" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Use <code>build_fat_binary.py</code> in CI</strong> - Reduce duplication, single source of truth</li>
+<li><strong>darwin-amd64 support</strong> - Requires custom Intel macOS runner</li>
+<li><strong>Universal macOS binaries</strong> - Combine AMD64 + ARM64 with <code>lipo</code></li>
+<li><strong>Binary size optimization</strong> - Target &lt;100MB per binary</li>
+<li><strong>Multi-stage container builds</strong> - Smaller container images</li>
+<li><strong>Parallel test execution</strong> - Faster test stage</li>
+</ol>
+<h3 id="known-limitations">Known Limitations<a class="headerlink" href="#known-limitations" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>macOS Intel (AMD64)</strong>: Not available (GitLab SaaS ARM64 runners only)</li>
+<li><strong>UPX on macOS</strong>: Incompatible with code signing</li>
+<li><strong>Binary size</strong>: 150-200MB (target: &lt;100MB)</li>
+</ol>
+<hr/>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">¶</a></h2>
+<h3 id="official-documentation">Official Documentation<a class="headerlink" href="#official-documentation" title="Permanent link">¶</a></h3>
+<ul>
+<li><a href="https://docs.gitlab.com/ee/ci/">GitLab CI/CD Documentation</a></li>
+<li><a href="https://docs.gitlab.com/ee/ci/runners/saas/">GitLab SaaS Runners</a></li>
+<li><a href="https://pyinstaller.org/">PyInstaller Documentation</a></li>
+<li><a href="https://buildah.io/">Buildah Documentation</a></li>
+</ul>
+<h3 id="project-files">Project Files<a class="headerlink" href="#project-files" title="Permanent link">¶</a></h3>
+<ul>
+<li>Main CI: <code>/Users/jsullivan2/git/huskycats-bates/.gitlab-ci.yml</code></li>
+<li>Build Jobs: <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/build.yml</code></li>
+<li>Tool Downloads: <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/download-tools.yml</code></li>
+<li>E2E Tests: <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/e2e-tests.yml</code></li>
+<li>Binary Tests: <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/binary-tests.yml</code></li>
+<li>Pages: <code>/Users/jsullivan2/git/huskycats-bates/.gitlab/ci/pages.yml</code></li>
+</ul>
+<hr/>
+<p><strong>Last Updated</strong>: 2025-12-12
+<strong>Pipeline Status</strong>: Production (All 22/22 jobs passing)
+<strong>Verified Against</strong>: Actual <code>.gitlab-ci.yml</code> and include files</p>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.follow", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+</body>
+</html>

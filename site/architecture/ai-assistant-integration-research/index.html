@@ -1,0 +1,2172 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Universal Code Validation Platform">
+      
+      
+      
+        <link rel="canonical" href="https://huskycat-570fbd.gitlab.io/architecture/ai-assistant-integration-research/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>AI Assistant Integration Research: Beyond MCP - HuskyCat Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ai-assistant-integration-research-beyond-mcp" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HuskyCat Documentation" class="md-header__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HuskyCat Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AI Assistant Integration Research: Beyond MCP
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../features/mcp-server/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../product-modes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ci-cd/gitlab/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  CI/CD Integration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../dogfooding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../performance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/mcp-tools/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../troubleshooting/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Troubleshooting
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HuskyCat Documentation" class="md-nav__button md-logo" aria-label="HuskyCat Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    HuskyCat Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://gitlab.com/tinyland/ai/huskycat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinyland/ai/huskycat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../binary-downloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Binary Downloads
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Features
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nonblocking-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Non-Blocking Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../product-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Product Modes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../execution-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Execution Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    CI/CD Integration
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            CI/CD Integration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ci-cd/gitlab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitLab CI/CD
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GitHub Actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dogfooding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dogfooding Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parallel_executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parallel Executor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Performance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migration/to-nonblocking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../macos-code-signing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    macOS Code Signing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/mcp-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="ai-assistant-integration-research-beyond-mcp">AI Assistant Integration Research: Beyond MCP<a class="headerlink" href="#ai-assistant-integration-research-beyond-mcp" title="Permanent link">&para;</a></h1>
+<p><strong>Research Date</strong>: 2026-01-15
+<strong>Status</strong>: Research Complete
+<strong>Scope</strong>: ACP, OpenCode, JetBrains/IntelliJ, VS Code, Cross-Platform Integration</p>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p>HuskyCat currently integrates with Claude Code via MCP (Model Context Protocol). This research explores how HuskyCat could expand to support:</p>
+<ol>
+<li><strong>Agent Client Protocol (ACP)</strong> - JetBrains, Zed, and broader IDE integration</li>
+<li><strong>OpenCode</strong> - Open-source Claude Code alternative (75+ LLM providers)</li>
+<li><strong>JetBrains/IntelliJ AI Assistant</strong> - Native IDE integration with ACP support</li>
+<li><strong>VS Code Extensions</strong> - LSP-based AI coding assistant patterns</li>
+<li><strong>Standardization Landscape</strong> - Agentic AI Foundation (AAIF) protocols</li>
+</ol>
+<p><strong>Key Finding</strong>: The AI coding assistant ecosystem is converging on <strong>open protocols</strong> (MCP, ACP, A2A) under the Linux Foundation's Agentic AI Foundation (AAIF). HuskyCat should implement <strong>ACP support</strong> to integrate with JetBrains IDEs and position itself as a <strong>protocol-agnostic validation platform</strong>.</p>
+<hr />
+<h2 id="1-protocol-landscape">1. Protocol Landscape<a class="headerlink" href="#1-protocol-landscape" title="Permanent link">&para;</a></h2>
+<h3 id="11-model-context-protocol-mcp">1.1 Model Context Protocol (MCP)<a class="headerlink" href="#11-model-context-protocol-mcp" title="Permanent link">&para;</a></h3>
+<p><strong>Current Status</strong>: HuskyCat implements MCP 2024-11-05 ✅</p>
+<p><strong>What MCP Does</strong>:
+- Connects AI assistants to <strong>external data sources and tools</strong>
+- Anthropic describes it as the "USB-C port for AI"
+- Handles tool orchestration, RAG, embeddings, and context management
+- JSON-RPC 2.0 protocol over stdio</p>
+<p><strong>Adoption</strong>:
+- Industry standard for connecting AI to data/tools (2025)
+- Donated to Linux Foundation's AAIF (Dec 2025)
+- Supported by: Claude Code, Cursor, AWS, Google Cloud, Azure</p>
+<p><strong>HuskyCat Implementation</strong>:
+- <code>src/huskycat/mcp_server.py</code> - stdio JSON-RPC server
+- Exposes validators as MCP tools
+- Container-backed execution for consistency</p>
+<p><strong>Strength</strong>: Tool-to-model connection (validation tools → AI)</p>
+<hr />
+<h3 id="12-agent-client-protocol-acp-new-opportunity">1.2 Agent Client Protocol (ACP) - NEW OPPORTUNITY 🎯<a class="headerlink" href="#12-agent-client-protocol-acp-new-opportunity" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>: Emerging standard, JetBrains partnership (Oct 2025)</p>
+<p><strong>What ACP Does</strong>:
+- Connects <strong>AI coding agents to IDEs/editors</strong>
+- Like LSP (Language Server Protocol) but for AI agents
+- REST-based, uses standard HTTP patterns (not JSON-RPC)
+- Enables agent-to-editor communication (open files, suggest edits, run tests)</p>
+<p><strong>Key Difference from MCP</strong>:
+| Aspect | MCP | ACP |
+|--------|-----|-----|
+| <strong>Focus</strong> | AI ↔ Data/Tools | AI Agent ↔ IDE |
+| <strong>Creator</strong> | Anthropic | IBM + Zed |
+| <strong>Protocol</strong> | JSON-RPC (specialized SDK) | REST (familiar HTTP) |
+| <strong>Purpose</strong> | Context management | Agent orchestration |
+| <strong>Layer</strong> | Tools/data wiring | Agent-to-agent, agent-to-editor |</p>
+<p><strong>Adoption</strong>:
+- <strong>JetBrains</strong>: Native ACP support in AI Assistant (25.3 RC) - IntelliJ, PyCharm, WebStorm, etc.
+- <strong>Zed</strong>: Co-developer of ACP specification
+- <strong>Google</strong>: Built ACP-compatible Gemini CLI
+- <strong>Block (Square)</strong>: Native ACP in goose agent
+- <strong>Anthropic</strong>: Claude via Zed SDK adapter</p>
+<p><strong>Critical for HuskyCat</strong>:</p>
+<blockquote>
+<p>"ACP separates agents from editors. Agents implement one protocol and work everywhere. Editors adopt one protocol and support every agent."</p>
+</blockquote>
+<p><strong>Integration Model</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>JetBrains IDEs (millions of users)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    ↓ ACP protocol (REST)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>HuskyCat ACP Server
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ↓ Internal API
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>HuskyCat Validation Engine
+</code></pre></div></p>
+<p><strong>How JetBrains Uses ACP</strong>:
+1. User needs an <strong>ACP-compatible agent executable</strong> (HuskyCat binary)
+2. User creates <strong>acp.json configuration</strong> (tells IDE where HuskyCat is)
+3. Agent becomes available in AI Chat
+4. IDE mediates agent's access to code/terminals/tools
+5. IDE shows planned changes as <strong>diffs</strong> user must approve</p>
+<p><strong>Benefits for HuskyCat</strong>:
+- ✅ Access to <strong>millions of JetBrains users</strong>
+- ✅ Works across IntelliJ IDEA, PyCharm, WebStorm, GoLand, PhpStorm, RubyMine, RustRover
+- ✅ No vendor lock-in (also works in Zed, potentially Neovim/Emacs)
+- ✅ Familiar REST architecture (easier than JSON-RPC for many developers)</p>
+<p><strong>Implementation Effort</strong>: <strong>Medium</strong> (Sprint 9-10)
+- Create REST API server (port 8080 or dynamic)
+- Map ACP endpoints to validation commands
+- Implement ACP discovery/capabilities
+- Create acp.json configuration template</p>
+<hr />
+<h3 id="13-agent-to-agent-a2a-protocol">1.3 Agent-to-Agent (A2A) Protocol<a class="headerlink" href="#13-agent-to-agent-a2a-protocol" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>: Merged with ACP under AAIF (Sept 2025)</p>
+<p><strong>What A2A Does</strong>:
+- Agent-to-agent communication and coordination
+- Cross-platform collaboration
+- Task hand-off between agents</p>
+<p><strong>Relevance to HuskyCat</strong>:
+- Future consideration for <strong>multi-agent workflows</strong>
+- Example: HuskyCat validates → Refactoring agent fixes → HuskyCat re-validates
+- Not immediate priority</p>
+<hr />
+<h3 id="14-agentsmd-standard">1.4 AGENTS.md Standard<a class="headerlink" href="#14-agentsmd-standard" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>: OpenAI contribution to AAIF (Aug 2025)</p>
+<p><strong>What it Does</strong>:
+- Simple markdown file giving AI agents <strong>project-specific guidance</strong>
+- Adopted by 60,000+ open-source projects
+- Used by: Cursor, Devin, GitHub Copilot, Gemini CLI, VS Code</p>
+<p><strong>Example for HuskyCat</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gh"># AGENTS.md</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="gu">## Project: HuskyCat</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="gu">### Validation Standards</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">-</span><span class="w"> </span>Always run validators before committing
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">-</span><span class="w"> </span>Use <span class="sb">`huskycat validate --staged`</span> pre-commit
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">-</span><span class="w"> </span>Python: Black, Ruff, MyPy required
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">-</span><span class="w"> </span>YAML: yamllint with strict config
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="gu">### Auto-Fix Policy</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="k">-</span><span class="w"> </span>Black: Always auto-fix (100% safe)
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="k">-</span><span class="w"> </span>Ruff: Auto-fix with review (90% safe)
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="k">-</span><span class="w"> </span>Security issues: Suggest only (manual review)
+</code></pre></div></p>
+<p><strong>Implementation Effort</strong>: <strong>Trivial</strong> (Sprint 1)
+- Create <code>.agents.md</code> in HuskyCat repo
+- Document validation workflows
+- Provide examples for downstream projects</p>
+<hr />
+<h2 id="2-opencode-open-source-claude-code-alternative">2. OpenCode: Open-Source Claude Code Alternative<a class="headerlink" href="#2-opencode-open-source-claude-code-alternative" title="Permanent link">&para;</a></h2>
+<p><strong>Status</strong>: Released Dec 2025, rapid maturity</p>
+<p><strong>Key Features</strong>:
+- Open-source, provider-agnostic AI coding agent
+- Native Terminal UI (TUI) with LSP integration
+- Supports <strong>75+ LLM providers</strong> (OpenAI, Anthropic, Google, Ollama, etc.)
+- Multi-session capability
+- Shareable session links (read-only snapshots)</p>
+<p><strong>Comparison to Claude Code</strong>:
+| Feature | Claude Code | OpenCode |
+|---------|-------------|----------|
+| <strong>Provider</strong> | Anthropic only | 75+ providers |
+| <strong>UI</strong> | Terminal | Terminal (themeable TUI) |
+| <strong>LSP</strong> | Built-in | Automatic integration |
+| <strong>Session Sharing</strong> | No | Yes (unique URLs) |
+| <strong>Local Models</strong> | No | Yes (Ollama) |
+| <strong>Maturity</strong> | Stable | Fast-moving (bugs possible) |</p>
+<p><strong>MCP Support in OpenCode</strong>:
+- OpenCode supports MCP servers
+- HuskyCat's existing MCP server works with OpenCode <strong>immediately</strong> ✅</p>
+<p><strong>Integration Path</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;huskycat&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/huskycat&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;mcp-server&quot;</span><span class="p">]</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Why This Matters</strong>:
+- Users locked into Claude Pro ($20/mo) can use OpenCode with their own API keys
+- Local model support (Ollama) = fully offline validation workflows
+- OpenCode uses sonnet-4 and "could replace Claude Code soon"</p>
+<p><strong>Action</strong>: <strong>Document OpenCode compatibility</strong> (already works via MCP)</p>
+<hr />
+<h2 id="3-jetbrains-ecosystem">3. JetBrains Ecosystem<a class="headerlink" href="#3-jetbrains-ecosystem" title="Permanent link">&para;</a></h2>
+<h3 id="31-jetbrains-ai-assistant">3.1 JetBrains AI Assistant<a class="headerlink" href="#31-jetbrains-ai-assistant" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>: Production-ready, deeply integrated</p>
+<p><strong>Architecture</strong>:
+- Powered by JetBrains AI Service
+- Connects to multiple LLMs (OpenAI, Anthropic, Google)
+- BYOK (Bring Your Own Key) supported
+- Deep IDE integration (code completion, next edit suggestions, AI chat)</p>
+<p><strong>Key Features</strong>:
+- <strong>Code Completion</strong>: Single lines and blocks
+- <strong>Next Edit Suggestions</strong>: Update related code throughout file
+- <strong>AI Chat</strong>: Agent mode for complex tasks (refactoring, test generation)
+- <strong>Context Management</strong>: Add files, folders, images, commits to give context</p>
+<p><strong>MCP Integration</strong> (Discovered!):</p>
+<blockquote>
+<p>"The IntelliJ plugin's AI Assistant uses the same underlying tool architecture as the MCP Server. This means you get consistent, reliable access to your RevenueCat data directly inside your IDE."</p>
+</blockquote>
+<p><strong>Implication</strong>: JetBrains AI Assistant <strong>already supports MCP-style tool integration</strong>!</p>
+<p><strong>Integration Path for HuskyCat</strong>:
+1. Existing MCP server might work via plugin architecture
+2. Or: Build JetBrains plugin that wraps HuskyCat as AI Assistant tool
+3. Or: Use ACP as the standard integration path (preferred)</p>
+<hr />
+<h3 id="32-jetbrains-junie-agentic-ai">3.2 JetBrains Junie (Agentic AI)<a class="headerlink" href="#32-jetbrains-junie-agentic-ai" title="Permanent link">&para;</a></h3>
+<p><strong>Status</strong>: Official JetBrains AI coding agent (2025)</p>
+<p><strong>Key Capabilities</strong>:
+- <strong>Autonomous agent</strong>: Completes multi-step tasks independently
+- <strong>Planning stage</strong>: Creates plan before generating code (dependencies, structure, APIs)
+- <strong>Project context</strong>: Analyzes code to find relevant information
+- <strong>IDE inspections</strong>: Uses built-in checks to reduce errors
+- <strong>Runs tests</strong>: Verifies changes after making them</p>
+<p><strong>Model Support</strong>:
+- OpenAI, Anthropic, OpenAI-compatible providers
+- BYOK supported (no JetBrains AI subscription required for BYOK)
+- Local models <strong>not supported</strong> for Junie</p>
+<p><strong>IDE Compatibility</strong>:
+- IntelliJ IDEA, PyCharm, GoLand, PhpStorm, WebStorm, RubyMine, RustRover</p>
+<p><strong>Difference from AI Assistant</strong>:
+- AI Assistant: Complements workflow (suggestions, questions)
+- Junie: <strong>Autonomous</strong> (explores project, writes code, runs tests, shares results)</p>
+<p><strong>ACP Support</strong>:</p>
+<blockquote>
+<p>"JetBrains' AI agent Junie coming with ACP support across their entire IDE ecosystem."</p>
+</blockquote>
+<p><strong>Integration Opportunity</strong>:
+- HuskyCat as ACP-compatible agent could appear alongside Junie
+- Junie writes code → HuskyCat validates → Report back to user
+- Complementary agents in same workflow</p>
+<hr />
+<h2 id="4-vs-code-ai-extension-architecture">4. VS Code AI Extension Architecture<a class="headerlink" href="#4-vs-code-ai-extension-architecture" title="Permanent link">&para;</a></h2>
+<h3 id="41-extension-host-pattern">4.1 Extension Host Pattern<a class="headerlink" href="#41-extension-host-pattern" title="Permanent link">&para;</a></h3>
+<p><strong>Architecture</strong>:
+- Extensions run in isolated <strong>Extension Host</strong> (separate Node.js process)
+- Communicates with main UI via well-defined API
+- Allows non-blocking operations (parsing, model invocation, analysis)</p>
+<p><strong>Key Components</strong>:
+1. <strong>Extension API</strong>: Access to editor state, file buffers, user interactions
+2. <strong>LSP Integration</strong>: Query language servers for references, types, diagnostics
+3. <strong>Vector Embeddings</strong>: Semantic similarity search for relevant code
+4. <strong>Session Management</strong>: Per-project or per-workspace LSP sessions</p>
+<p><strong>AI Extensions Use</strong>:
+- GitHub Copilot, Sourcegraph Cody, Cursor, Continue, TabNine, etc.
+- All leverage LSP for code context
+- Many use vector embeddings for retrieval across large codebases</p>
+<hr />
+<h3 id="42-lsp-language-server-protocol-integration">4.2 LSP (Language Server Protocol) Integration<a class="headerlink" href="#42-lsp-language-server-protocol-integration" title="Permanent link">&para;</a></h3>
+<p><strong>How LSP Works</strong>:
+- Standardizes developer tooling (linters, formatters, type checkers) ↔ editors
+- JSON-RPC 2.0 over stdin/stdout (like MCP!)
+- One server, many clients (VS Code, Neovim, Emacs, Sublime)</p>
+<p><strong>What LSP Provides AI Extensions</strong>:
+- Symbol references (find all usages)
+- Type information (inferred by language server)
+- Diagnostics (linter warnings, type errors)
+- Code actions (quick fixes)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// AI extension queries LSP for all references to `calculateTotal`</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">references</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">languageServer</span><span class="p">.</span><span class="nx">findReferences</span><span class="p">(</span><span class="s1">&#39;calculateTotal&#39;</span><span class="p">);</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">// Include related code in prompt for better AI suggestions</span>
+</code></pre></div></p>
+<p><strong>Relevance to HuskyCat</strong>:
+- HuskyCat validators <strong>produce diagnostics</strong> (errors, warnings, suggestions)
+- Could expose diagnostics via LSP for IDE integration
+- Would enable <strong>real-time inline validation</strong> in editors</p>
+<hr />
+<h3 id="43-vs-code-ai-extensibility-apis">4.3 VS Code AI Extensibility APIs<a class="headerlink" href="#43-vs-code-ai-extensibility-apis" title="Permanent link">&para;</a></h3>
+<p><strong>Language Model Tools API</strong>:
+- Introduced in VS Code 1.90+ (2024)
+- Extensions can register <strong>tools</strong> that language models can invoke
+- Deep integration with editor (access all VS Code APIs)</p>
+<p><strong>Model Context Protocol (MCP) Tools</strong>:
+- VS Code supports MCP tools in agent mode
+- MCP tools automatically invoked based on user prompts
+- Can run locally or as remote services</p>
+<p><strong>Implementation Pattern</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// VS Code extension using HuskyCat MCP server</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">vscode</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vscode&#39;</span><span class="p">;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">MCPClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@modelcontextprotocol/sdk&#39;</span><span class="p">;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">activate</span><span class="p">(</span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">vscode.ExtensionContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">huskycatClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MCPClient</span><span class="p">({</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;huskycat&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="nx">args</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;mcp-server&#39;</span><span class="p">]</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="p">});</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="c1">// Register validation command</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="nx">vscode</span><span class="p">.</span><span class="nx">commands</span><span class="p">.</span><span class="nx">registerCommand</span><span class="p">(</span><span class="s1">&#39;huskycat.validate&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">huskycatClient</span><span class="p">.</span><span class="nx">callTool</span><span class="p">(</span><span class="s1">&#39;validate&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">      </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">vscode.workspace.rootPath</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="p">});</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="c1">// Show results in problems panel</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">  </span><span class="p">});</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Action</strong>: Consider building <strong>VS Code extension</strong> that wraps HuskyCat MCP server</p>
+<hr />
+<h2 id="5-cross-platform-integration-strategies">5. Cross-Platform Integration Strategies<a class="headerlink" href="#5-cross-platform-integration-strategies" title="Permanent link">&para;</a></h2>
+<h3 id="51-protocol-agnostic-architecture">5.1 Protocol-Agnostic Architecture<a class="headerlink" href="#51-protocol-agnostic-architecture" title="Permanent link">&para;</a></h3>
+<p><strong>Proposed HuskyCat Architecture</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>┌─────────────────────────────────────────────────────────────┐
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>│                    AI ASSISTANT CLIENTS                     │
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>│  Claude Code │ OpenCode │ JetBrains │ VS Code │ Zed │ Emacs│
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>└───────┬────────────┬────────────┬────────┬─────────┬────────┘
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>        │            │            │        │         │
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>        v            v            v        v         v
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    ┌───────┐   ┌───────┐   ┌────────┐  ┌────┐  ┌────┐
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    │  MCP  │   │  MCP  │   │  ACP   │  │LSP │  │ACP │
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    │ stdio │   │ stdio │   │  REST  │  │RPC │  │REST│
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    └───┬───┘   └───┬───┘   └────┬───┘  └─┬──┘  └─┬──┘
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>        │           │            │        │       │
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        └───────────┴────────────┴────────┴───────┘
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>                            │
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>                ┌───────────v────────────┐
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>                │  PROTOCOL ROUTER       │
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>                │  (detect &amp; dispatch)   │
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>                └───────────┬────────────┘
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>                            │
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>                ┌───────────v────────────┐
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>                │  VALIDATION ENGINE     │
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>                │  (unified logic)       │
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>                └────────────────────────┘
+</code></pre></div></p>
+<p><strong>Benefits</strong>:
+- Single validation engine
+- Multiple frontend protocols
+- Protocol detection at entry point
+- Minimal duplication</p>
+<hr />
+<h3 id="52-implementation-roadmap">5.2 Implementation Roadmap<a class="headerlink" href="#52-implementation-roadmap" title="Permanent link">&para;</a></h3>
+<h4 id="phase-1-foundation-sprint-1-2">Phase 1: Foundation (Sprint 1-2)<a class="headerlink" href="#phase-1-foundation-sprint-1-2" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li>✅ MCP server (complete)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Create protocol abstraction layer</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Document protocol requirements</li>
+</ul>
+<h4 id="phase-2-acp-support-sprint-3-4">Phase 2: ACP Support (Sprint 3-4)<a class="headerlink" href="#phase-2-acp-support-sprint-3-4" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Implement REST API server</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Map ACP endpoints to commands</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Create acp.json template</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Test with JetBrains AI Assistant</li>
+</ul>
+<h4 id="phase-3-lsp-integration-sprint-5-6">Phase 3: LSP Integration (Sprint 5-6)<a class="headerlink" href="#phase-3-lsp-integration-sprint-5-6" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Implement LSP server (diagnostics only)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Real-time validation on file save</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Publish diagnostics to editors</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Support quick fixes (auto-fixes)</li>
+</ul>
+<h4 id="phase-4-vs-code-extension-sprint-7-8">Phase 4: VS Code Extension (Sprint 7-8)<a class="headerlink" href="#phase-4-vs-code-extension-sprint-7-8" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Build VS Code extension wrapper</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Integrate with problems panel</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add commands palette integration</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Publish to marketplace</li>
+</ul>
+<h4 id="phase-5-documentation-sprint-9">Phase 5: Documentation (Sprint 9)<a class="headerlink" href="#phase-5-documentation-sprint-9" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Update docs with all integration methods</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Create AGENTS.md standard file</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Write integration guides for each platform</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Create demo videos</li>
+</ul>
+<hr />
+<h3 id="53-protocol-comparison-matrix">5.3 Protocol Comparison Matrix<a class="headerlink" href="#53-protocol-comparison-matrix" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Transport</th>
+<th>Use Case</th>
+<th>Complexity</th>
+<th>Adoption</th>
+<th>HuskyCat Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MCP</strong></td>
+<td>stdio JSON-RPC</td>
+<td>AI ↔ Tools</td>
+<td>Medium</td>
+<td>High (AAIF)</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td><strong>ACP</strong></td>
+<td>HTTP REST</td>
+<td>Agent ↔ IDE</td>
+<td>Low</td>
+<td>Growing (JetBrains)</td>
+<td>🎯 Planned</td>
+</tr>
+<tr>
+<td><strong>LSP</strong></td>
+<td>stdio JSON-RPC</td>
+<td>Tool ↔ Editor</td>
+<td>Medium</td>
+<td>Very High</td>
+<td>📋 Future</td>
+</tr>
+<tr>
+<td><strong>A2A</strong></td>
+<td>HTTP/gRPC</td>
+<td>Agent ↔ Agent</td>
+<td>High</td>
+<td>Early</td>
+<td>⏳ Watch</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-standardization-landscape-2025-2026">6. Standardization Landscape (2025-2026)<a class="headerlink" href="#6-standardization-landscape-2025-2026" title="Permanent link">&para;</a></h2>
+<h3 id="61-agentic-ai-foundation-aaif">6.1 Agentic AI Foundation (AAIF)<a class="headerlink" href="#61-agentic-ai-foundation-aaif" title="Permanent link">&para;</a></h3>
+<p><strong>Formed</strong>: December 9, 2025
+<strong>Governance</strong>: Linux Foundation
+<strong>Founding Projects</strong>:
+1. <strong>MCP</strong> (Anthropic) - Tool/data connection standard
+2. <strong>goose</strong> (Block/Square) - Open-source AI agent
+3. <strong>AGENTS.md</strong> (OpenAI) - Project guidance standard</p>
+<p><strong>Founding Members</strong>:
+- OpenAI, Anthropic, Google, Microsoft, AWS, Bloomberg, Cloudflare</p>
+<p><strong>Mission</strong>:</p>
+<blockquote>
+<p>"Provide neutral stewardship for open, interoperable infrastructure as agentic AI systems move from experimentation into real-world production."</p>
+</blockquote>
+<p><strong>Key Trends</strong>:
+- <strong>Convergence on open protocols</strong> (vs proprietary APIs)
+- <strong>Linux Foundation governance</strong> (neutral, community-driven)
+- <strong>Cross-vendor collaboration</strong> (OpenAI + Anthropic + Google)</p>
+<p><strong>Impact on HuskyCat</strong>:
+- MCP now a <strong>neutral standard</strong> (not just Anthropic's)
+- AAIF ensures long-term protocol stability
+- Multi-protocol support becomes competitive advantage</p>
+<hr />
+<h3 id="62-industry-adoption-trends">6.2 Industry Adoption Trends<a class="headerlink" href="#62-industry-adoption-trends" title="Permanent link">&para;</a></h3>
+<p><strong>By End of 2025</strong>:
+- 85% of developers regularly use AI coding tools
+- MCP = "industry standard for connecting AI to data/tools"
+- 60,000+ projects adopted AGENTS.md</p>
+<p><strong>Gartner Prediction</strong>:
+- 40% of enterprise apps will embed AI agents by end of 2026
+- Up from &lt;5% in 2025</p>
+<p><strong>Protocol Convergence</strong>:</p>
+<blockquote>
+<p>"The impact parallels the early web: just as HTTP enabled any browser to access any server, these protocols enable any agent to use any tool or collaborate with any other agent."</p>
+</blockquote>
+<hr />
+<h2 id="7-huskycat-integration-recommendations">7. HuskyCat Integration Recommendations<a class="headerlink" href="#7-huskycat-integration-recommendations" title="Permanent link">&para;</a></h2>
+<h3 id="71-immediate-actions-sprint-1-2">7.1 Immediate Actions (Sprint 1-2)<a class="headerlink" href="#71-immediate-actions-sprint-1-2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Create AGENTS.md</strong> - Trivial effort, broad compatibility
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="gh"># .agents.md</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="gu">## Validation Standards</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">-</span><span class="w"> </span>Run <span class="sb">`huskycat validate --staged`</span> before every commit
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">-</span><span class="w"> </span>Python: Black + Ruff + MyPy required
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="k">-</span><span class="w"> </span>Auto-fix: Use <span class="sb">`--fix`</span> for safe changes only
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Document OpenCode Compatibility</strong> - Already works via MCP</p>
+</li>
+<li>Add to README and docs</li>
+<li>Test with OpenCode + various LLM providers</li>
+<li>
+<p>Promote as "works with 75+ LLMs"</p>
+</li>
+<li>
+<p><strong>Research ACP Implementation</strong> - Start architecture planning</p>
+</li>
+<li>Review ACP specification</li>
+<li>Design REST API endpoints</li>
+<li>Create acp.json template</li>
+</ol>
+<hr />
+<h3 id="72-high-priority-integrations-sprint-3-6">7.2 High-Priority Integrations (Sprint 3-6)<a class="headerlink" href="#72-high-priority-integrations-sprint-3-6" title="Permanent link">&para;</a></h3>
+<h4 id="priority-1-acp-server-sprint-3-4">Priority 1: ACP Server (Sprint 3-4)<a class="headerlink" href="#priority-1-acp-server-sprint-3-4" title="Permanent link">&para;</a></h4>
+<p><strong>Rationale</strong>:
+- Access to <strong>millions of JetBrains users</strong>
+- REST is simpler than JSON-RPC for many developers
+- ACP is gaining momentum (JetBrains partnership)</p>
+<p><strong>Implementation</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># src/huskycat/acp_server.py</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">.unified_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationEngine</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">engine</span> <span class="o">=</span> <span class="n">ValidationEngine</span><span class="p">()</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/agent&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_agent_info</span><span class="p">():</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ACP discovery endpoint&quot;&quot;&quot;</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;HuskyCat&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Code validation and auto-fix agent&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>        <span class="s2">&quot;capabilities&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;validate&quot;</span><span class="p">,</span> <span class="s2">&quot;fix&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">],</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ready&quot;</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="p">})</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/validate&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">():</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate files&quot;&quot;&quot;</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>    <span class="n">path</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>    <span class="n">fix</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fix&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">validate_directory</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>        <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_summary</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>        <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">results</span>
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>    <span class="p">})</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Configuration</strong> (acp.json):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HuskyCat&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;huskycat&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;acp-server&quot;</span><span class="p">]</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="s2">&quot;validate_code&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="s2">&quot;auto_fix&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="s2">&quot;security_scan&quot;</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="p">]</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h4 id="priority-2-lsp-diagnostics-sprint-5-6">Priority 2: LSP Diagnostics (Sprint 5-6)<a class="headerlink" href="#priority-2-lsp-diagnostics-sprint-5-6" title="Permanent link">&para;</a></h4>
+<p><strong>Rationale</strong>:
+- Real-time validation in <strong>any editor</strong> (VS Code, Neovim, Emacs, Sublime)
+- Inline error highlighting
+- Quick fixes (auto-fix actions)</p>
+<p><strong>Implementation</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># src/huskycat/lsp_server.py</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pygls.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanguageServer</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lsprotocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">types</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">server</span> <span class="o">=</span> <span class="n">LanguageServer</span><span class="p">(</span><span class="s1">&#39;huskycat-lsp&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="nd">@server</span><span class="o">.</span><span class="n">feature</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">TEXT_DOCUMENT_DID_SAVE</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">did_save</span><span class="p">(</span><span class="n">ls</span><span class="p">:</span> <span class="n">LanguageServer</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">DidSaveTextDocumentParams</span><span class="p">):</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate on file save&quot;&quot;&quot;</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="n">uri</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">text_document</span><span class="o">.</span><span class="n">uri</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;file://&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">validate_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="c1"># Convert to LSP diagnostics</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="n">diagnostics</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>        <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>            <span class="n">diagnostics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Diagnostic</span><span class="p">(</span>
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>                <span class="nb">range</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">Range</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>                <span class="n">severity</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">DiagnosticSeverity</span><span class="o">.</span><span class="n">Error</span><span class="p">,</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>                <span class="n">source</span><span class="o">=</span><span class="s1">&#39;huskycat&#39;</span><span class="p">,</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>                <span class="n">message</span><span class="o">=</span><span class="n">error</span>
+<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>            <span class="p">))</span>
+<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>
+<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>    <span class="n">ls</span><span class="o">.</span><span class="n">publish_diagnostics</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">diagnostics</span><span class="p">)</span>
+<a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>
+<a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a><span class="nd">@server</span><span class="o">.</span><span class="n">feature</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">TEXT_DOCUMENT_CODE_ACTION</span><span class="p">)</span>
+<a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a><span class="k">def</span><span class="w"> </span><span class="nf">code_action</span><span class="p">(</span><span class="n">ls</span><span class="p">:</span> <span class="n">LanguageServer</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">CodeActionParams</span><span class="p">):</span>
+<a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide auto-fix actions&quot;&quot;&quot;</span>
+<a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>    <span class="c1"># Return quick fixes as code actions</span>
+<a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>    <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">can_fix</span><span class="p">:</span>
+<a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a>        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">CodeAction</span><span class="p">(</span>
+<a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a>            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fix with </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">tool</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a>            <span class="n">kind</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">CodeActionKind</span><span class="o">.</span><span class="n">QuickFix</span><span class="p">,</span>
+<a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a>            <span class="n">command</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
+<a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a>                <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Apply fix&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a>                <span class="n">command</span><span class="o">=</span><span class="s2">&quot;huskycat.fix&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-41" name="__codelineno-9-41" href="#__codelineno-9-41"></a>                <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="n">params</span><span class="o">.</span><span class="n">text_document</span><span class="o">.</span><span class="n">uri</span><span class="p">]</span>
+<a id="__codelineno-9-42" name="__codelineno-9-42" href="#__codelineno-9-42"></a>            <span class="p">)</span>
+<a id="__codelineno-9-43" name="__codelineno-9-43" href="#__codelineno-9-43"></a>        <span class="p">))</span>
+<a id="__codelineno-9-44" name="__codelineno-9-44" href="#__codelineno-9-44"></a>    <span class="k">return</span> <span class="n">actions</span>
+</code></pre></div></p>
+<hr />
+<h3 id="73-medium-priority-integrations-sprint-7-9">7.3 Medium-Priority Integrations (Sprint 7-9)<a class="headerlink" href="#73-medium-priority-integrations-sprint-7-9" title="Permanent link">&para;</a></h3>
+<h4 id="priority-3-vs-code-extension">Priority 3: VS Code Extension<a class="headerlink" href="#priority-3-vs-code-extension" title="Permanent link">&para;</a></h4>
+<p><strong>Why</strong>:
+- Largest editor user base
+- Native problems panel integration
+- Marketplace distribution</p>
+<p><strong>Implementation</strong>:
+- Wrap existing MCP/LSP servers
+- Add commands to command palette
+- Integrate with test explorer
+- Provide hover diagnostics with fix suggestions</p>
+<hr />
+<h4 id="priority-4-enhanced-mcp-tools">Priority 4: Enhanced MCP Tools<a class="headerlink" href="#priority-4-enhanced-mcp-tools" title="Permanent link">&para;</a></h4>
+<p><strong>Add new tools</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nd">@mcp_tool</span><span class="p">(</span><span class="s2">&quot;huskycat_suggest_fixes&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">suggest_fixes</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get AI-friendly fix suggestions&quot;&quot;&quot;</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="c1"># Return structured suggestions for AI to reason about</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="k">pass</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nd">@mcp_tool</span><span class="p">(</span><span class="s2">&quot;huskycat_explain_error&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="k">def</span><span class="w"> </span><span class="nf">explain_error</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Explain validation error in detail&quot;&quot;&quot;</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="c1"># Provide context and examples for AI</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="k">pass</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="nd">@mcp_tool</span><span class="p">(</span><span class="s2">&quot;huskycat_configure&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="k">def</span><span class="w"> </span><span class="nf">configure</span><span class="p">(</span><span class="n">tool</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure validator behavior&quot;&quot;&quot;</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>    <span class="c1"># Allow AI to adjust validation rules</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>    <span class="k">pass</span>
+</code></pre></div></p>
+<hr />
+<h3 id="74-long-term-vision-2026">7.4 Long-Term Vision (2026+)<a class="headerlink" href="#74-long-term-vision-2026" title="Permanent link">&para;</a></h3>
+<h4 id="multi-agent-workflows-a2a">Multi-Agent Workflows (A2A)<a class="headerlink" href="#multi-agent-workflows-a2a" title="Permanent link">&para;</a></h4>
+<p><strong>Scenario</strong>: HuskyCat coordinates with other agents
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>User request
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    ↓
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Junie (JetBrains) → Writes code
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    ↓
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>HuskyCat (ACP) → Validates code
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    ↓ (if errors)
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>Junie (JetBrains) → Fixes issues
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    ↓
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>HuskyCat (ACP) → Re-validates
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    ↓ (if pass)
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>Git Agent → Commits changes
+</code></pre></div></p>
+<p><strong>Protocols Needed</strong>:
+- ACP (for IDE communication)
+- A2A (for agent-to-agent coordination)
+- MCP (for tool/data access)</p>
+<hr />
+<h2 id="8-competitive-positioning">8. Competitive Positioning<a class="headerlink" href="#8-competitive-positioning" title="Permanent link">&para;</a></h2>
+<h3 id="81-unique-value-proposition">8.1 Unique Value Proposition<a class="headerlink" href="#81-unique-value-proposition" title="Permanent link">&para;</a></h3>
+<p><strong>HuskyCat's Differentiation</strong>:
+1. ✅ <strong>Multi-protocol support</strong> (MCP, ACP, LSP)
+2. ✅ <strong>Container-backed validation</strong> (consistent toolchain)
+3. ✅ <strong>Binary + container execution</strong> (flexible deployment)
+4. ✅ <strong>Auto-fix framework</strong> (beyond just detection)
+5. ✅ <strong>5 product modes</strong> (Git Hooks, CI, CLI, Pipeline, MCP)</p>
+<p><strong>vs GitHub Copilot</strong>:
+- Copilot: Code generation only
+- HuskyCat: Validation + auto-fix + security scanning</p>
+<p><strong>vs Cursor/Continue</strong>:
+- Cursor/Continue: Full IDE replacements
+- HuskyCat: Specialized validation agent, works with any IDE</p>
+<p><strong>vs Pre-commit Hooks</strong>:
+- Pre-commit: Git-specific, manual configuration
+- HuskyCat: Multi-platform, AI-assisted, auto-discovery</p>
+<hr />
+<h3 id="82-market-positioning-statement">8.2 Market Positioning Statement<a class="headerlink" href="#82-market-positioning-statement" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>"HuskyCat is a <strong>protocol-agnostic code validation agent</strong> that works with any AI coding assistant (Claude Code, OpenCode, JetBrains Junie, GitHub Copilot) and any IDE (VS Code, JetBrains, Zed, Neovim, Emacs). Unlike tools that only detect issues, HuskyCat <strong>fixes them</strong> with confidence-tiered auto-corrections. Deploy as binary, container, or MCP/ACP/LSP server."</p>
+</blockquote>
+<hr />
+<h2 id="9-technical-specifications">9. Technical Specifications<a class="headerlink" href="#9-technical-specifications" title="Permanent link">&para;</a></h2>
+<h3 id="91-acp-server-specification">9.1 ACP Server Specification<a class="headerlink" href="#91-acp-server-specification" title="Permanent link">&para;</a></h3>
+<p><strong>Endpoints</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>GET  /agent              - Agent discovery
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>POST /validate           - Validate code
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>POST /fix                - Apply auto-fixes
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>POST /suggest            - Generate fix suggestions
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>GET  /capabilities       - List validator tools
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>POST /configure          - Update configuration
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>GET  /status             - Health check
+</code></pre></div></p>
+<p><strong>Request/Response Format</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// POST /validate</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="p">{</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;src/main.py&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nt">&quot;fix&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="nt">&quot;tools&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;mypy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ruff&quot;</span><span class="p">]</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">}</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1">// Response</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="p">{</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">...</span><span class="p">],</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">  </span><span class="nt">&quot;summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">  </span><span class="nt">&quot;duration_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">142</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h3 id="92-lsp-server-specification">9.2 LSP Server Specification<a class="headerlink" href="#92-lsp-server-specification" title="Permanent link">&para;</a></h3>
+<p><strong>Capabilities</strong>:
+- <code>textDocument/didSave</code> - Validate on save
+- <code>textDocument/publishDiagnostics</code> - Send errors/warnings
+- <code>textDocument/codeAction</code> - Provide quick fixes
+- <code>workspace/executeCommand</code> - Apply fixes</p>
+<p><strong>Diagnostics Format</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;file:///src/main.py&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nt">&quot;diagnostics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">      </span><span class="nt">&quot;range&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">        </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;line&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;character&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">},</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">        </span><span class="nt">&quot;end&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;line&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;character&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">}</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">      </span><span class="p">},</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">      </span><span class="nt">&quot;severity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">      </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;huskycat-mypy&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">      </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Function is missing a return type annotation&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">      </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;no-untyped-def&quot;</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">  </span><span class="p">]</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h2 id="10-research-sources">10. Research Sources<a class="headerlink" href="#10-research-sources" title="Permanent link">&para;</a></h2>
+<h3 id="protocol-specifications">Protocol Specifications<a class="headerlink" href="#protocol-specifications" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://agentcommunicationprotocol.dev/introduction/welcome">Agent Communication Protocol (ACP) - Official Site</a></li>
+<li><a href="https://github.com/i-am-bee/acp">ACP GitHub Repository</a></li>
+<li><a href="https://arxiv.org/html/2505.02279v1">A Survey of Agent Interoperability Protocols (arXiv)</a></li>
+<li><a href="https://akka.io/blog/mcp-a2a-acp-what-does-it-all-mean">MCP, A2A, ACP Comparison</a></li>
+</ul>
+<h3 id="jetbrains-integration">JetBrains Integration<a class="headerlink" href="#jetbrains-integration" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://www.jetbrains.com/help/ai-assistant/acp.html">JetBrains AI Assistant - ACP Documentation</a></li>
+<li><a href="https://blog.jetbrains.com/ai/2025/12/bring-your-own-ai-agent-to-jetbrains-ides/">Bring Your Own AI Agent to JetBrains IDEs</a></li>
+<li><a href="https://blog.jetbrains.com/ai/2025/10/jetbrains-zed-open-interoperability-for-ai-coding-agents-in-your-ide/">JetBrains × Zed: ACP Collaboration</a></li>
+<li><a href="https://www.jetbrains.com/junie/">JetBrains Junie AI Agent</a></li>
+</ul>
+<h3 id="opencode">OpenCode<a class="headerlink" href="#opencode" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://apidog.com/blog/opencode/">OpenCode Official Site</a></li>
+<li><a href="https://www.builder.io/blog/opencode-vs-claude-code">OpenCode vs Claude Code Comparison</a></li>
+<li><a href="https://www.andreagrandi.it/posts/comparing-claude-code-vs-opencode-testing-different-models/">Comparing Claude Code vs OpenCode (Testing Different Models)</a></li>
+</ul>
+<h3 id="vs-code-integration">VS Code Integration<a class="headerlink" href="#vs-code-integration" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://www.gocodeo.com/post/how-ai-extensions-in-vscode-understand-code-context-under-the-hood">How AI Extensions in VS Code Understand Code Context</a></li>
+<li><a href="https://code.visualstudio.com/api/extension-guides/ai/ai-extensibility-overview">AI Extensibility in VS Code</a></li>
+<li><a href="https://code.visualstudio.com/api/language-extensions/language-server-extension-guide">Language Server Extension Guide</a></li>
+</ul>
+<h3 id="standardization">Standardization<a class="headerlink" href="#standardization" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">Linux Foundation Announces Agentic AI Foundation (AAIF)</a></li>
+<li><a href="https://openai.com/index/agentic-ai-foundation/">OpenAI Co-founds Agentic AI Foundation</a></li>
+<li><a href="https://dev.to/blackgirlbytes/my-predictions-for-mcp-and-ai-assisted-coding-in-2026-16bm">My Predictions for MCP and AI-Assisted Coding in 2026</a></li>
+</ul>
+<hr />
+<h2 id="11-conclusion">11. Conclusion<a class="headerlink" href="#11-conclusion" title="Permanent link">&para;</a></h2>
+<h3 id="key-takeaways">Key Takeaways<a class="headerlink" href="#key-takeaways" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Protocol Convergence</strong>: The AI coding assistant ecosystem is converging on <strong>open standards</strong> (MCP, ACP, AGENTS.md) under Linux Foundation governance.</p>
+</li>
+<li>
+<p><strong>ACP is Critical</strong>: JetBrains (millions of users) has adopted ACP. HuskyCat should implement ACP to unlock this market.</p>
+</li>
+<li>
+<p><strong>OpenCode Works Now</strong>: HuskyCat's MCP server already works with OpenCode, providing access to 75+ LLM providers.</p>
+</li>
+<li>
+<p><strong>Multi-Protocol Strategy</strong>: HuskyCat should support MCP (current), ACP (high priority), and LSP (future) to be truly platform-agnostic.</p>
+</li>
+<li>
+<p><strong>Beyond Detection</strong>: HuskyCat's auto-fix framework is a <strong>competitive advantage</strong> over detection-only tools.</p>
+</li>
+</ol>
+<h3 id="recommended-sprint-priorities">Recommended Sprint Priorities<a class="headerlink" href="#recommended-sprint-priorities" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Sprint</th>
+<th>Priority</th>
+<th>Protocol</th>
+<th>Effort</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1-2</td>
+<td>HIGH</td>
+<td>AGENTS.md + OpenCode docs</td>
+<td>Trivial</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>3-4</td>
+<td><strong>CRITICAL</strong></td>
+<td><strong>ACP Server</strong></td>
+<td><strong>Medium</strong></td>
+<td><strong>Very High</strong></td>
+</tr>
+<tr>
+<td>5-6</td>
+<td>HIGH</td>
+<td>LSP Server</td>
+<td>Medium</td>
+<td>High</td>
+</tr>
+<tr>
+<td>7-8</td>
+<td>MEDIUM</td>
+<td>VS Code Extension</td>
+<td>High</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>9</td>
+<td>LOW</td>
+<td>Enhanced MCP Tools</td>
+<td>Low</td>
+<td>Low</td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-metrics">Success Metrics<a class="headerlink" href="#success-metrics" title="Permanent link">&para;</a></h3>
+<p><strong>By Q2 2026</strong>:
+- ✅ MCP server stable (Claude Code, OpenCode)
+- 🎯 ACP server GA (JetBrains IDEs)
+- 📋 LSP server beta (VS Code, Neovim, etc.)
+- 📊 10,000+ monthly active users across all platforms
+- 🌟 Featured in JetBrains marketplace
+- 📚 AGENTS.md adopted by 100+ projects</p>
+<hr />
+<p><strong>Research Complete</strong>: 2026-01-15
+<strong>Next Step</strong>: Create ACP implementation plan (Sprint 3-4)
+<strong>Confidence</strong>: High - All protocols have clear specifications and active communities</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.follow", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>
