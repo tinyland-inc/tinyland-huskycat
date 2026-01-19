@@ -80,9 +80,11 @@ nav:
   - CI/CD Integration:
       - GitLab CI/CD: ci-cd/gitlab.md
       - GitHub Actions: github-actions.md
+  - Quick Reference: QUICK_REFERENCE.md
   - Development:
       - Build Guide: development/BUILD.md
       - Next Steps: development/NEXT_STEPS.md
+      - YAML Linter: development/YAML_LINTER_IMPLEMENTATION.md
       - Dogfooding Guide: dogfooding.md
   - Advanced:
       - Performance: performance.md

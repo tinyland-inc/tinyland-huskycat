@@ -20,9 +20,15 @@ from typing import Any, Dict, List, Optional, Set
 
 from huskycat.core.tool_selector import (
     LintingMode,
+    get_gpl_tools,
     get_mode_from_env,
     get_tool_info,
     is_tool_bundled,
+)
+from huskycat.core.gpl_client import (
+    GPLSidecarClient,
+    GPLToolResult,
+    GPLSidecarError,
 )
 
 # Configure logging
@@ -31,6 +37,39 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+# GPL Sidecar client (lazy initialized)
+_gpl_sidecar_client: Optional[GPLSidecarClient] = None
+_gpl_sidecar_checked: bool = False
+
+
+def get_gpl_sidecar() -> Optional[GPLSidecarClient]:
+    """Get GPL sidecar client if available.
+
+    Returns lazily-initialized client if sidecar is running, None otherwise.
+    Caches the result to avoid repeated socket connection attempts.
+    """
+    global _gpl_sidecar_client, _gpl_sidecar_checked
+
+    if _gpl_sidecar_checked:
+        return _gpl_sidecar_client
+
+    _gpl_sidecar_checked = True
+    client = GPLSidecarClient()
+
+    if client.is_available():
+        logger.info("GPL sidecar is available - using IPC for GPL tools")
+        _gpl_sidecar_client = client
+        return client
+    else:
+        logger.debug("GPL sidecar not available - GPL tools will use local/container execution")
+        return None
+
+
+def is_gpl_tool(tool_name: str) -> bool:
+    """Check if a tool is a GPL-licensed tool requiring sidecar execution."""
+    gpl_tools = get_gpl_tools()
+    return tool_name in gpl_tools
 
 
 @dataclass
@@ -93,10 +132,19 @@ class Validator(ABC):
         """Check if validator is available in current execution context
 
         Priority order:
-        1. Bundled tools (from fat binary)
-        2. Local tools (in PATH)
-        3. Container runtime (fallback only)
+        1. GPL sidecar (for GPL tools when sidecar is running)
+        2. Bundled tools (from fat binary)
+        3. Local tools (in PATH)
+        4. Container runtime (fallback only)
         """
+        # Check if this is a GPL tool and sidecar is available
+        if is_gpl_tool(self.name):
+            sidecar = get_gpl_sidecar()
+            if sidecar is not None:
+                logger.debug(f"GPL tool {self.name} available via sidecar")
+                return True
+            # Fall through to check local availability
+
         mode = self._get_execution_mode()
 
         if mode == "bundled":
@@ -198,11 +246,18 @@ class Validator(ABC):
         """Execute command with mode-aware execution
 
         Priority order:
-        1. Bundled tools (direct execution)
-        2. Local tools (direct execution)
-        3. Container tools (already in container)
-        4. Container runtime (fallback delegation)
+        1. GPL sidecar (for GPL tools when sidecar is running)
+        2. Bundled tools (direct execution)
+        3. Local tools (direct execution)
+        4. Container tools (already in container)
+        5. Container runtime (fallback delegation)
         """
+        # Check if this is a GPL tool and sidecar is available
+        if is_gpl_tool(self.name):
+            sidecar = get_gpl_sidecar()
+            if sidecar is not None:
+                return self._execute_via_sidecar(sidecar, cmd, **kwargs)
+
         mode = self._get_execution_mode()
 
         if mode == "bundled":
@@ -224,6 +279,54 @@ class Validator(ABC):
         logger.warning(f"Falling back to container execution for {self.command}")
         container_cmd = self._build_container_command(cmd)
         return subprocess.run(container_cmd, **kwargs)
+
+    def _execute_via_sidecar(
+        self, sidecar: GPLSidecarClient, cmd: List[str], **kwargs: Any
+    ) -> subprocess.CompletedProcess:
+        """Execute GPL tool via IPC sidecar.
+
+        Args:
+            sidecar: GPL sidecar client
+            cmd: Command list where first element is tool name
+            **kwargs: Additional arguments (timeout extracted if present)
+
+        Returns:
+            subprocess.CompletedProcess-like object with stdout, stderr, returncode
+        """
+        self._log_execution_mode("gpl_sidecar")
+
+        # Extract tool name and args from command
+        tool = cmd[0]
+        args = cmd[1:] if len(cmd) > 1 else []
+
+        # Get timeout from kwargs (convert to ms)
+        timeout_s = kwargs.get("timeout", 30)
+        timeout_ms = int(timeout_s * 1000)
+
+        # Get working directory
+        cwd = kwargs.get("cwd", os.getcwd())
+
+        logger.debug(f"Executing {tool} via GPL sidecar: {args}")
+
+        try:
+            result = sidecar.execute(tool, args, cwd=str(cwd), timeout_ms=timeout_ms)
+
+            # Convert GPLToolResult to subprocess.CompletedProcess
+            return subprocess.CompletedProcess(
+                args=cmd,
+                returncode=result.exit_code,
+                stdout=result.stdout,
+                stderr=result.stderr,
+            )
+        except GPLSidecarError as e:
+            logger.error(f"GPL sidecar execution failed: {e}")
+            # Return error result
+            return subprocess.CompletedProcess(
+                args=cmd,
+                returncode=1,
+                stdout="",
+                stderr=str(e),
+            )
 
     def _execute_bundled(
         self, cmd: List[str], **kwargs: Any

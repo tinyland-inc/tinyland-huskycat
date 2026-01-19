@@ -1,0 +1,59 @@
+# HuskyCat GPL Sidecar Compose Configuration
+# SPDX-License-Identifier: Apache-2.0
+#
+# Usage:
+#   podman-compose up -d          # Start sidecar in background
+#   podman-compose logs -f        # Follow logs
+#   podman-compose down           # Stop sidecar
+#
+# The sidecar provides GPL-licensed tools (shellcheck, hadolint, yamllint)
+# via IPC to maintain Apache-2.0 licensing for the main HuskyCat binary.
+#
+# Socket path: /tmp/huskycat-gpl-{UID}.sock (shared via volume mount)
+
+version: "3.8"
+
+services:
+  gpl-sidecar:
+    build:
+      context: .
+      dockerfile: ContainerFile.gpl-sidecar
+    image: huskycat-gpl-sidecar:latest
+    container_name: huskycat-gpl-sidecar
+    restart: unless-stopped
+
+    # Mount workspace for file validation and socket directory
+    volumes:
+      - ${PWD}:/workspace:ro
+      - /tmp:/tmp
+
+    # Working directory for validation
+    working_dir: /workspace
+
+    # Override entrypoint to use /tmp socket path
+    command: ["--socket", "/tmp/huskycat-gpl-${UID:-1000}.sock"]
+
+    # Environment configuration
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+    # Health check via socket connection
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import socket; s=socket.socket(socket.AF_UNIX, socket.SOCK_STREAM); s.connect('/tmp/huskycat-gpl-${UID:-1000}.sock'); s.close()\""]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+
+# Network not needed - using Unix socket IPC
+networks: {}
