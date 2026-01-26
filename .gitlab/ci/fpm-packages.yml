@@ -59,23 +59,7 @@ package:rpm:x86_64:
     - chmod +x pkg-root/usr/local/bin/huskycat
 
     # Copy assets (if they exist)
-    - |
-      if [ -f assets/huskycat.desktop ]; then
-        cp assets/huskycat.desktop pkg-root/usr/share/applications/
-      else
-        echo "[Desktop Entry]
-Version=1.0
-Type=Application
-Name=HuskyCat
-GenericName=Code Validator
-Comment=Universal Code Validation Platform
-Exec=huskycat-tray
-Icon=huskycat
-Categories=Development;IDE;
-Terminal=false
-StartupNotify=true
-Keywords=validation;linting;git;hooks;" > pkg-root/usr/share/applications/huskycat.desktop
-      fi
+    - if [ -f assets/huskycat.desktop ]; then cp assets/huskycat.desktop pkg-root/usr/share/applications/; else printf '[Desktop Entry]\nVersion=1.0\nType=Application\nName=HuskyCat\nGenericName=Code Validator\nComment=Universal Code Validation Platform\nExec=huskycat-tray\nIcon=huskycat\nCategories=Development;IDE;\nTerminal=false\nStartupNotify=true\nKeywords=validation;linting;git;hooks;\n' > pkg-root/usr/share/applications/huskycat.desktop; fi
 
     # Copy icon (create placeholder if not exists)
     - |
@@ -149,23 +133,7 @@ package:deb:amd64:
     - chmod +x pkg-root/usr/local/bin/huskycat
 
     # Copy assets (if they exist)
-    - |
-      if [ -f assets/huskycat.desktop ]; then
-        cp assets/huskycat.desktop pkg-root/usr/share/applications/
-      else
-        echo "[Desktop Entry]
-Version=1.0
-Type=Application
-Name=HuskyCat
-GenericName=Code Validator
-Comment=Universal Code Validation Platform
-Exec=huskycat-tray
-Icon=huskycat
-Categories=Development;IDE;
-Terminal=false
-StartupNotify=true
-Keywords=validation;linting;git;hooks;" > pkg-root/usr/share/applications/huskycat.desktop
-      fi
+    - if [ -f assets/huskycat.desktop ]; then cp assets/huskycat.desktop pkg-root/usr/share/applications/; else printf '[Desktop Entry]\nVersion=1.0\nType=Application\nName=HuskyCat\nGenericName=Code Validator\nComment=Universal Code Validation Platform\nExec=huskycat-tray\nIcon=huskycat\nCategories=Development;IDE;\nTerminal=false\nStartupNotify=true\nKeywords=validation;linting;git;hooks;\n' > pkg-root/usr/share/applications/huskycat.desktop; fi
 
     # Copy icon (create placeholder if not exists)
     - |
