@@ -165,6 +165,7 @@ test:mcp:server:
 # Build stage jobs - multi-architecture container builds
 # Using Docker-in-Docker for GitLab SaaS shared runner compatibility
 # (buildah requires CLONE_NEWUSER which is not permitted on shared runners)
+# NOTE: TLS disabled for custom runners - certs don't share properly between containers
 .container_build_template: &container_build_template
   stage: validate
   image: docker:24-cli
@@ -172,10 +173,9 @@ test:mcp:server:
     - docker:24-dind
   <<: *retry_transient
   variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: "/certs"
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+    # Disable TLS for DinD - custom runners don't share certs properly
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   before_script:
     - echo "Waiting for Docker daemon..."
     - until docker info; do sleep 1; done
@@ -187,10 +187,8 @@ container:build:amd64:
     - dind
     - x86_64
   variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: "/certs"
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
     PLATFORM: linux/amd64
     ARCH: amd64
   script:
@@ -219,10 +217,8 @@ container:tag:latest:
     - dind
     - x86_64
   variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: "/certs"
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   needs:
     - container:build:amd64
   before_script:
@@ -250,12 +246,19 @@ container:tag:latest:
 # Stage 2: Complete validation using freshly built container
 validate:complete:
   stage: build
-  image: docker:latest
+  image: docker:24-cli
   services:
-    - docker:dind
+    - docker:24-dind
+  tags:
+    - dind
+    - x86_64
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   dependencies:
     - container:build:amd64
   before_script:
+    - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - echo "🎠 Stage 2 - Complete validation with fresh container"
