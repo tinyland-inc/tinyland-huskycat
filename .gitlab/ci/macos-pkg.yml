@@ -331,7 +331,7 @@ package:macos-pkg:
 # Universal macOS binary (fat binary)
 build:binary:darwin-universal:
   extends: .macos_saas_runners
-  stage: build
+  stage: package  # Same stage as darwin-arm64 and darwin-amd64
   needs:
     - job: build:binary:darwin-arm64
       artifacts: true
