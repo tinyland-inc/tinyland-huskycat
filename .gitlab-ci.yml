@@ -178,6 +178,8 @@ test:mcp:server:
 
 container:build:amd64:
   <<: *container_build_template
+  tags:
+    - saas-linux-medium-amd64  # Force GitLab SaaS shared runner
   variables:
     DOCKER_HOST: tcp://docker:2376
     DOCKER_TLS_CERTDIR: "/certs"

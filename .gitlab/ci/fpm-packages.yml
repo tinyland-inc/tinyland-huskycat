@@ -26,7 +26,7 @@ variables:
   image: ruby:3.2-slim
   stage: package
   before_script:
-    - apt-get update && apt-get install -y --no-install-recommends rpm rpmbuild binutils
+    - apt-get update && apt-get install -y --no-install-recommends rpm binutils
     - gem install fpm -v $FPM_VERSION --no-document
     - fpm --version
   rules:
