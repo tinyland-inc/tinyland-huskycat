@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Set
 
 from huskycat.linters.yaml_lint import YamlLintConfig, lint_yaml_file
-from huskycat.unified_validation import ValidationResult, Validator
+from huskycat.validators import ValidationResult, Validator
 
 
 class YamlLintValidator(Validator):

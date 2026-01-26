@@ -1,12 +1,15 @@
 # Claude Code Instructions for HuskyCat Project
 
-## Sprint Plan Reference
+## Development Roadmap
 
-See `docs/SPRINT_PLAN.md` for comprehensive development roadmap covering:
-- **Product Mode Architecture**: 5 distinct modes (Git Hooks, CI, CLI, Pipeline, MCP)
-- **Execution Modes**: Container vs Binary
-- **Auto-Fix Framework**: Confidence tiers, mode-specific behavior
-- **Sprint 0-8**: From architecture foundation to auto-fix implementation
+See `docs/development/NEXT_STEPS.md` for the current beta testing roadmap and next steps.
+
+**Current Status**: v2.0.0 Beta Testing Phase (Dec 2025 - Jan 2026)
+
+Key documentation:
+- **Architecture**: `docs/architecture/product-modes.md`, `docs/architecture/execution-models.md`
+- **Beta Testing**: `docs/BETA_TESTING.md`
+- **Historical Sprints**: `docs/archive/sprints/SPRINT_PLAN.md` (archived)
 
 ## License
 

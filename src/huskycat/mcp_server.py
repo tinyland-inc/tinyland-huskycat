@@ -25,6 +25,7 @@ from dataclasses import asdict
 from .core.process_manager import ProcessManager, ValidationRun
 from .core.task_manager import TaskManager, TaskStatus, get_task_manager
 from .unified_validation import ValidationEngine
+from .validators._utils import is_running_in_container
 
 # Import commands for API parity
 try:
@@ -197,15 +198,11 @@ class MCPServer:
         return False
 
     def _is_running_in_container(self) -> bool:
-        """Detect if we're running inside a container (same logic as Validator class)"""
-        import os
+        """Detect if we're running inside a container.
 
-        # Check for container-specific environment indicators
-        return (
-            os.path.exists("/.dockerenv")  # Docker
-            or bool(os.environ.get("container"))  # Podman
-            or os.path.exists("/run/.containerenv")  # Podman
-        )
+        Uses shared utility from validators package.
+        """
+        return is_running_in_container()
 
     def _run_container_validation(
         self, command_args: list, cwd: str = "."

@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 from typing import List, Set
 
-from huskycat.unified_validation import ValidationResult, Validator
+from huskycat.validators import ValidationResult, Validator
 
 logger = logging.getLogger(__name__)
 
