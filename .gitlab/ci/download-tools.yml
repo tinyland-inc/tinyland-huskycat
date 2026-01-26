@@ -38,15 +38,8 @@ download:tools:linux-amd64:
     PLATFORM: linux-amd64
     OUTPUT_DIR: dist/tools
 
-# Linux ARM64 tool downloads
-download:tools:linux-arm64:
-  <<: *download_tools_template
-  variables:
-    PLATFORM: linux-arm64
-    OUTPUT_DIR: dist/tools
-
-# NOTE: macOS Intel (AMD64) download job removed - no corresponding build job
-# GitLab SaaS only provides ARM64 (Apple Silicon) macOS runners
+# NOTE: Linux ARM64 removed - not a supported platform
+# NOTE: macOS Intel (AMD64) removed - no corresponding build job
 
 # macOS Apple Silicon (ARM64) tool downloads
 download:tools:darwin-arm64:
@@ -56,21 +49,20 @@ download:tools:darwin-arm64:
     OUTPUT_DIR: dist/tools
 
 # Verification job - ensure all tools downloaded successfully
+# Supported platforms: linux-amd64, darwin-arm64
 verify:tools:all-platforms:
   stage: test
   image: python:3.11-slim
   needs:
     - download:tools:linux-amd64
-    - download:tools:linux-arm64
     - download:tools:darwin-arm64
   dependencies:
     - download:tools:linux-amd64
-    - download:tools:linux-arm64
     - download:tools:darwin-arm64
   script:
-    - echo "Verifying downloaded tools for all platforms..."
+    - echo "Verifying downloaded tools for supported platforms..."
     - |
-      for platform in linux-amd64 linux-arm64 darwin-arm64; do
+      for platform in linux-amd64 darwin-arm64; do
         echo ""
         echo "Platform: ${platform}"
         echo "----------------------------------------"

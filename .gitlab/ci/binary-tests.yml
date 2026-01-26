@@ -35,30 +35,15 @@ binary:test:linux-amd64:
   variables:
     BINARY_PATH: dist/bin/huskycat-linux-amd64
   tags:
-    - linux
-    - docker
+    - dind
+    - x86_64
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-binary:test:linux-arm64:
-  extends: .binary-test-template
-  dependencies:
-    - build:binary:linux-arm64
-  variables:
-    BINARY_PATH: dist/bin/huskycat-linux-arm64
-  tags:
-    - linux
-    - arm64
-  allow_failure: true  # ARM64 runners may not always be available
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_TAG
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-
-# binary:test:darwin-amd64 removed - no build:binary:darwin-amd64 job exists
-# GitLab SaaS only provides ARM64 macOS runners, not Intel/AMD64
+# NOTE: Linux ARM64 test removed - not a supported platform
+# NOTE: macOS Intel test removed - no corresponding build job
 
 binary:test:darwin-arm64:
   stage: sign  # Must run after package stage where binaries are built
@@ -67,8 +52,8 @@ binary:test:darwin-arm64:
   variables:
     BINARY_PATH: dist/bin/huskycat-darwin-arm64
   tags:
-    - macos
-    - arm64
+    - native
+    - darwin
   before_script:
     - pip3 install pytest || python3 -m pip install pytest
   script:
@@ -102,8 +87,8 @@ binary:smoke-test:
     - ./dist/bin/huskycat-linux-amd64 --help
     - echo "✓ Binary smoke test passed"
   tags:
-    - linux
-    - docker
+    - dind
+    - x86_64
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG

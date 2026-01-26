@@ -23,11 +23,11 @@ variables:
   PKG_IDENTIFIER: "ai.tinyland.huskycat"
   PKG_INSTALL_LOCATION: "/"
 
-# macOS SaaS runner template
+# macOS native runner template (Apple Silicon)
 .macos_saas_runners:
   tags:
-    - saas-macos-medium-m1
-  image: macos-14-xcode-15
+    - native
+    - darwin
 
 # Code signing setup template
 .keychain_setup:
