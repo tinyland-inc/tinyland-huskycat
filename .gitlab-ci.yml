@@ -48,6 +48,18 @@ variables:
     - export PATH="$HOME/.local/bin:$PATH"
     - uv --version
 
+# Retry template for transient runner failures
+# Based on crush-dots CI patterns for GitLab SaaS runner resilience
+.retry_transient: &retry_transient
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - api_failure
+      - scheduler_failure
+
 # Container-based validation (after container build for parity)
 validate:basic:
   stage: security
@@ -92,6 +104,7 @@ test:unit:
     entrypoint: [""]
   needs:
     - container:build:amd64
+  <<: *retry_transient
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -126,6 +139,7 @@ test:mcp:server:
     entrypoint: [""]
   needs:
     - container:build:amd64
+  <<: *retry_transient
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -151,6 +165,7 @@ test:mcp:server:
   image: docker:24-cli
   services:
     - docker:24-dind
+  <<: *retry_transient
   variables:
     DOCKER_HOST: tcp://docker:2376
     DOCKER_TLS_CERTDIR: "/certs"
