@@ -189,11 +189,10 @@ container:build:amd64:
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
-    PLATFORM: linux/amd64
     ARCH: amd64
   script:
-    - echo "Building container for $PLATFORM using Docker-in-Docker..."
-    - docker build --platform=$PLATFORM -f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .
+    - echo "Building container for linux/amd64 using Docker-in-Docker..."
+    - docker build -f ContainerFile -t $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH .
     - docker push $CONTAINER_REGISTRY:$CONTAINER_TAG-$ARCH
   artifacts:
     reports:
