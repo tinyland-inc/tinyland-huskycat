@@ -161,11 +161,10 @@ package:macos-pkg:
   extends:
     - .macos_saas_runners
     - .keychain_setup
-  stage: package
+  stage: deploy  # After sign stage, so sign:darwin-arm64 artifacts are available
   needs:
     - job: sign:darwin-arm64
       artifacts: true
-      optional: true
   variables:
     PKG_VERSION: ${CI_COMMIT_TAG:-2.0.0}
   script:

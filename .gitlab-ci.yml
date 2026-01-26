@@ -22,7 +22,7 @@ stages:
   - build  # Tool downloads happen here
   - test
   - package  # Binary builds happen here (depends on build stage)
-  - sign
+  - sign     # Code signing (after package)
   - deploy
   - scheduled
 
