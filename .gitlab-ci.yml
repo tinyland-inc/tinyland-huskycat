@@ -168,6 +168,7 @@ test:mcp:server:
 .container_build_template: &container_build_template
   stage: validate
   image: docker:25.0-cli
+  timeout: 2h  # Extended timeout for slow DinD container builds
   services:
     - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
