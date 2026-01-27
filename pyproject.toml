@@ -34,7 +34,6 @@ dependencies = [
     "rich>=14.2.0",
     "networkx>=3.2.1",
     "psutil>=5.9.0",
-    "dockerfile>=3.4.0",
 ]
 
 [project.optional-dependencies]
@@ -75,6 +74,11 @@ observability = [
     # See: https://github.com/chrisguidry/pytest-otel/issues
     "opentelemetry-api>=1.20.0",
     "opentelemetry-sdk>=1.20.0",
+]
+dockerlint = [
+    # Requires Go compiler to build from source - optional for CI
+    # The dockerlint validator gracefully handles missing dependency
+    "dockerfile>=3.4.0",
 ]
 
 [project.scripts]
