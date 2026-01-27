@@ -174,7 +174,7 @@ test:mcp:server:
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
   tags:
     - dind
-    - x86_64  # Target Rocky Linux runner (excludes Darwin M1 with broken lima socket)
+    - linux  # Target Rocky Linux runner (excludes Darwin M1 which has 'darwin' tag)
   <<: *retry_transient
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -222,7 +222,7 @@ container:tag:latest:
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
   tags:
     - dind
-    - x86_64  # Target Rocky Linux runner (excludes Darwin M1 with broken lima socket)
+    - linux  # Target Rocky Linux runner (excludes Darwin M1 which has 'darwin' tag)
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
@@ -265,7 +265,7 @@ validate:complete:
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
   tags:
     - dind
-    - x86_64  # Target Rocky Linux runner (excludes Darwin M1 with broken lima socket)
+    - linux  # Target Rocky Linux runner (excludes Darwin M1 which has 'darwin' tag)
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
