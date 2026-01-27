@@ -358,6 +358,38 @@ package:python:
 # Uses the cleaner .keychain_setup template for code signing
 
 # Deploy stage jobs
+
+# Upload binaries to GitLab Package Registry for private distribution
+# Beta testers can download via deploy token without full repo access
+publish:package-registry:
+  stage: deploy
+  image: curlimages/curl:latest
+  needs:
+    - job: build:binary:linux-amd64
+      artifacts: true
+    - job: build:binary:darwin-arm64
+      artifacts: true
+      optional: true
+    - job: checksums:generate
+      artifacts: true
+  variables:
+    PACKAGE_NAME: huskycat
+    # Use tag version or commit SHA for non-tag builds
+    PACKAGE_VERSION: "${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}"
+  script:
+    - echo "Publishing binaries to GitLab Package Registry..."
+    - echo "Package version - ${PACKAGE_VERSION}"
+    - 'test -f dist/bin/huskycat-linux-amd64 && curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/bin/huskycat-linux-amd64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${PACKAGE_VERSION}/huskycat-linux-amd64" || echo "No linux binary"'
+    - 'test -f dist/bin/huskycat-darwin-arm64 && curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/bin/huskycat-darwin-arm64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${PACKAGE_VERSION}/huskycat-darwin-arm64" || echo "No darwin binary"'
+    - 'test -f dist/bin/SHA256SUMS.txt && curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/bin/SHA256SUMS.txt "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${PACKAGE_VERSION}/SHA256SUMS.txt" || echo "No checksums"'
+    - echo "Package registry upload complete!"
+    - echo "Download URLs (requires deploy token or project access)"
+    - echo "Linux - ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${PACKAGE_VERSION}/huskycat-linux-amd64"
+    - echo "macOS - ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${PACKAGE_VERSION}/huskycat-darwin-arm64"
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+
 release:create:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
