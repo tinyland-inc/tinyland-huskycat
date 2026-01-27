@@ -16,7 +16,6 @@ from .core.process_manager import ProcessManager, ValidationRun
 from .core.task_manager import TaskManager, TaskStatus, get_task_manager
 from .unified_validation import ValidationEngine, ValidationResult as EngineResult
 
-
 # =============================================================================
 # Result Types
 # =============================================================================
