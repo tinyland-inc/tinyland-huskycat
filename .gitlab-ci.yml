@@ -171,8 +171,10 @@ test:mcp:server:
   services:
     - name: docker:24-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
-  # NOTE: No tags - runners use run_untagged=true
-  # Tags not synced to GitLab API, only in local config.toml
+  tags:
+    - docker
+    - dind
+    - linux  # Target Rocky Linux runner (tags synced via API)
   <<: *retry_transient
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -218,7 +220,10 @@ container:tag:latest:
   services:
     - name: docker:24-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
-  # NOTE: No tags - runners use run_untagged=true
+  tags:
+    - docker
+    - dind
+    - linux  # Target Rocky Linux runner
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
@@ -259,7 +264,10 @@ validate:complete:
   services:
     - name: docker:24-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
-  # NOTE: No tags - runners use run_untagged=true
+  tags:
+    - docker
+    - dind
+    - linux  # Target Rocky Linux runner
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
