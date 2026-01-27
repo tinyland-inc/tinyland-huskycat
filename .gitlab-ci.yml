@@ -167,9 +167,9 @@ test:mcp:server:
 # NOTE: TLS disabled, explicit --tls=false in service command
 .container_build_template: &container_build_template
   stage: validate
-  image: docker:24-cli
+  image: docker:25.0-cli
   services:
-    - name: docker:24-dind
+    - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
   tags:
     - docker
@@ -216,9 +216,9 @@ container:build:amd64:
 # Multi-arch manifests removed since we only build linux/amd64 containers
 container:tag:latest:
   stage: build
-  image: docker:24-cli
+  image: docker:25.0-cli
   services:
-    - name: docker:24-dind
+    - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
   tags:
     - docker
@@ -260,9 +260,9 @@ container:tag:latest:
 # Stage 2: Complete validation using freshly built container
 validate:complete:
   stage: build
-  image: docker:24-cli
+  image: docker:25.0-cli
   services:
-    - name: docker:24-dind
+    - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
   tags:
     - docker

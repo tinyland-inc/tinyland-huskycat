@@ -38,6 +38,34 @@ git commit --no-verify -m "message"  # Acceptable when MyPy blocks commits
 git push --no-verify  # Acceptable when validation is too strict
 ```
 
+## CI Monitoring: Background Tasks Only
+
+**CRITICAL**: CI pipeline monitoring MUST be delegated to background agents, not foreground chat.
+
+### Pattern
+```
+Task tool with:
+- subagent_type: "general-purpose"
+- run_in_background: true
+- prompt: "Monitor GitLab CI pipeline [ID] until completion. Report failures."
+```
+
+### Runner Fleet (via Tailscale SSH)
+
+| Host | Platform | IP | Tags |
+|------|----------|-----|------|
+| honey | Rocky Linux 10 | 100.77.196.50 | docker, dind, linux |
+| petting-zoo-mini | macOS M1 | 100.111.5.80 | darwin, native |
+
+### SSH Diagnostics
+```bash
+ssh honey "docker system df"  # Check disk usage
+ssh honey "docker volume prune -af"  # Clean volumes
+ssh honey "gitlab-runner list 2>&1"  # List runners
+```
+
+See `~/.claude/skills/ci-monitoring.md` for full skill reference.
+
 ## Product Mode Architecture
 
 HuskyCat operates in **5 distinct product modes**, each with different requirements:
