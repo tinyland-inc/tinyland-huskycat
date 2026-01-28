@@ -88,6 +88,10 @@ sbom:generate:container:
       curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | \
         sh -s -- -b /usr/local/bin v${SYFT_VERSION}
     - syft version
+    # Configure registry authentication for GitLab Container Registry
+    - mkdir -p ~/.docker
+    - |
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > ~/.docker/config.json
   script:
     - echo "📋 Generating SBOM from container image..."
 
