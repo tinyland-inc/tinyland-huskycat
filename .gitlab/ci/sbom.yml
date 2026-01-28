@@ -99,7 +99,7 @@ sbom:generate:container:
     - echo "Docker config created for registry:" && cat /root/.docker/config.json | jq 'del(.auths[].password)'
   script:
     - echo "📋 Generating SBOM from container image..."
-    - echo "Target image: ${CONTAINER_REGISTRY}:${CONTAINER_TAG}-amd64"
+    - 'echo "Target image: ${CONTAINER_REGISTRY}:${CONTAINER_TAG}-amd64"'
 
     # Verify image exists and is accessible via skopeo first
     - |
