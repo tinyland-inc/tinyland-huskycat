@@ -81,25 +81,41 @@ sbom:generate:container:
   needs:
     - job: container:build:amd64
       artifacts: false
+  variables:
+    # Tell Syft where to find Docker credentials
+    DOCKER_CONFIG: /root/.docker
   before_script:
-    - apk add --no-cache curl bash skopeo
+    - apk add --no-cache curl bash skopeo jq
     # Install Syft
     - |
       curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | \
         sh -s -- -b /usr/local/bin v${SYFT_VERSION}
     - syft version
     # Configure registry authentication for GitLab Container Registry
-    - mkdir -p ~/.docker
+    - mkdir -p /root/.docker
     - |
-      echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > ~/.docker/config.json
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /root/.docker/config.json
+    # Debug: Show config (without password)
+    - echo "Docker config created for registry:" && cat /root/.docker/config.json | jq 'del(.auths[].password)'
   script:
     - echo "📋 Generating SBOM from container image..."
+    - echo "Target image: ${CONTAINER_REGISTRY}:${CONTAINER_TAG}-amd64"
+
+    # Verify image exists and is accessible via skopeo first
+    - |
+      echo "Verifying registry access with skopeo..."
+      skopeo inspect --creds "$CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD" \
+        docker://${CONTAINER_REGISTRY}:${CONTAINER_TAG}-amd64 | jq '.Digest, .Created' || {
+          echo "⚠️ Skopeo inspect failed, trying without explicit creds..."
+          skopeo inspect docker://${CONTAINER_REGISTRY}:${CONTAINER_TAG}-amd64 | jq '.Digest' || true
+        }
 
     # Generate SBOM from container registry
     - |
       syft registry:${CONTAINER_REGISTRY}:${CONTAINER_TAG}-amd64 \
         -o cyclonedx-json=sbom-container-cyclonedx.json \
-        -o spdx-json=sbom-container-spdx.json
+        -o spdx-json=sbom-container-spdx.json \
+        -v
 
     - echo "✅ Container SBOM generation complete"
     - ls -la sbom-*.json
