@@ -420,3 +420,4 @@ release:create:
     - if: $CI_COMMIT_TAG
 # Security scanning jobs (using GitLab security templates)
 # These are automatically included via the templates at the top
+# Runner tags fixed - all runners now properly tagged
