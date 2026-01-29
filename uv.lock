@@ -410,7 +410,6 @@ source = { editable = "." }
 dependencies = [
     { name = "autoflake" },
     { name = "black" },
-    { name = "dockerfile" },
     { name = "flake8" },
     { name = "jsonschema" },
     { name = "mkdocs" },
@@ -455,6 +454,9 @@ dev = [
     { name = "ruff" },
     { name = "yamllint" },
 ]
+dockerlint = [
+    { name = "dockerfile" },
+]
 docs = [
     { name = "mkdocs" },
     { name = "mkdocs-material" },
@@ -488,7 +490,7 @@ requires-dist = [
     { name = "black", specifier = ">=24.0.0" },
     { name = "black", marker = "extra == 'dev'", specifier = ">=24.0.0" },
     { name = "docker", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "dockerfile", specifier = ">=3.4.0" },
+    { name = "dockerfile", marker = "extra == 'dockerlint'", specifier = ">=3.4.0" },
     { name = "flake8", specifier = ">=7.0.0" },
     { name = "flake8", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0.0" },
@@ -525,7 +527,7 @@ requires-dist = [
     { name = "staticx", marker = "sys_platform == 'linux' and extra == 'build-linux'", specifier = ">=0.14.0" },
     { name = "yamllint", marker = "extra == 'dev'", specifier = ">=1.35.0" },
 ]
-provides-extras = ["dev", "build", "build-linux", "docs", "observability"]
+provides-extras = ["dev", "build", "build-linux", "docs", "observability", "dockerlint"]
 
 [package.metadata.requires-dev]
 dev = [

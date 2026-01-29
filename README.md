@@ -6,15 +6,15 @@
 
 One-line install (macOS and Linux):
 ```bash
-curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+curl -fsSL https://huskycat-570fbd.gitlab.io/install.sh | bash
 ```
 
 With Claude Code MCP integration:
 ```bash
-HUSKYCAT_WITH_CLAUDE=1 curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+HUSKYCAT_WITH_CLAUDE=1 curl -fsSL https://huskycat-570fbd.gitlab.io/install.sh | bash
 ```
 
-Manual downloads: [Binary Downloads](https://tinyland.gitlab.io/ai/huskycat/downloads/)
+Manual downloads: [Binary Downloads](https://huskycat-570fbd.gitlab.io/downloads/)
 
 ## Overview
 
@@ -319,8 +319,8 @@ Apache License 2.0 - see [LICENSE](LICENSE) for details.
 ## Links
 
 - **Repository**: https://gitlab.com/tinyland/ai/huskycat
-- **Documentation**: https://tinyland.gitlab.io/ai/huskycat/
-- **Downloads**: https://tinyland.gitlab.io/ai/huskycat/downloads/
+- **Documentation**: https://huskycat-570fbd.gitlab.io/
+- **Downloads**: https://huskycat-570fbd.gitlab.io/downloads/
 - **Issues**: https://gitlab.com/tinyland/ai/huskycat/-/issues
 
 ---

@@ -1,5 +1,8 @@
 # E2E Tests for HuskyCat Bootstrap and Git Hooks
 # Tests the complete binary + git hooks workflow for GitOps repositories
+#
+# Optimization: Uses `changes:` rules for incremental test selection
+# Only runs tests when relevant files change (similar to Bazel's incremental behavior)
 
 # Template for E2E test retry logic
 .e2e_retry_transient: &e2e_retry
@@ -14,6 +17,7 @@ test:e2e:bootstrap:gitops:
   stage: test
   image: python:3.11-alpine
   <<: *e2e_retry
+  needs: []  # Start immediately, don't wait for container build
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -21,9 +25,6 @@ test:e2e:bootstrap:gitops:
     - uv --version
     - git config --global user.name "CI Test"
     - git config --global user.email "ci@test.com"
-  needs:
-    - job: container:build:amd64
-      optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -36,14 +37,24 @@ test:e2e:bootstrap:gitops:
       - pytest-logs/
     expire_in: 1 week
   rules:
+    # Run on bootstrap/hook changes
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - src/huskycat/commands/bootstrap.py
+        - src/huskycat/hooks/**/*.py
+        - tests/e2e/**/*.py
     - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - src/huskycat/commands/bootstrap.py
+        - src/huskycat/hooks/**/*.py
+        - tests/e2e/**/*.py
 
 # E2E: Test bootstrap on different repository types
 test:e2e:bootstrap:types:
   stage: test
   image: python:3.11-alpine
   <<: *e2e_retry
+  needs: []
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -51,9 +62,6 @@ test:e2e:bootstrap:types:
     - uv --version
     - git config --global user.name "CI Test"
     - git config --global user.email "ci@test.com"
-  needs:
-    - job: container:build:amd64
-      optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -69,13 +77,22 @@ test:e2e:bootstrap:types:
     expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - src/huskycat/commands/bootstrap.py
+        - src/huskycat/hooks/**/*.py
+        - tests/e2e/**/*.py
     - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - src/huskycat/commands/bootstrap.py
+        - src/huskycat/hooks/**/*.py
+        - tests/e2e/**/*.py
 
 # E2E: Test hook execution (pre-commit, pre-push, commit-msg)
 test:e2e:hooks:execution:
   stage: test
   image: python:3.11-alpine
   <<: *e2e_retry
+  needs: []
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -83,9 +100,6 @@ test:e2e:hooks:execution:
     - uv --version
     - git config --global user.name "CI Test"
     - git config --global user.email "ci@test.com"
-  needs:
-    - job: container:build:amd64
-      optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -104,13 +118,20 @@ test:e2e:hooks:execution:
     expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - src/huskycat/hooks/**/*.py
+        - tests/e2e/**/*.py
     - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - src/huskycat/hooks/**/*.py
+        - tests/e2e/**/*.py
 
 # E2E: Test fast mode integration in hooks
 test:e2e:fast:mode:
   stage: test
   image: python:3.11-alpine
   <<: *e2e_retry
+  needs: []
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -118,9 +139,6 @@ test:e2e:fast:mode:
     - uv --version
     - git config --global user.name "CI Test"
     - git config --global user.email "ci@test.com"
-  needs:
-    - job: container:build:amd64
-      optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -135,13 +153,22 @@ test:e2e:fast:mode:
     expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - src/huskycat/hooks/**/*.py
+        - src/huskycat/core/mode_detector.py
+        - tests/e2e/**/*.py
     - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - src/huskycat/hooks/**/*.py
+        - src/huskycat/core/mode_detector.py
+        - tests/e2e/**/*.py
 
 # E2E: Test edge cases and error handling
 test:e2e:edge:cases:
   stage: test
   image: python:3.11-alpine
   <<: *e2e_retry
+  needs: []
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -149,9 +176,6 @@ test:e2e:edge:cases:
     - uv --version
     - git config --global user.name "CI Test"
     - git config --global user.email "ci@test.com"
-  needs:
-    - job: container:build:amd64
-      optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -167,53 +191,21 @@ test:e2e:edge:cases:
     expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - src/huskycat/commands/bootstrap.py
+        - tests/e2e/**/*.py
     - if: $CI_COMMIT_BRANCH == "main"
-
-# E2E: Test with actual built binary (requires binary build job)
-# Disabled temporarily - binary build stages need to be reorganized
-# test:e2e:binary:integration:
-#   stage: deploy
-#   image: alpine:latest
-#   needs:
-#     - job: binary:build:linux
-#       artifacts: true
-#       optional: true
-#   before_script:
-#     - apk add --no-cache git bash python3 py3-pip
-#     - git config --global user.name "CI Test"
-#     - git config --global user.email "ci@test.com"
-#   script:
-#     - echo "=== E2E Test - Binary Integration ==="
-#     - mkdir -p ~/.local/bin
-#     - cp dist/bin/huskycat-linux-amd64 ~/.local/bin/huskycat
-#     - chmod +x ~/.local/bin/huskycat
-#     - export PATH="$HOME/.local/bin:$PATH"
-#     - huskycat --version
-#     - mkdir -p /tmp/test-gitops
-#     - cd /tmp/test-gitops
-#     - git init
-#     - git config user.name "Test"
-#     - git config user.email "test@test.com"
-#     - mkdir -p chart k8s/deployments
-#     - echo 'apiVersion:v2\nname:test\nversion:0.1.0' > chart/Chart.yaml
-#     - echo 'apiVersion:v1\nkind:Deployment\nmetadata:\n  name:test' > k8s/deployments/app.yaml
-#     - git add .
-#     - git commit -m "Initial commit"
-#     - huskycat bootstrap --force
-#     - test -f .git/hooks/pre-commit || exit 1
-#     - test -f .git/hooks/pre-push || exit 1
-#     - test -f .git/hooks/commit-msg || exit 1
-#     - test -x .git/hooks/pre-commit || exit 1
-#     - echo "Binary bootstrap test passed"
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main"
-#     - if: $CI_COMMIT_TAG
+      changes:
+        - src/huskycat/commands/bootstrap.py
+        - tests/e2e/**/*.py
 
 # E2E: Comprehensive test suite (runs all E2E tests together)
+# Only runs on schedule or tags - comprehensive validation
 test:e2e:comprehensive:
   stage: test
   image: python:3.11-alpine
   <<: *e2e_retry
+  needs: []
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -221,9 +213,6 @@ test:e2e:comprehensive:
     - uv --version
     - git config --global user.name "CI Test"
     - git config --global user.email "ci@test.com"
-  needs:
-    - job: container:build:amd64
-      optional: true
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
@@ -243,6 +232,7 @@ test:e2e:comprehensive:
       - pytest-logs/
     expire_in: 1 week
   rules:
+    # Always run on schedule and tags (comprehensive validation)
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_COMMIT_TAG
   allow_failure: true  # Don't block on E2E tests for now

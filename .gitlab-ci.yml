@@ -94,16 +94,23 @@ validate:yaml:
     - container:build:amd64
   interruptible: true
   script:
-    - echo "🐳 Using HuskyCat container for YAML validation parity"
+    - echo "Using HuskyCat container for YAML validation parity"
     - which yamllint && yamllint --version
     - yamllint .gitlab-ci.yml mkdocs.yml
     - find . -name "*.yml" -o -name "*.yaml" | grep -v .cache | xargs yamllint
   allow_failure: true  # Don't block pipeline on runner infrastructure issues
   rules:
+    # Always run on main and tags
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    # For MRs, only run when YAML files change
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
+      changes:
+        - "**/*.yml"
+        - "**/*.yaml"
 
 # Test stage jobs
+# Using changes: rules for incremental test selection (Phase 3 optimization)
 test:unit:
   stage: test
   image:
@@ -115,7 +122,7 @@ test:unit:
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - echo "🐳 Using HuskyCat container with pre-installed tools"
+    - echo "Using HuskyCat container with pre-installed tools"
     - which python3 && python3 --version
     - which pytest && pytest --version
     - pwd && ls -la
@@ -132,8 +139,16 @@ test:unit:
       - htmlcov/
     expire_in: 1 week
   rules:
+    # Always run on main branch and tags (release builds)
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    # For MRs, only run when relevant files change
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
+      changes:
+        - src/**/*.py
+        - tests/test_*.py
+        - pyproject.toml
+        - uv.lock
 
 # E2E tests removed - tracked as future goals in docs/future-roadmap.md
 # Previously included test:e2e:comprehensive, test:e2e:playwright, and test:e2e:deployment jobs
@@ -150,7 +165,7 @@ test:mcp:server:
   variables:
     PYTHONPATH: "$CI_PROJECT_DIR/src"
   script:
-    - echo "🐳 Using HuskyCat container with pre-installed tools"
+    - echo "Using HuskyCat container with pre-installed tools"
     - which python3 && python3 --version
     - which pytest && pytest --version
     - pwd && ls -la
@@ -161,8 +176,15 @@ test:mcp:server:
       - logs/
     expire_in: 1 week
   rules:
+    # Always run on main and tags
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    # For MRs, only run when MCP-related files change
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
+      changes:
+        - src/huskycat/mcp_server.py
+        - src/huskycat/mcp/**/*.py
+        - tests/test_mcp*.py
 
 # Build stage jobs - multi-architecture container builds
 # Using Docker-in-Docker following crush-dots patterns for Tinyland runners

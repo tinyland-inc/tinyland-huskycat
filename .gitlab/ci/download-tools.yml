@@ -4,7 +4,7 @@
 
 # Shared configuration for download jobs
 .download_tools_template: &download_tools_template
-  stage: build
+  stage: validate  # Changed from 'build' to 'validate' for parallel execution
   image: python:3.11-slim
   tags:
     - linux  # Allow any Linux runner to pick up these jobs
@@ -21,7 +21,7 @@
   artifacts:
     paths:
       - ${OUTPUT_DIR}
-    expire_in: 1 day
+    expire_in: 1 week  # Extended from 1 day to 1 week
     name: "huskycat-tools-${PLATFORM}-${CI_COMMIT_SHORT_SHA}"
   cache:
     key: "tools-${PLATFORM}"

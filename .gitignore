@@ -111,3 +111,5 @@ result-*
 # Bazel
 bazel-*
 .bazelisk/
+CLAUDE.md
+*.bak

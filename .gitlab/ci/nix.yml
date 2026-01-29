@@ -1,36 +1,203 @@
-# Nix build verification
-# Verifies the Nix flake builds correctly and passes basic checks
+# Nix build verification with Attic cache optimization
+# Strategy: Matrix builds, unconditional cache push, immediate job start
+#
+# Key optimizations:
+# - `needs: []` - Jobs start immediately, pull from cache as it populates
+# - Unconditional cache push - Every build contributes, not just main branch
+# - `allow_failure: true` - Matrix jobs don't block each other
+# - No `changes:` restrictions - Every commit populates cache for future builds
 
-nix:build:
+# Shared variables for Nix builds
+.nix_variables: &nix_variables
+  NIX_CONFIG: |
+    experimental-features = nix-command flakes
+    accept-flake-config = true
+    substituters = https://cache.nixos.org https://nix-cache.fuzzy-dev.tinyland.dev/main
+    trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= main:PBDvqG8OP3W2XF4QzuqWwZD/RhLRsE7ONxwM09kqTtw=
+
+# Template for matrix Nix builds
+.nix_build_template:
   stage: validate
   image: nixos/nix:latest
+  needs: []  # Start immediately, don't wait for other jobs
   variables:
-    NIX_CONFIG: |
-      experimental-features = nix-command flakes
-      sandbox = false
+    <<: *nix_variables
   before_script:
     - nix --version
+    - command -v attic || nix profile install nixpkgs#attic-client
+    - attic login tinyland https://nix-cache.fuzzy-dev.tinyland.dev "$ATTIC_TOKEN" || true
   script:
-    - echo "Building HuskyCat with Nix..."
-    - nix build --print-build-logs --no-link
-    - echo "Checking flake..."
-    - nix flake check --no-build
-    - echo "Showing flake outputs..."
-    - nix flake show
+    - echo "Building HuskyCat for ${SYSTEM}..."
+    - nix build .#packages.${SYSTEM}.default --no-update-lock-file --print-build-logs
+    # Push unconditionally - every build contributes to cache
+    # This populates cache for all future builds regardless of branch
+    - attic push tinyland:main ./result || echo "Cache push failed (non-fatal)"
+  artifacts:
+    paths:
+      - result/
+    expire_in: 1 week
+  # Run on all commits - every build contributes to cache
+  rules:
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_TAG
+
+# Matrix: Build all 4 systems in parallel
+# Each job starts immediately (needs: []) and pulls from cache as available
+
+nix:build:x86_64-linux:
+  extends: .nix_build_template
+  variables:
+    <<: *nix_variables
+    SYSTEM: x86_64-linux
+  tags:
+    - linux
+  allow_failure: false  # Primary platform, should not fail
+
+nix:build:aarch64-linux:
+  extends: .nix_build_template
+  variables:
+    <<: *nix_variables
+    SYSTEM: aarch64-linux
+  tags:
+    - linux
+  allow_failure: true  # May not have ARM runners, don't block pipeline
+
+nix:build:x86_64-darwin:
+  extends: .nix_build_template
+  variables:
+    <<: *nix_variables
+    SYSTEM: x86_64-darwin
+  tags:
+    - darwin
+  allow_failure: true  # May not have Intel Mac runners
+
+nix:build:aarch64-darwin:
+  extends: .nix_build_template
+  variables:
+    <<: *nix_variables
+    SYSTEM: aarch64-darwin
+  tags:
+    - darwin
+    - native
+  allow_failure: true  # Apple Silicon runner available but may have capacity issues
+
+# Nix binary output - lightweight binary for Nix users (~2MB)
+# Requires tools in PATH or sidecar container
+nix:binary:linux-amd64:
+  stage: package
+  image: nixos/nix:latest
+  needs:
+    - job: nix:build:x86_64-linux
+      optional: true  # Pull from cache if matrix job failed
+  variables:
+    <<: *nix_variables
+  before_script:
+    - nix --version
+    - command -v attic || nix profile install nixpkgs#attic-client
+    - attic login tinyland https://nix-cache.fuzzy-dev.tinyland.dev "$ATTIC_TOKEN" || true
+  script:
+    - nix build .#packages.x86_64-linux.default --no-update-lock-file
+    - mkdir -p dist/bin
+    - cp -L result/bin/huskycat dist/bin/huskycat-nix-linux-amd64
+    - chmod +x dist/bin/huskycat-nix-linux-amd64
+    - ls -la dist/bin/
+    - ./dist/bin/huskycat-nix-linux-amd64 --version || echo "Version check (may require Python PATH)"
+    # Push to cache unconditionally
+    - attic push tinyland:main ./result || true
+  artifacts:
+    paths:
+      - dist/bin/huskycat-nix-linux-amd64
+    expire_in: 1 month
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-      changes:
-        - flake.nix
-        - flake.lock
-    - if: $CI_MERGE_REQUEST_ID
-      changes:
-        - flake.nix
-        - flake.lock
-  allow_failure: true  # Don't block pipeline until Nix builds are stable
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
+nix:binary:darwin-arm64:
+  stage: package
+  image: nixos/nix:latest
+  needs:
+    - job: nix:build:aarch64-darwin
+      optional: true
+  variables:
+    <<: *nix_variables
+  tags:
+    - darwin
+    - native
+  before_script:
+    - nix --version
+    - command -v attic || nix profile install nixpkgs#attic-client
+    - attic login tinyland https://nix-cache.fuzzy-dev.tinyland.dev "$ATTIC_TOKEN" || true
+  script:
+    - nix build .#packages.aarch64-darwin.default --no-update-lock-file
+    - mkdir -p dist/bin
+    - cp -L result/bin/huskycat dist/bin/huskycat-nix-darwin-arm64
+    - chmod +x dist/bin/huskycat-nix-darwin-arm64
+    - ls -la dist/bin/
+    - ./dist/bin/huskycat-nix-darwin-arm64 --version || echo "Version check (may require Python PATH)"
+    - attic push tinyland:main ./result || true
+  artifacts:
+    paths:
+      - dist/bin/huskycat-nix-darwin-arm64
+    expire_in: 1 month
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: true  # macOS runners may have capacity issues
+
+# Nix container build using nix2container (Phase 2)
+# Reproducible container with layer caching
+nix:container:amd64:
+  stage: build
+  image: nixos/nix:latest
+  needs: []  # Start immediately
+  variables:
+    <<: *nix_variables
+  before_script:
+    - nix --version
+    - nix profile install nixpkgs#skopeo nixpkgs#attic-client
+    - attic login tinyland https://nix-cache.fuzzy-dev.tinyland.dev "$ATTIC_TOKEN" || true
+  script:
+    - echo "Building container with nix2container..."
+    - nix build .#packages.x86_64-linux.container --no-update-lock-file || echo "Container output not yet defined"
+    - |
+      if [ -e ./result ]; then
+        echo "Pushing container to registry..."
+        skopeo copy --dest-creds "$CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD" \
+          nix:./result docker://$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA-nix
+        attic push tinyland:main ./result || true
+      else
+        echo "No container output - skipping push (add container output to flake.nix)"
+      fi
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: true  # Don't block pipeline while transitioning to nix2container
+
+# Flake check - validates flake structure (fast, no build)
+nix:flake:check:
+  stage: validate
+  image: nixos/nix:latest
+  needs: []
+  variables:
+    <<: *nix_variables
+  script:
+    - echo "Checking flake structure..."
+    - nix flake check --no-build
+    - nix flake show
+  rules:
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+  allow_failure: true  # Flake check is informational
+
+# Development shell test - verifies dev environment works
 nix:devshell:
   stage: validate
   image: nixos/nix:latest
+  needs: []
   variables:
     NIX_CONFIG: |
       experimental-features = nix-command flakes
@@ -38,16 +205,13 @@ nix:devshell:
   script:
     - echo "Testing development shell..."
     - nix develop --command echo "Dev shell works!"
-    - echo "Testing CI shell..."
+    - echo "Testing CI shell (includes GPL tools)..."
     - nix develop .#ci --command shellcheck --version
     - nix develop .#ci --command hadolint --version
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      changes:
-        - flake.nix
-        - flake.lock
+    - if: $CI_COMMIT_BRANCH
     - if: $CI_MERGE_REQUEST_ID
-      changes:
+    - changes:
         - flake.nix
         - flake.lock
-  allow_failure: true
+  allow_failure: true  # Dev shell test is informational
