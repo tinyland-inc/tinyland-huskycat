@@ -531,7 +531,7 @@ huskycat validate src/**/*.chpl
 
 | Validator | Tool | Purpose | Auto-Fix |
 |-----------|------|---------|----------|
-| `docker-hadolint` | hadolint | Dockerfile linting |  No |
+| `hadolint` | hadolint | Dockerfile linting |  No |
 | `shellcheck` | shellcheck | Shell script linting |  No |
 
 ---

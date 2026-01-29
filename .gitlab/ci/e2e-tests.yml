@@ -1,10 +1,19 @@
 # E2E Tests for HuskyCat Bootstrap and Git Hooks
 # Tests the complete binary + git hooks workflow for GitOps repositories
 
+# Template for E2E test retry logic
+.e2e_retry_transient: &e2e_retry
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
 # E2E: Test bootstrap on full GitOps repository
 test:e2e:bootstrap:gitops:
   stage: test
   image: python:3.11-alpine
+  <<: *e2e_retry
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -34,6 +43,7 @@ test:e2e:bootstrap:gitops:
 test:e2e:bootstrap:types:
   stage: test
   image: python:3.11-alpine
+  <<: *e2e_retry
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -65,6 +75,7 @@ test:e2e:bootstrap:types:
 test:e2e:hooks:execution:
   stage: test
   image: python:3.11-alpine
+  <<: *e2e_retry
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -99,6 +110,7 @@ test:e2e:hooks:execution:
 test:e2e:fast:mode:
   stage: test
   image: python:3.11-alpine
+  <<: *e2e_retry
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -129,6 +141,7 @@ test:e2e:fast:mode:
 test:e2e:edge:cases:
   stage: test
   image: python:3.11-alpine
+  <<: *e2e_retry
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -200,6 +213,7 @@ test:e2e:edge:cases:
 test:e2e:comprehensive:
   stage: test
   image: python:3.11-alpine
+  <<: *e2e_retry
   before_script:
     - apk add --no-cache git curl bash gcc musl-dev linux-headers
     - curl -LsSf https://astral.sh/uv/install.sh | sh

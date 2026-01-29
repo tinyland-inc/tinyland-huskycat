@@ -223,7 +223,7 @@ class TestValidationEngineProperties:
             assert isinstance(results, list)
             # Dockerfile validation is optional (hadolint might not be installed)
             for result in results:
-                if result.tool == "docker-hadolint":
+                if result.tool == "hadolint":
                     assert isinstance(result.success, bool)
                     assert isinstance(result.messages, list)
         finally:

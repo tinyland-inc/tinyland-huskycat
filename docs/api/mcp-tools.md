@@ -256,7 +256,7 @@ YAML validator using yamllint.
 }
 ```
 
-### `validate_docker-hadolint`
+### `validate_hadolint`
 
 Dockerfile/ContainerFile linter using hadolint.
 

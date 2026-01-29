@@ -19,7 +19,12 @@ class HadolintValidator(Validator):
 
     @property
     def name(self) -> str:
-        return "docker-hadolint"
+        return "hadolint"
+
+    @property
+    def command(self) -> str:
+        """Command to execute - hadolint binary"""
+        return "hadolint"
 
     @property
     def extensions(self) -> Set[str]:

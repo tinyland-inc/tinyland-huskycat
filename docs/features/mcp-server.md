@@ -13,7 +13,7 @@ The Model Context Protocol (MCP) is an open standard that allows AI assistants l
 Install HuskyCat with automatic Claude Code integration:
 
 ```bash
-HUSKYCAT_WITH_CLAUDE=1 curl -fsSL https://tinyland.gitlab.io/ai/huskycat/install.sh | bash
+HUSKYCAT_WITH_CLAUDE=1 curl -fsSL https://huskycat-570fbd.gitlab.io/install.sh | bash
 ```
 
 This automatically:
@@ -117,7 +117,7 @@ Each validator has its own tool for targeted validation:
 - `validate_js-eslint` - JavaScript/TypeScript linting
 - `validate_js-prettier` - JavaScript/TypeScript formatting
 - `validate_yamllint` - YAML validation
-- `validate_docker-hadolint` - Dockerfile validation
+- `validate_hadolint` - Dockerfile validation
 - `validate_shellcheck` - Shell script validation
 - `validate_gitlab-ci` - GitLab CI validation
 
