@@ -65,15 +65,13 @@ variables:
       - api_failure
       - scheduler_failure
 
-# Debug: Test if validate stage works
-test:validate-stage-works:
-  stage: validate
+# Debug: Test if package stage works (NO RULES)
+test:package-stage-works:
+  stage: package
   image: alpine:latest
   needs: []
   script:
-    - echo "Validate stage works!"
-  rules:
-    - when: always
+    - echo "Package stage works!"
 
 # Container-based validation (after container build for parity)
 validate:basic:
