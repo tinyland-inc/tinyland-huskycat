@@ -13,6 +13,16 @@ build:binary:linux-amd64:
       optional: true
   dependencies:
     - download:tools:linux-amd64
+  cache:
+    key:
+      files:
+        - pyproject.toml
+        - uv.lock
+      prefix: build-linux-amd64
+    paths:
+      - .cache/uv
+      - .cache/pip
+    policy: pull-push
   before_script:
     - dnf install -y epel-release
     - dnf install -y git curl gcc python3 python3-pip zlib-devel
@@ -77,6 +87,16 @@ build:binary:darwin-arm64:
       artifacts: true
     - job: validate:complete
       optional: true
+  cache:
+    key:
+      files:
+        - pyproject.toml
+        - uv.lock
+      prefix: build-darwin-arm64
+    paths:
+      - .cache/uv
+      - .cache/pip
+    policy: pull-push
   before_script:
     - curl -LsSf https://astral.sh/uv/install.sh | sh
     - export PATH="$HOME/.local/bin:$PATH"
