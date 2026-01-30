@@ -2,10 +2,11 @@
 # This stage downloads pre-compiled binaries (shellcheck, hadolint, taplo)
 # that will be embedded into HuskyCat binaries for each platform.
 
-# Shared configuration for download jobs
-.download_tools_template: &download_tools_template
+# Shared configuration for download jobs (uses extends: instead of YAML anchors)
+.download_tools_template:
   stage: validate  # Changed from 'build' to 'validate' for parallel execution
   image: python:3.11-slim
+  needs: []  # Start immediately
   tags:
     - linux  # Allow any Linux runner to pick up these jobs
   before_script:
@@ -35,7 +36,7 @@
 
 # Linux AMD64 tool downloads
 download:tools:linux-amd64:
-  <<: *download_tools_template
+  extends: .download_tools_template
   variables:
     PLATFORM: linux-amd64
     OUTPUT_DIR: dist/tools
@@ -45,7 +46,7 @@ download:tools:linux-amd64:
 
 # macOS Apple Silicon (ARM64) tool downloads
 download:tools:darwin-arm64:
-  <<: *download_tools_template
+  extends: .download_tools_template
   variables:
     PLATFORM: darwin-arm64
     OUTPUT_DIR: dist/tools
