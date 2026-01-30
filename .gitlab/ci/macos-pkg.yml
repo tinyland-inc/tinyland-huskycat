@@ -7,7 +7,7 @@
 # Required CI/CD Variables:
 #   APPLE_CERTIFICATE_BASE64        - Developer ID Application cert (.p12, base64)
 #   APPLE_INSTALLER_CERTIFICATE_BASE64 - Developer ID Installer cert (.p12, base64)
-#   APPLE_CERTIFICATE_PASSWORD      - Certificate password
+#   APPLE_CERTIFICATE_PASSWORD      - Certificate password (can be empty for unencrypted P12)
 #   APPLE_DEVELOPER_ID_APPLICATION  - "Developer ID Application: Name (TEAMID)"
 #   APPLE_DEVELOPER_ID_INSTALLER    - "Developer ID Installer: Name (TEAMID)"
 #   APPLE_DEVELOPER_ID_CA_G2        - G2 intermediate cert (base64, optional)
@@ -34,14 +34,11 @@ variables:
   before_script:
     - echo "🔐 Setting up temporary keychain for code signing..."
 
-    # Validate required variables
+    # Validate required variables (password can be empty for unencrypted P12)
     - |
       MISSING_VARS=""
       if [ -z "$APPLE_CERTIFICATE_BASE64" ]; then
         MISSING_VARS="$MISSING_VARS APPLE_CERTIFICATE_BASE64"
-      fi
-      if [ -z "$APPLE_CERTIFICATE_PASSWORD" ]; then
-        MISSING_VARS="$MISSING_VARS APPLE_CERTIFICATE_PASSWORD"
       fi
       if [ -z "$APPLE_DEVELOPER_ID_APPLICATION" ]; then
         MISSING_VARS="$MISSING_VARS APPLE_DEVELOPER_ID_APPLICATION"
@@ -55,7 +52,7 @@ variables:
       fi
       echo "✅ Required variables present"
       echo "   APPLE_CERTIFICATE_BASE64: ${#APPLE_CERTIFICATE_BASE64} chars"
-      echo "   APPLE_CERTIFICATE_PASSWORD: ${#APPLE_CERTIFICATE_PASSWORD} chars"
+      echo "   APPLE_CERTIFICATE_PASSWORD: ${#APPLE_CERTIFICATE_PASSWORD:-0} chars (empty is OK)"
       echo "   APPLE_DEVELOPER_ID_APPLICATION: $APPLE_DEVELOPER_ID_APPLICATION"
 
     # Create temporary keychain
@@ -87,23 +84,27 @@ variables:
       echo "Importing Application certificate..."
       echo "$APPLE_CERTIFICATE_BASE64" | base64 -d > certificate.p12
 
+      # Handle empty password (use empty string for -passin)
+      CERT_PASSWORD="${APPLE_CERTIFICATE_PASSWORD:-}"
+
       # Verify the P12 file is valid before import
-      if ! openssl pkcs12 -info -in certificate.p12 -passin pass:"$APPLE_CERTIFICATE_PASSWORD" -noout 2>/dev/null; then
+      if ! openssl pkcs12 -info -in certificate.p12 -passin pass:"$CERT_PASSWORD" -noout 2>/dev/null; then
         echo "❌ ERROR: Failed to read P12 certificate"
         echo "   This usually means the password is incorrect"
         echo ""
         echo "   Certificate size: $(wc -c < certificate.p12) bytes"
-        echo "   Password length: ${#APPLE_CERTIFICATE_PASSWORD} chars"
+        echo "   Password provided: ${#CERT_PASSWORD} chars"
         echo ""
         echo "   To fix: Update APPLE_CERTIFICATE_PASSWORD in GitLab CI/CD variables"
         echo "   Or re-export the certificate with the correct password"
+        echo "   (Use empty string for unencrypted P12 files)"
         rm -f certificate.p12
         exit 1
       fi
       echo "✅ P12 certificate validated"
 
-      # Import into keychain
-      if ! security import certificate.p12 -k "$KEYCHAIN_NAME" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign -A 2>&1; then
+      # Import into keychain (empty password is valid for unencrypted P12)
+      if ! security import certificate.p12 -k "$KEYCHAIN_NAME" -P "$CERT_PASSWORD" -T /usr/bin/codesign -A 2>&1; then
         echo "❌ ERROR: Failed to import certificate into keychain"
         rm -f certificate.p12
         exit 1
@@ -117,8 +118,8 @@ variables:
         echo "Importing Installer certificate..."
         echo "$APPLE_INSTALLER_CERTIFICATE_BASE64" | base64 -d > installer.p12
 
-        # Use separate password if provided, otherwise use same as application cert
-        INSTALLER_PASSWORD="${APPLE_INSTALLER_CERTIFICATE_PASSWORD:-$APPLE_CERTIFICATE_PASSWORD}"
+        # Use separate password if provided, otherwise use same as application cert (can be empty)
+        INSTALLER_PASSWORD="${APPLE_INSTALLER_CERTIFICATE_PASSWORD:-$CERT_PASSWORD}"
 
         if ! openssl pkcs12 -info -in installer.p12 -passin pass:"$INSTALLER_PASSWORD" -noout 2>/dev/null; then
           echo "⚠️  WARNING: Failed to validate Installer certificate (continuing without it)"
