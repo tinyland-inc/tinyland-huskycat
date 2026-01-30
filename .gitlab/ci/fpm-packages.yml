@@ -40,9 +40,16 @@ package:rpm:x86_64:
     - job: build:binary:linux-amd64
       artifacts: true
   variables:
-    PACKAGE_VERSION: ${CI_COMMIT_TAG:-2.0.0}
     ARCH: x86_64
   script:
+    # Determine version - use tag if available, otherwise fallback to 2.0.0
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        PACKAGE_VERSION="$CI_COMMIT_TAG"
+      else
+        PACKAGE_VERSION="2.0.0"
+      fi
+      echo "Package version: $PACKAGE_VERSION"
     - echo "📦 Building RPM package for ${ARCH}..."
 
     # Create package directory structure
@@ -114,9 +121,16 @@ package:deb:amd64:
     - job: build:binary:linux-amd64
       artifacts: true
   variables:
-    PACKAGE_VERSION: ${CI_COMMIT_TAG:-2.0.0}
     ARCH: amd64
   script:
+    # Determine version - use tag if available, otherwise fallback to 2.0.0
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        PACKAGE_VERSION="$CI_COMMIT_TAG"
+      else
+        PACKAGE_VERSION="2.0.0"
+      fi
+      echo "Package version: $PACKAGE_VERSION"
     - echo "📦 Building DEB package for ${ARCH}..."
 
     # Create package directory structure

@@ -247,19 +247,23 @@ container:tag:latest:
   tags:
     - dind
     - linux  # Target Rocky Linux runner (excludes Darwin M1 which has 'darwin' tag)
+  <<: *retry_transient
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
   needs:
     - container:build:amd64
   before_script:
+    # Extended timeout (90s) for DinD startup
     - |
-      ATTEMPTS=0; MAX=30
+      echo "Waiting for Docker daemon (max 90s)..."
+      ATTEMPTS=0; MAX=45
       until docker info >/dev/null 2>&1; do
         ATTEMPTS=$((ATTEMPTS + 1))
-        [ $ATTEMPTS -ge $MAX ] && echo "Docker not ready" && exit 1
+        [ $ATTEMPTS -ge $MAX ] && echo "Docker not ready after 90s" && exit 1
         sleep 2
       done
+      docker version
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     # Tag commit SHA (without -amd64 suffix)
