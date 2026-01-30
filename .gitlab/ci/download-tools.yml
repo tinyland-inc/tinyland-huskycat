@@ -2,6 +2,16 @@
 # This stage downloads pre-compiled binaries (shellcheck, hadolint, taplo)
 # that will be embedded into HuskyCat binaries for each platform.
 
+# Debug test job to verify includes work
+test:download-includes-work:
+  stage: validate
+  image: alpine:latest
+  needs: []
+  script:
+    - echo "Download-tools.yml is being included!"
+  rules:
+    - when: always
+
 # Shared configuration for download jobs (uses extends: instead of YAML anchors)
 .download_tools_template:
   stage: validate  # Changed from 'build' to 'validate' for parallel execution
