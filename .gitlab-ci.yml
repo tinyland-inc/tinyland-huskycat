@@ -65,6 +65,56 @@ variables:
       - api_failure
       - scheduler_failure
 
+# Download tools for fat binary builds
+# NOTE: Defined here because .gitlab/ci/download-tools.yml include wasn't working
+download:tools:linux-amd64:
+  stage: package
+  image: python:3.11-slim
+  needs: []
+  tags:
+    - linux
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends curl ca-certificates xz-utils gzip
+    - python3 scripts/download_tools.py --help
+  script:
+    - echo "Downloading tools for linux-amd64"
+    - python3 scripts/download_tools.py --platform linux-amd64 --output-dir dist/tools
+    - ls -lah dist/tools/linux-amd64
+    - cat dist/tools/linux-amd64/versions.txt
+  artifacts:
+    paths:
+      - dist/tools
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+download:tools:darwin-arm64:
+  stage: package
+  image: python:3.11-slim
+  needs: []
+  tags:
+    - linux
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends curl ca-certificates xz-utils gzip
+    - python3 scripts/download_tools.py --help
+  script:
+    - echo "Downloading tools for darwin-arm64"
+    - python3 scripts/download_tools.py --platform darwin-arm64 --output-dir dist/tools
+    - ls -lah dist/tools/darwin-arm64
+    - cat dist/tools/darwin-arm64/versions.txt
+  artifacts:
+    paths:
+      - dist/tools
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
 # Container-based validation (after container build for parity)
 validate:basic:
   stage: security
