@@ -19,7 +19,6 @@ include:
   - local: '/.gitlab/ci/nix.yml'
 
 stages:
-  - lint
   - validate
   - security
   - build  # Tool downloads happen here
@@ -65,22 +64,6 @@ variables:
       - job_execution_timeout
       - api_failure
       - scheduler_failure
-
-# Debug: Test if lint stage works (changed from validate)
-test:lint-stage:
-  stage: lint
-  image: alpine:latest
-  needs: []
-  script:
-    - echo "Lint stage works!"
-
-# Debug: Test if package stage works (NO RULES)
-test:package-stage-works:
-  stage: package
-  image: alpine:latest
-  needs: []
-  script:
-    - echo "Package stage works!"
 
 # Container-based validation (after container build for parity)
 validate:basic:

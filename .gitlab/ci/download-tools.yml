@@ -2,19 +2,9 @@
 # This stage downloads pre-compiled binaries (shellcheck, hadolint, taplo)
 # that will be embedded into HuskyCat binaries for each platform.
 
-# Debug test job to verify includes work
-test:download-includes-work:
-  stage: validate
-  image: alpine:latest
-  needs: []
-  script:
-    - echo "Download-tools.yml is being included!"
-  rules:
-    - when: always
-
 # Shared configuration for download jobs (uses extends: instead of YAML anchors)
 .download_tools_template:
-  stage: validate  # Changed from 'build' to 'validate' for parallel execution
+  stage: package  # Using package stage where jobs are working
   image: python:3.11-slim
   needs: []  # Start immediately
   tags:
@@ -64,7 +54,7 @@ download:tools:darwin-arm64:
 # Verification job - ensure all tools downloaded successfully
 # Supported platforms: linux-amd64, darwin-arm64
 verify:tools:all-platforms:
-  stage: test
+  stage: package
   image: python:3.11-slim
   needs:
     - download:tools:linux-amd64
