@@ -147,8 +147,9 @@ nix:binary:darwin-arm64:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   allow_failure: true  # macOS runners may have capacity issues
 
-# Nix container build using nix2container (Phase 2)
-# Reproducible container with layer caching
+# Nix container build using nix2container (Phase 5)
+# Reproducible container with layer caching (3 layers: base, python, app)
+# Expected speedup: 25-30min (DinD) → 5-10min (nix2container with cache)
 nix:container:amd64:
   stage: build
   image: nixos/nix:latest
@@ -160,22 +161,37 @@ nix:container:amd64:
     - nix profile install nixpkgs#skopeo nixpkgs#attic-client
     - attic login tinyland https://nix-cache.fuzzy-dev.tinyland.dev "$ATTIC_TOKEN" || true
   script:
-    - echo "Building container with nix2container..."
-    - nix build .#packages.x86_64-linux.container --no-update-lock-file || echo "Container output not yet defined"
+    - echo "Building container with nix2container (3-layer caching)..."
+    - nix build .#packages.x86_64-linux.container --no-update-lock-file --print-build-logs
     - |
       if [ -e ./result ]; then
-        echo "Pushing container to registry..."
+        echo "Container build successful! Pushing to registry..."
+        # Push to GitLab Container Registry with version tag
         skopeo copy --dest-creds "$CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD" \
-          nix:./result docker://$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA-nix
+          docker-archive:./result \
+          docker://$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA-nix
+        # Tag as latest-nix on main branch
+        if [ "$CI_COMMIT_BRANCH" = "main" ] || [ -n "$CI_COMMIT_TAG" ]; then
+          skopeo copy --dest-creds "$CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD" \
+            docker-archive:./result \
+            docker://$CI_REGISTRY_IMAGE:latest-nix
+        fi
+        # Push layers to Attic cache
         attic push tinyland:main ./result || true
+        echo "✅ nix2container build and push complete"
       else
-        echo "No container output - skipping push (add container output to flake.nix)"
+        echo "ERROR: Container build failed - result not found"
+        exit 1
       fi
+  artifacts:
+    paths:
+      - result/
+    expire_in: 1 week
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-  allow_failure: true  # Don't block pipeline while transitioning to nix2container
+  allow_failure: true  # Keep non-blocking during transition period
 
 # Flake check - validates flake structure (fast, no build)
 nix:flake:check:

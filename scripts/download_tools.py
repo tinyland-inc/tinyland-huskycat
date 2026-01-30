@@ -356,6 +356,11 @@ def main():
         help="Target platform (default: auto-detect)",
     )
     parser.add_argument(
+        "--tool",
+        choices=list(TOOL_URLS.keys()),
+        help="Download specific tool only (for checkpoint resume)",
+    )
+    parser.add_argument(
         "--all",
         action="store_true",
         help="Download tools for all platforms",
@@ -394,8 +399,19 @@ def main():
     # Download for each platform
     total_tools = 0
     for platform_key in platforms:
-        results = downloader.download_all_tools(platform_key)
-        total_tools += len(results)
+        if args.tool:
+            # Download specific tool only (checkpoint mode)
+            print(f"\nCheckpoint mode: Downloading {args.tool} for {platform_key}")
+            binary_path = downloader.download_tool(args.tool, platform_key)
+            if binary_path:
+                total_tools += 1
+                # Write manifest for single tool
+                results = {args.tool: binary_path}
+                downloader.write_version_manifest(platform_key, results)
+        else:
+            # Download all tools
+            results = downloader.download_all_tools(platform_key)
+            total_tools += len(results)
 
     print(f"\n✓ Downloaded {total_tools} tool binaries across {len(platforms)} platform(s)")
     print(f"✓ Tools stored in: {args.output_dir}")

@@ -83,15 +83,40 @@ download:tools:linux-amd64:
     - apt-get install -y --no-install-recommends curl ca-certificates xz-utils gzip
     # Use pip directly (already in python:3.11-slim), not pip3 via apt-get
     - pip install --no-cache-dir requests pyyaml
-    - echo "Downloading tools for linux-amd64"
-    - python3 scripts/download_tools.py --platform linux-amd64 --output-dir dist/tools
+    - mkdir -p dist/tools/linux-amd64
+    # Checkpoint 1: Download shellcheck (skip if exists)
+    - |
+      if [ ! -f dist/tools/linux-amd64/shellcheck ]; then
+        echo "Downloading shellcheck..."
+        python3 scripts/download_tools.py --tool shellcheck --platform linux-amd64 --output-dir dist/tools
+      else
+        echo "Using cached shellcheck"
+      fi
+    # Checkpoint 2: Download hadolint (skip if exists)
+    - |
+      if [ ! -f dist/tools/linux-amd64/hadolint ]; then
+        echo "Downloading hadolint..."
+        python3 scripts/download_tools.py --tool hadolint --platform linux-amd64 --output-dir dist/tools
+      else
+        echo "Using cached hadolint"
+      fi
+    # Checkpoint 3: Download taplo (skip if exists)
+    - |
+      if [ ! -f dist/tools/linux-amd64/taplo ]; then
+        echo "Downloading taplo..."
+        python3 scripts/download_tools.py --tool taplo --platform linux-amd64 --output-dir dist/tools
+      else
+        echo "Using cached taplo"
+      fi
+    - echo "All tools downloaded for linux-amd64"
     - ls -lah dist/tools/linux-amd64
-    - cat dist/tools/linux-amd64/versions.txt
+    - cat dist/tools/linux-amd64/versions.txt || echo "Version manifest will be created on next full run"
   artifacts:
     paths:
       - dist/tools
-    expire_in: 1 month  # Extended from 1 week
-  timeout: 15m  # Reduced from 20m (should complete in <10min with cache)
+    expire_in: 1 month
+    when: always  # Save partial downloads even on failure
+  timeout: 15m
 
 download:tools:darwin-arm64:
   stage: package
@@ -109,15 +134,40 @@ download:tools:darwin-arm64:
     - apt-get install -y --no-install-recommends curl ca-certificates xz-utils gzip
     # Use pip directly (already in python:3.11-slim), not pip3 via apt-get
     - pip install --no-cache-dir requests pyyaml
-    - echo "Downloading tools for darwin-arm64"
-    - python3 scripts/download_tools.py --platform darwin-arm64 --output-dir dist/tools
+    - mkdir -p dist/tools/darwin-arm64
+    # Checkpoint 1: Download shellcheck (skip if exists)
+    - |
+      if [ ! -f dist/tools/darwin-arm64/shellcheck ]; then
+        echo "Downloading shellcheck..."
+        python3 scripts/download_tools.py --tool shellcheck --platform darwin-arm64 --output-dir dist/tools
+      else
+        echo "Using cached shellcheck"
+      fi
+    # Checkpoint 2: Download hadolint (skip if exists)
+    - |
+      if [ ! -f dist/tools/darwin-arm64/hadolint ]; then
+        echo "Downloading hadolint..."
+        python3 scripts/download_tools.py --tool hadolint --platform darwin-arm64 --output-dir dist/tools
+      else
+        echo "Using cached hadolint"
+      fi
+    # Checkpoint 3: Download taplo (skip if exists)
+    - |
+      if [ ! -f dist/tools/darwin-arm64/taplo ]; then
+        echo "Downloading taplo..."
+        python3 scripts/download_tools.py --tool taplo --platform darwin-arm64 --output-dir dist/tools
+      else
+        echo "Using cached taplo"
+      fi
+    - echo "All tools downloaded for darwin-arm64"
     - ls -lah dist/tools/darwin-arm64
-    - cat dist/tools/darwin-arm64/versions.txt
+    - cat dist/tools/darwin-arm64/versions.txt || echo "Version manifest will be created on next full run"
   artifacts:
     paths:
       - dist/tools
-    expire_in: 1 month  # Extended from 1 week
-  timeout: 15m  # Added explicit timeout
+    expire_in: 1 month
+    when: always  # Save partial downloads even on failure
+  timeout: 15m
 
 # MkDocs validation removed - handled by mkdocs:build job for Pages deployment
 # validate:basic removed - redundant with validate:complete (Phase 2 optimization)
