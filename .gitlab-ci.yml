@@ -7,7 +7,7 @@ include:
   - local: '/.gitlab/ci/scheduled-updates.yml'
   - local: '/.gitlab/ci/pages.yml'
   - local: '/.gitlab/ci/e2e-tests.yml'
-  - local: '.gitlab/ci/download-tools.yml'
+  # NOTE: download-tools.yml removed - jobs defined inline due to include issues
   - local: '/.gitlab/ci/build.yml'
   - local: '/.gitlab/ci/binary-tests.yml'
   # Packaging and distribution
