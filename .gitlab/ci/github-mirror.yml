@@ -1,5 +1,6 @@
-# Automated push mirror to GitHub.
-# Syncs all branches and tags from GitLab to GitHub on every main push and tag.
+# Filtered push mirror to GitHub.
+# Creates a clean community-facing copy: strips internal dotfiles, hooks,
+# markdown docs, and replaces the license with zlib.
 # Requires CI variable: GITHUB_MIRROR_KEY (ed25519 private key with write access)
 
 mirror:github:
@@ -15,10 +16,72 @@ mirror:github:
     - echo "$GITHUB_MIRROR_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+    - git config user.email "ci@tinyland.ai"
+    - git config user.name "Tinyland CI"
   script:
+    # --- Build filtered tree for GitHub ---
+    - |
+      echo "=== Stripping internal files for GitHub mirror ==="
+
+      # Remove .githooks (dev-only tracked hooks)
+      git rm -rf --quiet .githooks/ 2>/dev/null || true
+
+      # Remove GitLab-specific CI files (GitHub has its own in .github/)
+      git rm -rf --quiet .gitlab/ .gitlab-ci.yml 2>/dev/null || true
+
+      # Remove Claude Code / AI agent configs
+      git rm -rf --quiet .claude/ 2>/dev/null || true
+
+      # Remove HuskyCat run artifacts
+      git rm -rf --quiet .huskycat/ 2>/dev/null || true
+
+      # Remove MCP / editor / build configs not needed for community
+      git rm -f --quiet .mcp.json .huskycat.json .mise.toml .bazelrc .envrc 2>/dev/null || true
+
+      # Remove all markdown files (docs live on GitLab Pages)
+      git rm -rf --quiet $(git ls-files '*.md') 2>/dev/null || true
+
+      # Remove CLAUDE.md if present at root
+      git rm -f --quiet CLAUDE.md 2>/dev/null || true
+
+    # --- Replace LICENSE with zlib ---
+    - |
+      cat > LICENSE <<'ZLIB_EOF'
+      zlib License
+
+      Copyright (c) 2024-2026 Tinyland AI
+      Copyright (c) 2024-2026 Jess Sullivan
+
+      This software is provided 'as-is', without any express or implied
+      warranty. In no event will the authors be held liable for any damages
+      arising from the use of this software.
+
+      Permission is granted to anyone to use this software for any purpose,
+      including commercial applications, and to alter it and redistribute it
+      freely, subject to the following restrictions:
+
+        1. The origin of this software must not be misrepresented; you must
+           not claim that you wrote the original software. If you use this
+           software in a product, an acknowledgment in the product
+           documentation would be appreciated but is not required.
+
+        2. Altered source versions must be plainly marked as such, and must
+           not be misrepresented as being the original software.
+
+        3. This notice may not be removed or altered from any source
+           distribution.
+      ZLIB_EOF
+      sed -i 's/^      //' LICENSE
+      git add LICENSE
+
+    # --- Commit filtered tree (amend to keep original message) ---
+    - |
+      git commit --allow-empty -m "mirror: filtered sync from GitLab ($(git rev-parse --short HEAD~1))"
+
+    # --- Push to GitHub ---
     - git remote add github git@github.com:Jesssullivan/tinyland-huskycat.git 2>/dev/null || true
     - git remote set-url github git@github.com:Jesssullivan/tinyland-huskycat.git
-    - git push github --all --force
+    - git push github HEAD:main --force
     - git push github --tags --force
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
