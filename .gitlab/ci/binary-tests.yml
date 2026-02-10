@@ -34,9 +34,7 @@ binary:test:linux-amd64:
     - build:binary:linux-amd64
   variables:
     BINARY_PATH: dist/bin/huskycat-linux-amd64
-  tags:
-    - dind
-    - linux
+  # No tags — uses shared runners (no DinD needed for binary tests)
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
@@ -86,9 +84,7 @@ binary:smoke-test:
     - ./dist/bin/huskycat-linux-amd64 --version
     - ./dist/bin/huskycat-linux-amd64 --help
     - echo "✓ Binary smoke test passed"
-  tags:
-    - dind
-    - linux
+  # No tags — uses shared runners
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG

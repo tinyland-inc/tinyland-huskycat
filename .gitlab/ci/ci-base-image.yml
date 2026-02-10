@@ -10,9 +10,7 @@ build:ci-base-image:
   services:
     - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
-  tags:
-    - dind
-    - linux
+  # No tags — uses shared runners (DinD via services)
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""

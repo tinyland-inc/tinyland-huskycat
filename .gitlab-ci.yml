@@ -75,8 +75,7 @@ download:tools:linux-amd64:
   stage: package
   image: python:3.11-slim
   needs: []
-  tags:
-    - linux
+  # No tags — uses shared runners
   retry:
     max: 2
     when:
@@ -131,8 +130,7 @@ download:tools:darwin-arm64:
   stage: package
   image: python:3.11-slim
   needs: []
-  tags:
-    - linux
+  # No tags — uses shared runners (cross-downloads, not native execution)
   retry:
     max: 2
     when:
@@ -299,9 +297,8 @@ test:mcp:server:
   services:
     - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
-  tags:
-    - dind
-    - linux  # Target Rocky Linux runner (excludes Darwin M1 which has 'darwin' tag)
+  # No tags — runs on GitLab SaaS shared runners (DinD supported via services)
+  # Previously tagged [dind, linux] which only matched the honey self-hosted runner
   <<: *retry_transient
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -357,9 +354,7 @@ container:tag:latest:
   services:
     - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
-  tags:
-    - dind
-    - linux  # Target Rocky Linux runner (excludes Darwin M1 which has 'darwin' tag)
+  # No tags — uses shared runners (DinD via services)
   <<: *retry_transient
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -404,9 +399,7 @@ validate:complete:
   services:
     - name: docker:25.0-dind
       command: ["--tls=false", "--dns=8.8.8.8", "--dns=1.1.1.1"]
-  tags:
-    - dind
-    - linux  # Target Rocky Linux runner (excludes Darwin M1 which has 'darwin' tag)
+  # No tags — uses shared runners (DinD via services)
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""

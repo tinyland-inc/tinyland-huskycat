@@ -50,8 +50,7 @@ nix:build:x86_64-linux:
   variables:
     <<: *nix_variables
     SYSTEM: x86_64-linux
-  tags:
-    - linux
+  # No tags — uses shared runners (nixos/nix:latest image handles everything)
   allow_failure: false  # Primary platform, should not fail
 
 nix:build:aarch64-linux:
@@ -59,18 +58,32 @@ nix:build:aarch64-linux:
   variables:
     <<: *nix_variables
     SYSTEM: aarch64-linux
-  tags:
-    - linux
-  allow_failure: true  # May not have ARM runners, don't block pipeline
+    # Cross-compile via QEMU binfmt on x86_64 shared runners
+    NIX_CONFIG: |
+      experimental-features = nix-command flakes
+      accept-flake-config = true
+      substituters = https://cache.nixos.org https://nix-cache.fuzzy-dev.tinyland.dev/main
+      trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= main:PBDvqG8OP3W2XF4QzuqWwZD/RhLRsE7ONxwM09kqTtw=
+      extra-platforms = aarch64-linux
+  # No tags — uses shared runners with QEMU binfmt
+  allow_failure: true  # Cross-compilation may not be available on all runners
 
 nix:build:x86_64-darwin:
   extends: .nix_build_template
   variables:
     <<: *nix_variables
     SYSTEM: x86_64-darwin
+    # Cross-compile via Rosetta on Apple Silicon runners
+    NIX_CONFIG: |
+      experimental-features = nix-command flakes
+      accept-flake-config = true
+      substituters = https://cache.nixos.org https://nix-cache.fuzzy-dev.tinyland.dev/main
+      trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= main:PBDvqG8OP3W2XF4QzuqWwZD/RhLRsE7ONxwM09kqTtw=
+      extra-platforms = x86_64-darwin
   tags:
     - darwin
-  allow_failure: true  # May not have Intel Mac runners
+    - native
+  allow_failure: true  # Rosetta required, may not be available
 
 nix:build:aarch64-darwin:
   extends: .nix_build_template

@@ -5,8 +5,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
     # nix2container for reproducible container builds with layer caching
+    # Pinned to last commit before PR#189 (skopeo upgrade requiring Go 1.24+).
+    # nixos-24.11 ships Go 1.23.8; bump to nixos-25.05 will unpin this.
     nix2container = {
-      url = "github:nlewo/nix2container";
+      url = "github:nlewo/nix2container/bb6801be998ba857a62c002cb77ece66b0a57298";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
