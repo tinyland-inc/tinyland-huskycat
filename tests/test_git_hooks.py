@@ -46,27 +46,28 @@ class TestGitHookValidation:
         assert internal_dir.exists(), ".githooks/_ internal directory not found"
 
 
+@pytest.fixture
+def test_repo(isolated_dir: Path) -> Path:
+    """Create a test Git repository."""
+    repo_dir = isolated_dir / "test_git_repo"
+    repo_dir.mkdir(exist_ok=True)
+
+    # Initialize Git repo
+    subprocess.run(["git", "init"], cwd=repo_dir, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"],
+        cwd=repo_dir,
+        check=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Test User"], cwd=repo_dir, check=True
+    )
+
+    return repo_dir
+
+
 class TestGitHookExecution:
     """Test actual Git hook execution."""
-
-    @pytest.fixture
-    def test_repo(self, isolated_dir: Path) -> Path:
-        """Create a test Git repository."""
-        repo_dir = isolated_dir / "test_git_repo"
-        repo_dir.mkdir(exist_ok=True)
-
-        # Initialize Git repo
-        subprocess.run(["git", "init"], cwd=repo_dir, check=True, capture_output=True)
-        subprocess.run(
-            ["git", "config", "user.email", "test@example.com"],
-            cwd=repo_dir,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "config", "user.name", "Test User"], cwd=repo_dir, check=True
-        )
-
-        return repo_dir
 
     def test_pre_commit_validation_passes_clean_code(self, test_repo: Path):
         """Test that pre-commit validation passes for clean code."""
