@@ -166,13 +166,23 @@ nix:binary:darwin-arm64:
 nix:container:amd64:
   stage: build
   image: nixos/nix:latest
-  needs: []  # Start immediately
+  needs:
+    - job: nix:build:x86_64-linux
+      optional: true  # Use cache if available
   variables:
-    <<: *nix_variables
+    NIX_CONFIG: |
+      experimental-features = nix-command flakes
+      accept-flake-config = true
+      substituters = https://cache.nixos.org https://nix-cache.fuzzy-dev.tinyland.dev/main
+      trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= main:PBDvqG8OP3W2XF4QzuqWwZD/RhLRsE7ONxwM09kqTtw=
+      extra-platforms = x86_64-linux
   before_script:
     - nix --version
     - nix profile install nixpkgs#skopeo nixpkgs#attic-client
     - attic login tinyland https://nix-cache.fuzzy-dev.tinyland.dev "$ATTIC_TOKEN" || true
+    # Create containers policy.json for skopeo (not present in nixos/nix image)
+    - mkdir -p /etc/containers
+    - echo '{"default":[{"type":"insecureAcceptAnything"}]}' > /etc/containers/policy.json
   script:
     - echo "Building container with nix2container (3-layer caching)..."
     - nix build .#packages.x86_64-linux.container --no-update-lock-file --print-build-logs
@@ -208,7 +218,7 @@ nix:container:amd64:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-  allow_failure: false  # nix2container must succeed for registry distribution
+  allow_failure: true  # nix2container depends on x86_64-linux builder availability
 
 # Flake check - validates flake structure (fast, no build)
 nix:flake:check:
