@@ -17,6 +17,8 @@ include:
   - local: '/.gitlab/ci/sbom.yml'
   # Reproducible builds
   - local: '/.gitlab/ci/nix.yml'
+  # GitHub mirror sync
+  - local: '/.gitlab/ci/github-mirror.yml'
   # CI base image (Phase 7 - pre-baked UV + tools)
   - local: '/.gitlab/ci/ci-base-image.yml'
 

@@ -11,7 +11,10 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      description = "HuskyCat package to use";
+      default = pkgs.huskycat or (builtins.throw
+        "huskycat not found in pkgs. Add the huskycat overlay or set tinyland.huskycat.package.");
+      defaultText = lib.literalExpression "pkgs.huskycat";
+      description = "HuskyCat package to use. Defaults to pkgs.huskycat from the overlay.";
     };
 
     # Global hooks integration

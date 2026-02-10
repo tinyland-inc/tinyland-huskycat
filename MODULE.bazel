@@ -1,23 +1,52 @@
 """HuskyCat Bazel module definition.
 
-This module provides Bazel build support for HuskyCat using bzlmod.
-Currently provides basic Python toolchain integration via rules_nixpkgs.
+Provides hermetic Python builds with pip dependency resolution.
+For most development work, use UV:
+  uv sync --dev && just validate
 
-For most development work, use UV + npm scripts instead:
-  uv sync --dev && npm run dev
-
-Bazel is provided for reproducible builds and hermetic CI environments.
+Bazel is provided for reproducible builds, hermetic CI, and
+monorepo integration with tinyland/lab.
 """
 
 module(
     name = "huskycat",
-    version = "2.0.0",
+    version = "2.1.0",
     compatibility_level = 1,
+    bazel_compatibility = [">=7.0.0"],
 )
 
-# Python rules for building Python targets
-bazel_dep(name = "rules_python", version = "0.31.0")
+# --- Core dependencies ---
 
-# Nixpkgs integration for hermetic toolchains (optional)
-# Uncomment when rules_nixpkgs_core is available on bzlmod registry
-# bazel_dep(name = "rules_nixpkgs_core", version = "0.12.0")
+bazel_dep(name = "rules_python", version = "0.35.0")
+
+# Register Python 3.12 toolchain
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.12",
+    is_default = True,
+)
+
+# Resolve pip dependencies from lock file
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "huskycat_pip",
+    python_version = "3.12",
+    requirements_lock = "//:requirements_lock.txt",
+)
+use_repo(pip, "huskycat_pip")
+
+# --- Hermetic Nix toolchains (optional) ---
+# Uncomment when consuming from tinyland/lab monorepo
+# or when rules_nixpkgs_core is on the Bazel Central Registry.
+#
+# bazel_dep(name = "rules_nixpkgs_core", version = "0.13.0")
+#
+# nix_repo = use_extension(
+#     "@rules_nixpkgs_core//extensions:repository.bzl", "nix_repo",
+# )
+# nix_repo.file(
+#     name = "nixpkgs",
+#     file = "//:bazel/nixpkgs.nix",
+#     file_deps = ["//:flake.lock"],
+# )
+# use_repo(nix_repo, "nixpkgs")

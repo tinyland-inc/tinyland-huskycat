@@ -44,91 +44,40 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        # Version from git revision (research recommendation)
+        # Version from git revision
         version =
           if (self ? rev)
-          then "2.0.0-${self.shortRev}"
-          else "2.0.0-dirty";
+          then "2.1.0-${self.shortRev}"
+          else "2.1.0-dirty";
 
-        # Source filtering to avoid rebuilds on doc/test/cache changes (research recommendation)
-        src = pkgs.lib.cleanSourceWith {
+        # Source filtering to avoid rebuilds on doc/test/cache changes
+        filteredSrc = pkgs.lib.cleanSourceWith {
           src = ./.;
           filter = path: type:
             let baseName = baseNameOf path; in
-            # Include source files
             (pkgs.lib.hasSuffix ".py" baseName) ||
             (baseName == "pyproject.toml") ||
             (baseName == "uv.lock") ||
             (baseName == "README.md") ||
             (baseName == "LICENSE") ||
-            (pkgs.lib.hasPrefix "src/" path) ||
-            # Exclude cache, tests, docs from build (avoid unnecessary rebuilds)
-            (!(pkgs.lib.hasPrefix ".cache" baseName)) &&
-            (!(pkgs.lib.hasPrefix "tests/" path)) &&
-            (!(pkgs.lib.hasPrefix "docs/" path)) &&
-            (!(pkgs.lib.hasPrefix ".git" baseName)) &&
-            (!(pkgs.lib.hasPrefix "__pycache__" baseName)) &&
-            (baseName != ".pytest_cache") &&
-            (baseName != ".mypy_cache") &&
-            (baseName != ".ruff_cache");
+            (type == "directory");
         };
 
-        # Python environment with HuskyCat dependencies
-        pythonEnv = pkgs.python312.withPackages (ps: with ps; [
-          # Core dependencies (from pyproject.toml)
-          pydantic
-          pyyaml
-          jsonschema
-          requests
-          rich
-          networkx
-          psutil
-          click
-          toml
-          gitpython
+        # Package derivation (extracted to nix/package.nix for monorepo composability)
+        huskycatPkg = pkgs.callPackage ./nix/package.nix {
+          inherit version;
+          src = filteredSrc;
+        };
 
-          # Validation tools
-          black
-          mypy
-          flake8
-          bandit
-          autoflake
-
-          # Testing
-          pytest
-          pytest-cov
-          hypothesis
-        ]);
+        # Re-export the python environment for devShells and checks
+        pythonEnv = huskycatPkg.passthru.pythonEnv;
 
         # nix2container helper (only available on Linux)
         n2c = nix2container.packages.${system}.nix2container or null;
 
       in {
-        # Package: huskycat as a derivation
-        packages.default = pkgs.stdenvNoCC.mkDerivation {
-          pname = "huskycat";
-          inherit version src;
-
-          nativeBuildInputs = [ pkgs.makeWrapper ];
-          buildInputs = [ pythonEnv ];
-
-          installPhase = ''
-            mkdir -p $out/bin $out/lib/huskycat
-            cp -r src/huskycat $out/lib/huskycat/
-
-            makeWrapper ${pythonEnv}/bin/python $out/bin/huskycat \
-              --add-flags "-m huskycat" \
-              --prefix PYTHONPATH : "$out/lib"
-          '';
-
-          meta = with pkgs.lib; {
-            description = "Universal Code Validation Platform with MCP Server Integration";
-            homepage = "https://huskycat-570fbd.gitlab.io/";
-            license = licenses.asl20;
-            maintainers = [ ];
-            platforms = platforms.unix;
-          };
-        };
+        # Package: huskycat (derivation defined in nix/package.nix)
+        packages.default = huskycatPkg;
 
         # Container image using nix2container (Linux only)
         # Provides reproducible container builds with layer caching
