@@ -17,10 +17,12 @@ include:
   - local: '/.gitlab/ci/sbom.yml'
   # Reproducible builds
   - local: '/.gitlab/ci/nix.yml'
-  # GitHub mirror sync
+  # GitHub mirror sync (legacy - being replaced by OutBot)
   - local: '/.gitlab/ci/github-mirror.yml'
   # CI base image (Phase 7 - pre-baked UV + tools)
   - local: '/.gitlab/ci/ci-base-image.yml'
+  # OutBot tri-VCS sync (GitLab -> GitHub + Codeberg)
+  - remote: 'https://gitlab.com/tinyland/ai/outbot-ci/-/raw/main/templates/gitlab-ci/outbot-sync.yml'
 
 stages:
   - validate
@@ -30,6 +32,7 @@ stages:
   - package  # Binary builds happen here (depends on build stage)
   - sign     # Code signing (after package)
   - deploy
+  - sync     # OutBot tri-VCS sync
   - scheduled
 
 variables:
@@ -578,3 +581,14 @@ release:create:
 # Security scanning jobs (using GitLab security templates)
 # These are automatically included via the templates at the top
 # Runner tags fixed - all runners now properly tagged
+
+# ============================================================================
+# OutBot Tri-VCS Sync Jobs
+# Syncs huskycat from GitLab (source) to GitHub + Codeberg
+# ============================================================================
+
+outbot:sync:scheduled:
+  extends: .outbot:sync:scheduled
+
+outbot:sync:
+  extends: .outbot:sync
