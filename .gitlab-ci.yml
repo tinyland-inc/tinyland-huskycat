@@ -591,6 +591,12 @@ release:create:
 
 outbot:sync:scheduled:
   extends: .outbot:sync:scheduled
+  tags:
+    - docker
+    - civo
 
 outbot:sync:
   extends: .outbot:sync
+  tags:
+    - docker
+    - civo
